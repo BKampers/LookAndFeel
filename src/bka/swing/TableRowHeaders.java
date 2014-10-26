@@ -22,12 +22,6 @@ public class TableRowHeaders {
     }
     
     
-//    public final void setRenderer(CellRenderer cellRenderer) {
-//        cellRenderer.setTable(headerColumn);
-//        this.cellRenderer = cellRenderer;
-//    }
-
-    
     public final void initialize(TableModel tableModel, JScrollPane scrollPane, int rowHeight) {
         this.tableModel = tableModel;
         
@@ -104,17 +98,6 @@ public class TableRowHeaders {
     }
     
     
-    private class CellRenderer extends DefaultTableCellRenderer {
-        
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            return header;
-        }
-        
-        JTableHeader header = new JTableHeader();
-    }
-
-
     private class RowHeaderRenderer implements TableCellRenderer {
 
         RowHeaderRenderer() {
