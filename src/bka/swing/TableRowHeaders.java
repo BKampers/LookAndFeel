@@ -11,7 +11,7 @@ import javax.swing.table.*;
 
 public class TableRowHeaders {
 
-
+    
     public String cornerName() {
         return null;
     }
@@ -20,16 +20,23 @@ public class TableRowHeaders {
     public Object rowName(int row) {
         return row + 1;
     }
+    
+    
+//    public final void setRenderer(CellRenderer cellRenderer) {
+//        cellRenderer.setTable(headerColumn);
+//        this.cellRenderer = cellRenderer;
+//    }
 
     
-    public void initialize(TableModel tableModel, JScrollPane scrollPane) {
+    public final void initialize(TableModel tableModel, JScrollPane scrollPane, int rowHeight) {
         this.tableModel = tableModel;
         
-        Table headerColumn = new Table();
         headerColumn.createDefaultColumnsFromModel();
         headerColumn.setColumnSelectionAllowed(false);
         headerColumn.setCellSelectionEnabled(false);
-        headerColumn.setDefaultRenderer(Object.class, new CellRenderer());
+        headerColumn.setDefaultRenderer(Object.class, new RowHeaderRenderer());
+        
+        headerColumn.setRowHeight(rowHeight);
 
         JViewport viewport = new JViewport();
         viewport.setView(headerColumn);
@@ -42,12 +49,19 @@ public class TableRowHeaders {
     }
     
     
+    public void setAlignment(int horizontalAlignment, int verticalAlignment) {
+        rowHeaderRenderer.setHorizontalAlignment(horizontalAlignment);
+        rowHeaderRenderer.setVerticalAlignment(verticalAlignment);
+    }
+    
+    
     private class Table extends JTable {
         
         Table() {
             super(new Model(), new ColumnModel()); 
         }
         
+        @Override
         public Component prepareRenderer(TableCellRenderer renderer, int row, int col) {
             return getTableHeader().getDefaultRenderer().getTableCellRendererComponent(this, getValueAt(row, col), false, false, row, col);
         }
@@ -62,7 +76,7 @@ public class TableRowHeaders {
         }
         
         public int getRowCount() {
-            return tableModel.getRowCount(); 
+            return (tableModel != null) ? tableModel.getRowCount() : 0; 
         }
         
         public String getColumnName(int column) {
@@ -92,15 +106,33 @@ public class TableRowHeaders {
     
     private class CellRenderer extends DefaultTableCellRenderer {
         
+        @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            JTableHeader header = new JTableHeader();
-            header.setTable(table);
             return header;
         }
         
+        JTableHeader header = new JTableHeader();
     }
 
+
+    private class RowHeaderRenderer implements TableCellRenderer {
+
+        RowHeaderRenderer() {
+            rowHeaderRenderer = (DefaultTableCellRenderer) headerColumn.getTableHeader().getDefaultRenderer();
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+            return rowHeaderRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
+        }
+
+    }
+    
+    private final Table headerColumn = new Table();
     
     private TableModel tableModel = null;
+
+    private DefaultTableCellRenderer rowHeaderRenderer;
+
     
 }
