@@ -35,7 +35,7 @@ public class Demarcations {
         double low = min.doubleValue();
         double high = max.doubleValue();
         double range = high - low;
-        bka.Scientific r = new bka.Scientific(range);
+        bka.numeric.Scientific r = new bka.numeric.Scientific(range);
         double step = 1.0;
         int digits = 0;
         double coefficient = r.getCoefficient();
@@ -53,7 +53,7 @@ public class Demarcations {
             values.add(markerValue);
             ready = markerValue > high;
         }
-        short exponent = new bka.Scientific(step).getExponent();
+        short exponent = new bka.numeric.Scientific(step).getExponent();
         digits += (exponent < 0) ? -exponent : 0;
         format = "%." + digits + "f";
     }

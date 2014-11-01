@@ -64,12 +64,12 @@ public class TimestampDemarcations extends Demarcations {
                 break;
             case Calendar.MINUTE:
                 //low.clear(Calendar.SECOND); <- This affects DST offset, do not use it
-                long round = step.amount * bka.Time.MILLIS_PER_MINUTE;
+                long round = step.amount * bka.numeric.Time.MILLIS_PER_MINUTE;
                 low.setTimeInMillis((low.getTimeInMillis() / round) * round);
                 break;
             case Calendar.SECOND:
                 //low.clear(Calendar.MILLISECOND); <- This affects DST offset, do not use it
-                round = step.amount * bka.Time.MILLIS_PER_SECOND;
+                round = step.amount * bka.numeric.Time.MILLIS_PER_SECOND;
                 low.setTimeInMillis((low.getTimeInMillis() / round) * round);
                 break;
             case Calendar.MILLISECOND:
