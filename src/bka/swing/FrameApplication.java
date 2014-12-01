@@ -86,7 +86,8 @@ public abstract class FrameApplication extends JFrame {
 
 
     public boolean getBooleanProperty(String key, boolean defaultValue) {
-        return Boolean.parseBoolean(getProperty(key));
+        String property = getProperty(key);
+        return (property != null) ? Boolean.parseBoolean(getProperty(key)) : defaultValue;
     }
 
 
@@ -276,6 +277,24 @@ public abstract class FrameApplication extends JFrame {
     }
     
     
+    protected static void setLookAndFeel(String name) {
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if (name.equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    return;
+                }
+            }
+        }
+        catch (ReflectiveOperationException ex) {
+            java.util.logging.Logger.getLogger(FrameApplication.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(FrameApplication.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+    }
+    
+    
     protected boolean loadedFromJar() {
         String className = getClass().getName().replace('.', '/');
         String classJar = getClass().getResource("/" + className + ".class").toString();
@@ -302,8 +321,8 @@ public abstract class FrameApplication extends JFrame {
 
 
     protected void parseArguments(String[] arguments) {
+        loadProperties();
         if (arguments != null) {
-            loadProperties();
             // Overrule read properties with arguments
             for (String argument : arguments) {
                 int index = argument.indexOf('=');
