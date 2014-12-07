@@ -634,6 +634,14 @@ public abstract class FrameApplication extends JFrame {
         private boolean opened = false;
         
     }
+    
+    
+    static {
+        javax.swing.UIDefaults defaults = UIManager.getDefaults();
+        defaults.put("errorBackground", new java.awt.Color(253, 115, 115));
+        defaults.put("highlightBackground", java.awt.Color.YELLOW);
+        defaults.put("Border.highlightColor", java.awt.Color.ORANGE);        
+    }
 
 
     private final Properties properties = new Properties();

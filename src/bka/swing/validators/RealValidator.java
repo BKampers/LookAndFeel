@@ -18,7 +18,7 @@ public class RealValidator extends AbstractValidator {
     }
 
 
-    public void enableDecimalCheck(int count) {
+    public final void enableDecimalCheck(int count) {
         checkDecimalCount = true;
         maxDecimalCount = count;
     }
@@ -50,7 +50,6 @@ public class RealValidator extends AbstractValidator {
         String fieldText = field.getText();
         int separatorIndex = fieldText.indexOf(symbols.getDecimalSeparator());
         boolean hasSeparator = false;
-        boolean decimalAllowed = true;
         int decimalCount = 0;
         if (separatorIndex >= 0) {
             hasSeparator = true;
@@ -59,7 +58,7 @@ public class RealValidator extends AbstractValidator {
         char[] charArray = text.toCharArray();
         for (int i = 0; i < charArray.length; i++) {
             char ch = charArray[i];
-            decimalAllowed = decimalCount < maxDecimalCount;
+            boolean decimalAllowed = decimalCount < maxDecimalCount;
             boolean validDigit = Character.isDigit(ch) && (! checkDecimalCount || offset <= separatorIndex || decimalAllowed);
             boolean validSeparator = ! hasSeparator && maxDecimalCount > 0 && ch == symbols.getDecimalSeparator();
             if (validDigit/* || offset == 0 && i == 0 && ch == symbols.getMinusSign()*/ || validSeparator) {
