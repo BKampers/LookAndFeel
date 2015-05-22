@@ -8,15 +8,14 @@ import java.awt.Color;
 import java.util.*;
 
 
-public abstract class PointRenderer {
+public abstract class PointRenderer extends AbstractDataPointRenderer {
     
     
     public abstract void drawSymbol(java.awt.Graphics2D g2d, int x, int y);
 
     
     public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint) {
-        drawSymbol(g2d, dataPoint.getPixel().x, dataPoint.getPixel().y);
-        
+        drawSymbol(g2d, dataPoint.getPixel().x, dataPoint.getPixel().y);   
     }
     
     
@@ -60,6 +59,7 @@ public abstract class PointRenderer {
     }
     
     
+    @Deprecated
     void setChartPanel(ChartPanel chartPanel) {
         this.chartPanel = chartPanel;
     }
@@ -83,11 +83,9 @@ public abstract class PointRenderer {
     }
     
     
-    protected Color color; // Must be initialized by Panel
+    protected Color color;
     
     protected String xFormat = null;
     protected String yFormat = null;
-    
-    protected ChartPanel chartPanel;
     
 }

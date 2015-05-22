@@ -36,69 +36,20 @@ class DataSet {
         yMin = yWindowMin;
         yMax = yWindowMax;
         if (dataMap != null) {
-            /*
-            ** Select all points in window and determine ranges for x and y
-            */
-            Number xMinInWindow = null;
-            Number xMaxInWindow = null;
-            Number yMinInWindow = null;
-            Number yMaxInWindow = null;
-            Map<Object, Map<Number, Number>> pointsInWindow = new LinkedHashMap<Object, Map<Number, Number>>();
-            for (Map.Entry<Object, Map<Number, Number>> dataGraph : dataMap.entrySet()) {
-                Map<Number, Number> graphPointsInWindow = new HashMap<Number, Number>();
-                pointsInWindow.put(dataGraph.getKey(), graphPointsInWindow);
-                for (Map.Entry<Number, Number> entry : dataGraph.getValue().entrySet()) {
-                    Number x = entry.getKey();
-                    Number y = entry.getValue();
-                    if (
-                        (xWindowMin == null || value(xWindowMin) <= value(x)) && 
-                        (xWindowMax == null || value(x) <= value(xWindowMax)) &&
-                        (yWindowMin == null || value(yWindowMin) <= value(y)) && 
-                        (yWindowMax == null || value(y) <= value(yWindowMax)))
-                    {
-                        /** Point (x,y) is in window **/
-                        graphPointsInWindow.put(x, y);
-                        if (xMinInWindow == null || value(xMinInWindow) > value(x)) { xMinInWindow = x; }
-                        if (xMaxInWindow == null || value(xMaxInWindow) < value(x)) { xMaxInWindow = x; }
-                        if (yMinInWindow == null || value(yMinInWindow) > value(y)) { yMinInWindow = y; }
-                        if (yMaxInWindow == null || value(yMaxInWindow) < value(y)) { yMaxInWindow = y; }
-                    }
-                }
-            }
-            /*
-            ** Compute pixels for selected points
-            */
-            if (xMin == null) { xMin = xMinInWindow; }
-            if (xMax == null) { xMax = xMaxInWindow; }
-            if (yMin == null) { yMin = yMinInWindow; }
-            if (yMax == null) { yMax = yMaxInWindow; }
+            Window window = computeWindow(xWindowMin, xWindowMax, yWindowMin, yWindowMax);
+            if (xMin == null) { xMin = window.xMin; }
+            if (xMax == null) { xMax = window.xMax; }
+            if (yMin == null) { yMin = window.yMin; }
+            if (yMax == null) { yMax = window.yMax; }
             if (yWindowBase != null) {
                 if (yMin != null && yMin.doubleValue() > yWindowBase.doubleValue()) { yMin = yWindowBase; }
                 if (yMax != null && yMax.doubleValue() < yWindowBase.doubleValue()) { yMax = yWindowBase; }
             }
-            for (Map.Entry<Object, Map<Number, Number>> map : pointsInWindow.entrySet()) {
-                TreeSet<DataPoint> points = new TreeSet<DataPoint>();
-                graphs.put(map.getKey(), points);
-                for (Map.Entry<Number, Number> entry : map.getValue().entrySet()) {
-                    Number x = entry.getKey();
-                    Number y = entry.getValue();
-                    points.add(new DataPoint(x, y, new Point(xPixel(x), yPixel(y))));
-                }
-            }
+            computeDataPoints(window);
         }
-
-        if (xDemarcations == null) {
-            xDemarcations = new Demarcations();
-        }
-        xDemarcations.setLocale(locale);
-        xDemarcations.initialize(xMin, xMax);
-        if (yDemarcations == null) {
-            yDemarcations = new Demarcations();
-        }
-        yDemarcations.setLocale(locale);
-        yDemarcations.initialize(yMin, yMax);
+        initializeDemarcations(locale);
     }
-    
+
     
     Map<Object, TreeSet<DataPoint>> getGraphs() {
         return graphs;
@@ -169,6 +120,66 @@ class DataSet {
     }
 
     
+    /**
+     * Select all points in window and determine ranges for x and y
+     */
+    private Window computeWindow(Number xWindowMin, Number xWindowMax, Number yWindowMin, Number yWindowMax) {
+        Window window = new Window();
+        for (Map.Entry<Object, Map<Number, Number>> dataGraph : dataMap.entrySet()) {
+            Map<Number, Number> graphPointsInWindow = new HashMap<Number, Number>();
+            window.points.put(dataGraph.getKey(), graphPointsInWindow);
+            for (Map.Entry<Number, Number> entry : dataGraph.getValue().entrySet()) {
+                Number x = entry.getKey();
+                Number y = entry.getValue();
+                if (
+                        (xWindowMin == null || value(xWindowMin) <= value(x)) &&
+                        (xWindowMax == null || value(x) <= value(xWindowMax)) &&
+                        (yWindowMin == null || value(yWindowMin) <= value(y)) &&
+                        (yWindowMax == null || value(y) <= value(yWindowMax)))
+                {
+                    /** Point (x,y) is in window **/
+                    graphPointsInWindow.put(x, y);
+                    if (window.xMin == null || value(window.xMin) > value(x)) { window.xMin = x; }
+                    if (window.xMax == null || value(window.xMax) < value(x)) { window.xMax = x; }
+                    if (window.yMin == null || value(window.yMin) > value(y)) { window.yMin = y; }
+                    if (window.yMax == null || value(window.yMax) < value(y)) { window.yMax = y; }
+                }
+            }
+        }
+        return window;
+    }
+
+    
+    /**
+     * Compute pixels for points in window
+     */
+    private void computeDataPoints(Window window) {
+        for (Map.Entry<Object, Map<Number, Number>> map : window.points.entrySet()) {
+            TreeSet<DataPoint> points = new TreeSet<DataPoint>();
+            graphs.put(map.getKey(), points);
+            for (Map.Entry<Number, Number> entry : map.getValue().entrySet()) {
+                Number x = entry.getKey();
+                Number y = entry.getValue();
+                points.add(new DataPoint(x, y, new Point(xPixel(x), yPixel(y))));
+            }
+        }
+    }
+
+    
+    private void initializeDemarcations(Locale locale) {
+        if (xDemarcations == null) {
+            xDemarcations = new Demarcations();
+        }
+        xDemarcations.setLocale(locale);
+        xDemarcations.initialize(xMin, xMax);
+        if (yDemarcations == null) {
+            yDemarcations = new Demarcations();
+        }
+        yDemarcations.setLocale(locale);
+        yDemarcations.initialize(yMin, yMax);
+    }
+
+    
     private double xRange() {
         return value(xMax) - value(xMin);
     }
@@ -182,6 +193,12 @@ class DataSet {
     private double value(Number number) {
         return number.doubleValue();
     }
+    
+    
+    private class Window {
+        Map<Object, Map<Number, Number>> points = new LinkedHashMap<Object, Map<Number, Number>>();
+        Number xMin, xMax, yMin, yMax;
+    }
 
     
     Demarcations xDemarcations = null;
@@ -191,7 +208,7 @@ class DataSet {
     private Rectangle area = null;
     
     private Map<Object, Map<Number, Number>> dataMap;    
-    private Map<Object, TreeSet<DataPoint>> graphs = new LinkedHashMap<Object, TreeSet<DataPoint>>();
+    private final Map<Object, TreeSet<DataPoint>> graphs = new LinkedHashMap<Object, TreeSet<DataPoint>>();
 
     private Number xMin = null;
     private Number xMax = null;

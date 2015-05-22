@@ -13,9 +13,8 @@ import javax.swing.UIManager;
 
 
 public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Printable {
-
     
-    public enum Style { POINT, LINE, POINT_AND_LINE }
+    @Deprecated public enum Style { POINT, LINE, POINT_AND_LINE, PIE }
     public enum AxisPosition { ORIGIN, MINIMUM, MAXIMUM }
     public enum DemarcationMode { NONE, X, Y }
     public enum DragZoomMode { NONE, X, Y, XY }
@@ -66,7 +65,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                     numbers.put((Number) x, (Number) y);
                 }
                 else {
-                    throw new ClassCastException();
+                    throw new ClassCastException("ChartPanel needs Map containing Numbers only");
                 }
             }
             data.put(graph.getKey(), numbers);
@@ -220,11 +219,18 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
     
+    @Deprecated
    public void setStyle(Object key, Style style) {
        styles.put(key, style);
    }
    
    
+   public void setRenderer(Object key, AbstractDataPointRenderer renderer) {
+       renderers.put(key, renderer);
+   }
+   
+   
+   @Deprecated
     public void setPointRenderer(Object key, PointRenderer pointRenderer) {
         if (pointRenderer.getColor() == null) {
             pointRenderer.setColor(getPointColor(key));
@@ -234,17 +240,28 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
     
+    @Deprecated
     public void setPointColor(Object key, Color color) {
         pointColors.put(key, color);
     }
     
     
+    @Deprecated
     public void setLineRenderer(Object key, LineRenderer lineRenderer) {
         if (lineRenderer.getColor() == null) {
             lineRenderer.setColor(getLineColor(key));
         }
         lineRenderers.put(key, lineRenderer);
     }
+    
+    
+    @Deprecated
+    public void setPieSectorRenderer(Object key, PieSectorRenderer pieSectorRenderer) {
+        if (pieSectorRenderer.getPalette() == null) {
+            pieSectorRenderer.setPalette(getPiePalette(key));
+        }
+        pieSectorRenderers.put(key, pieSectorRenderer);
+    } 
     
     
     public void setPointHighlightRenderer(Object key, PointRenderer pointHighlightRenderer) {
@@ -346,35 +363,54 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             if (demarcationRenderer != null) {
                 demarcationRenderer.draw(g2d);
             }
-            getAxisRenderer().drawXAxis(g2d);
-            getAxisRenderer().drawYAxis(g2d);
+            boolean showAxes = false;
             for (Map.Entry<Object, TreeSet<DataPoint>> entry : dataSet.getGraphs().entrySet()) {
                 Object key = entry.getKey();
-                Style style = getStyle(key);
                 TreeSet<DataPoint> graph = entry.getValue();
-                DataPoint previous = null;
+                AbstractDataPointRenderer renderer = getRenderer(key);
+                renderer.reset(this, graph);
                 for (DataPoint dataPoint : graph) {
-                    if (style == Style.POINT || style == Style.POINT_AND_LINE) {
-                        PointRenderer pointRenderer = getPointRenderer(key);
-                        pointRenderer.draw(g2d, dataPoint);
-                    }
-                    if (previous != null && (style == Style.LINE || style == Style.POINT_AND_LINE)) {
-                        LineRenderer lineRenderer = getLineRenderer(key);
-                        lineRenderer.draw(g2d, previous, dataPoint);
-                    }
-                    previous = dataPoint;
-                    PointRenderer pointHighlightRenderer = pointHighlightRenderers.get(key);
-                    if (pointHighlightRenderer != null && dataPoint.equals(nearestToMouse)) {
-                        highlightPoint = dataPoint;
-                        highlightRenderer = pointHighlightRenderer;
-                    }
+                    renderer.draw(g2d, dataPoint);
                 }
+                Style style = getStyle(key);
+                if (style == Style.PIE) {
+//                    PieSectorRenderer pieSectorRenderer = getPieSectorRenderer(key, graph);
+//                    pieSectorRenderer.reset(chartArea(), graph);
+                }
+                else {
+                    showAxes = true;
+                }
+//                DataPoint previous = null;
+//                for (DataPoint dataPoint : graph) {
+//                    if (style == Style.POINT || style == Style.POINT_AND_LINE) {
+//                        PointRenderer pointRenderer = getPointRenderer(key);
+//                        pointRenderer.draw(g2d, dataPoint);
+//                    }
+//                    if (previous != null && (style == Style.LINE || style == Style.POINT_AND_LINE)) {
+//                        LineRenderer lineRenderer = getLineRenderer(key);
+//                        lineRenderer.draw(g2d, previous, dataPoint);
+//                    }
+//                    if (style == Style.PIE) {
+//                        PieSectorRenderer pieSectorRenderer = getPieSectorRenderer(key, graph);
+//                        pieSectorRenderer.draw(g2d, dataPoint);
+//                    }
+//                    previous = dataPoint;
+//                    PointRenderer pointHighlightRenderer = pointHighlightRenderers.get(key);
+//                    if (pointHighlightRenderer != null && dataPoint.equals(nearestToMouse)) {
+//                        highlightPoint = dataPoint;
+//                        highlightRenderer = pointHighlightRenderer;
+//                    }
+//                }
+            }
+            if (showAxes) {
+                getAxisRenderer().drawXAxis(g2d);
+                getAxisRenderer().drawYAxis(g2d);
             }
             if (showLegend) {
                 drawLegend(g2d);
             }
             drawSelectionRectangle(g2d);
-            if (highlightPoint != null) {
+            if (highlightRenderer != null && highlightPoint != null) {
                 highlightRenderer.draw(g2d, highlightPoint);
             }
             drawTitle(g2d);
@@ -420,19 +456,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         return java.awt.print.Printable.PAGE_EXISTS;
     }
     
-    
-    Rectangle zoomBarAreaX() {
-        Rectangle chartArea = chartArea();
-        return new Rectangle(chartArea.x, chartArea.y + chartArea.height + zoomBarOffset, chartArea.width, zoomBarWidth);
-    }
-    
-    
-    Rectangle zoomBarAreaY() {
-        Rectangle chartArea = chartArea();
-        return new Rectangle(chartArea.x + chartArea.width + zoomBarOffset, chartArea.y, zoomBarWidth, chartArea.height);
-    }
-    
-    
+
     int areaLeft() {
         return chartArea().x;
     }
@@ -607,6 +631,16 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
            g2d.drawRect(x, y, width, height);
         }
     }
+    
+    
+    private AbstractDataPointRenderer getRenderer(Object key) {
+        AbstractDataPointRenderer renderer = renderers.get(key);
+        if (renderer == null) {
+            renderer = new OvalDotRenderer();
+            renderers.put(key, renderer);
+        }
+        return renderer;
+    }
 
     
     private AxisRenderer getAxisRenderer() {
@@ -675,6 +709,16 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
     
+    private Palette getPiePalette(Object key) {
+        Palette piePalette = piePalettes.get(key);
+        if (piePalette == null) {
+            piePalette = new Palette("Chart.piePalette");
+            piePalettes.put(key, piePalette);
+        }
+        return piePalette;
+    }
+    
+    
     private Color getHighlightColor() {
         Color color = javax.swing.UIManager.getColor("Chart.highlightColor");
         return (color != null) ? color : Color.YELLOW;
@@ -706,7 +750,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                 bounds.x + leftMargin, 
                 bounds.y + topMargin, 
                 bounds.width - leftMargin - rightMargin, 
-                bounds.height - topMargin - bottomMargin - zoomBarWidth);
+                bounds.height - topMargin - bottomMargin);
         }
         else {
             // Prining
@@ -841,47 +885,33 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             Point point = evt.getPoint();
             if (clickZoomMode == ClickZoomMode.DOUBLE_CLICK_DEMARCATION && chartArea().contains(point)) {
                 if (evt.getButton() == java.awt.event.MouseEvent.BUTTON1 && evt.getClickCount() == 1) {
-                    switch (demarcationMode) {
-                        case X: {
-                            java.util.List<Number> values = dataSet.xDemarcations.values;
-                            if (values.size() >= 2) {
-                                Number min = values.get(0);
-                                boolean zoomed = false;
-                                int i = 0;
-                                while (! zoomed && i < values.size()) {
-                                    Number max = values.get(i);
-                                    if (dataSet.xPixel(min) <= point.x && point.x <= dataSet.xPixel(max)) {
-                                        setXWindow(min, max);
-                                        zoomed = true;
-                                    }
-                                    else {
-                                        min = max;
-                                        i++;
-                                    }
-                                }
-                            }
-                            break;
-                        }
-                        case Y: {
-                            java.util.List<Number> values = dataSet.yDemarcations.values;
-                            if (values.size() >= 2) {
-                                Number min = values.get(0);
-                                boolean zoomed = false;
-                                int i = 0;
-                                while (! zoomed && i < values.size()) {
-                                    Number max = values.get(i);
-                                    if (dataSet.yPixel(max) <= point.y && point.y <= dataSet.yPixel(min)) {
-                                        setYWindow(min, max);
-                                        zoomed = true;
-                                    }
-                                    else {
-                                        min = max;
-                                        i++;
-                                    }
-                                }
-                            }
-                            break;
-                        }
+                    if (demarcationMode == DemarcationMode.X || demarcationMode == DemarcationMode.Y) {
+                        zoom(point);
+                    }
+                }
+            }
+        }
+        
+        private void zoom(Point point) {
+            boolean xMode = demarcationMode == DemarcationMode.X;
+            java.util.List<Number> values = (xMode) ? dataSet.xDemarcations.values : dataSet.yDemarcations.values;
+            if (values.size() >= 2) {
+                Number min = values.get(0);
+                boolean zoomed = false;
+                int i = 1;
+                while (! zoomed && i < values.size()) {
+                    Number max = values.get(i);
+                    if (xMode && dataSet.xPixel(min) <= point.x && point.x <= dataSet.xPixel(max)) {
+                        setXWindow(min, max);
+                        zoomed = true;
+                    }
+                    else if (! xMode && dataSet.yPixel(min) <= point.y && point.y <= dataSet.yPixel(max)) {
+                        setYWindow(min, max);
+                        zoomed = true;
+                    }
+                    else {
+                        min = max;
+                        i++;
                     }
                 }
             }
@@ -932,13 +962,16 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private AxisRenderer axisRenderer = null;
     private DemarcationRenderer demarcationRenderer = null;
     
-    private Map<Object, Style> styles = new HashMap<Object, Style>();
-    private Map<Object, PointRenderer> pointRenderers = new HashMap<Object, PointRenderer>();
-    private Map<Object, LineRenderer> lineRenderers = new HashMap<Object, LineRenderer>();
-    private Map<Object, PointRenderer> pointHighlightRenderers = new HashMap<Object, PointRenderer>();
+    private final Map<Object, Style> styles = new HashMap<Object, Style>();
+    private final Map<Object, AbstractDataPointRenderer> renderers = new HashMap<Object, AbstractDataPointRenderer>();
+    private final Map<Object, PointRenderer> pointRenderers = new HashMap<Object, PointRenderer>();
+    private final Map<Object, LineRenderer> lineRenderers = new HashMap<Object, LineRenderer>();
+    private final Map<Object, PieSectorRenderer> pieSectorRenderers = new HashMap<Object, PieSectorRenderer>();
+    private final Map<Object, PointRenderer> pointHighlightRenderers = new HashMap<Object, PointRenderer>();
     
-    private Map<Object, Color> pointColors = new HashMap<Object, Color>();
-    private Map<Object, Color> lineColors = new HashMap<Object, Color>();
+    private final Map<Object, Color> pointColors = new HashMap<Object, Color>();
+    private final Map<Object, Color> lineColors = new HashMap<Object, Color>();
+    private final Map<Object, Palette> piePalettes = new HashMap<Object, Palette>();
     
     private Palette pointPalette = null;
     private Palette linePalette = null;
@@ -957,10 +990,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private int topMargin    =  50; // pixels
     private int bottomMargin =  50; // pixels
     
-    private int zoomBarOffset = 35; // pixels
-    private int zoomBarWidth  = 15; // pixels
-    
-    
+
     private final ArrayList<ZoomListener> zoomListeners = new ArrayList<ZoomListener>();
     
     

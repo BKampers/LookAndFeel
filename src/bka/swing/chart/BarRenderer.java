@@ -7,10 +7,20 @@ package bka.swing.chart;
 
 
 public class BarRenderer extends PointRenderer {
+    
+    
+    public BarRenderer(int width, java.awt.Color color) {
+        this.width = width;
+        this.color = color;
+    }
 
     
+    public BarRenderer(java.awt.Color color) {
+        this(7, color);
+    }
+    
     public BarRenderer(int width) {
-        this.width = width;
+        this(width, javax.swing.UIManager.getColor("chart.dataPointColor"));
     }
     
     

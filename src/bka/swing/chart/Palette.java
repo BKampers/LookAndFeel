@@ -7,18 +7,21 @@ package bka.swing.chart;
 import java.awt.Color;
 
 
-class Palette {
+public class Palette {
 
     
-    Palette(String key) {
+    Palette(String uiManagerKey) {
         try {
-            colors = (Color[]) javax.swing.UIManager.get(key);
+            colors = (Color[]) javax.swing.UIManager.get(uiManagerKey);
         }
         catch (Exception ex) {
             colors = null;
         }
         if (colors == null) {
-            colors = new Color[] { Color.BLUE, Color.RED, Color.MAGENTA, Color.ORANGE, Color.GREEN };
+            colors = new Color[10];
+            for (int i = 0; i < 10; ++i) {
+                colors[i] = new Color((i + 1) * 10, (i + 1) * 10, (i + 1) * 25);
+            }
         }
     }
 
@@ -27,6 +30,11 @@ class Palette {
         Color color = colors[index];
         index = (index + 1) % colors.length;
         return color;
+    }
+    
+    
+    void reset() {
+        index = 0;
     }
 
     

@@ -4,15 +4,20 @@
 
 package bka.swing.chart;
 
-import java.awt.Color;
+import java.awt.*;
 
 
-public abstract class LineRenderer {
+public abstract class LineRenderer extends AbstractDataPointRenderer {
     
     
     public abstract void draw(java.awt.Graphics2D g2d, DataPoint dataPoint1, DataPoint dataPoint2);
-    public abstract void drawSymbol(java.awt.Graphics2D g2d, int x, int y);
     
+    
+    @Override
+    public void reset(ChartPanel chartPanel, java.util.TreeSet<DataPoint> graph) {
+        super.reset(chartPanel, graph);
+        previous = null;
+    }
     
     public void setColor(Color color) {
         this.color = color;
@@ -25,5 +30,6 @@ public abstract class LineRenderer {
     
     
     protected Color color;
+    protected DataPoint previous;
     
 }
