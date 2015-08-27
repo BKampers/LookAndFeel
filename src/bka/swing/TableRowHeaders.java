@@ -41,6 +41,15 @@ public class TableRowHeaders {
         tableHeader.setEnabled(false);
         scrollPane.setCorner(javax.swing.ScrollPaneConstants.UPPER_LEFT_CORNER, tableHeader);
     }
+
+
+    public void repaintCorner() {
+        JTableHeader cornerCell = headerColumn.getTableHeader();
+        TableColumnModel cornerColumnModel = cornerCell.getColumnModel();
+        TableColumn cornerColumn = cornerColumnModel.getColumn(0);
+        cornerColumn.setHeaderValue(cornerName());
+        cornerCell.repaint();
+    }
     
     
     public void setAlignment(int horizontalAlignment, int verticalAlignment) {
@@ -65,22 +74,27 @@ public class TableRowHeaders {
     
     private class Model extends DefaultTableModel {
         
+        @Override
         public int getColumnCount() {
             return 1;
         }
         
+        @Override
         public int getRowCount() {
             return (tableModel != null) ? tableModel.getRowCount() : 0; 
         }
         
+        @Override
         public String getColumnName(int column) {
             return cornerName();
         }
         
+        @Override
         public Object getValueAt(int row, int column) {
             return rowName(row);
         }
         
+        @Override
         public boolean isCellEditable(int row, int column) {
             return false;
         }
@@ -90,6 +104,7 @@ public class TableRowHeaders {
     
     private class ColumnModel extends DefaultTableColumnModel {
 
+        @Override
         public void addColumn(TableColumn column) {
             column.setMaxWidth(column.getPreferredWidth());
             super.addColumn(column);
