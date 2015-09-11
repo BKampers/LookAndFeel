@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.util.*;
+import java.util.logging.*;
 import javax.swing.UIManager;
 
 
@@ -27,6 +28,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             selectionRectangleColor = Color.GRAY;
         }
         addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 synchronized (dataSet) {
                     initializeDataSet();
@@ -48,16 +50,16 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
 
     public void setGraph(Object key, Map graph) {
-        Map<Object, Map> graphs = new HashMap<Object, Map>();
+        Map<Object, Map> graphs = new HashMap<>();
         graphs.put(key, graph);
         setGraphs(graphs);
     }
     
     
     public void setGraphs(Map<Object, Map> graphs) {
-        Map<Object, Map<Number, Number>> data = new LinkedHashMap<Object, Map<Number, Number>>();
+        Map<Object, Map<Number, Number>> data = new LinkedHashMap<>();
         for (Map.Entry<Object, Map> graph : graphs.entrySet()) {
-            Map<Number, Number> numbers = new HashMap<Number, Number>();
+            Map<Number, Number> numbers = new HashMap<>();
             for (Object point : graph.getValue().entrySet()) {
                 Object x = ((Map.Entry) point).getKey();
                 Object y = ((Map.Entry) point).getValue();
@@ -348,12 +350,14 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
     
+    @Override
     public void invalidate() {
         initializeDataSet();
         super.invalidate();
     }
     
     
+    @Override
     public void paint(Graphics g) {
         super.paint(g);
         synchronized (dataSet) {
@@ -418,6 +422,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
     
+    @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
         synchronized (dataSet) {
             Graphics2D g2d = (Graphics2D) graphics;
@@ -487,29 +492,27 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
     
-    int xRangePixel(Number x) /*throws Exception */{
+    int xRangePixel(Number x) {
         if (x == null || xRangeMin == null || xRangeMax == null) { 
             return -1;
         }
         double ratio = chartArea().width / (xRangeMax.doubleValue() - xRangeMin.doubleValue());
         long pixel = Math.round((x.doubleValue() - xRangeMin.doubleValue()) * ratio);
         if (pixel < Integer.MIN_VALUE || pixel > Integer.MAX_VALUE) {
-            //throw new Exception("Chart data error: " + pixel + " not in [" + Integer.MIN_VALUE + " .. " + Integer.MAX_VALUE + "]");
-            System.err.printf("x pixel %d out of range [%d, %d]\n", pixel, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            logger.log(Level.WARNING, "x pixel {0} out of range [{1}, {2}]\n", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
         }
         return areaLeft() + (int) pixel;
     }
 
     
-    int yRangePixel(Number y) /*throws Exception */{
+    int yRangePixel(Number y) {
         if (y == null || yRangeMin == null || yRangeMax == null) { 
             return -1;
         }
         double ratio = chartArea().height / (yRangeMax.doubleValue() - yRangeMin.doubleValue());
         long pixel = Math.round((y.doubleValue() - yRangeMin.doubleValue()) * ratio);
         if (pixel < Integer.MIN_VALUE || pixel > Integer.MAX_VALUE) {
-            //throw new Exception("Chart data error: " + pixel + " not in [" + Integer.MIN_VALUE + " .. " + Integer.MAX_VALUE + "]");
-            System.err.printf("y pixel %d out of range [%d, %d]\n", pixel, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            logger.log(Level.WARNING, "y pixel {0} out of range [{1}, {2}]\n", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
         }
         return areaBottom() - (int) pixel;
     }
@@ -603,7 +606,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int x = areaRight() + 15;
         int y = topMargin;
-        ArrayList<Object> keys = new ArrayList<Object>(dataSet.getGraphs().keySet());
+        ArrayList<Object> keys = new ArrayList<>(dataSet.getGraphs().keySet());
         for (int i = keys.size() - 1; i >= 0; i--) {
             Object key = keys.get(i);
             LineRenderer lineRenderer = lineRenderers.get(key);
@@ -774,6 +777,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     private final java.awt.event.MouseAdapter MOUSE_ADAPTER = new java.awt.event.MouseAdapter() {
 
+        @Override
         public void mouseMoved(java.awt.event.MouseEvent evt) {
             Point mousePoint = evt.getPoint();
             if (chartArea().contains(mousePoint)) {
@@ -802,6 +806,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             }
         }
         
+        @Override
         public void mousePressed(java.awt.event.MouseEvent evt) {
             if (dragZoomMode != DragZoomMode.NONE && evt.getButton() == java.awt.event.MouseEvent.BUTTON1) {
                 dragStartPoint = new Point(evt.getX(), evt.getY());
@@ -827,6 +832,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             }
         }
         
+        @Override
         public void mouseDragged(java.awt.event.MouseEvent evt) {
             if (dragZoomMode != DragZoomMode.NONE && dragStartPoint != null) {
                 dragEndPoint = new Point(evt.getX(), evt.getY());
@@ -852,6 +858,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             }
         }
         
+        @Override
         public void mouseReleased(java.awt.event.MouseEvent evt) {
             if (dragStartPoint != null && dragEndPoint != null && evt.getButton() == java.awt.event.MouseEvent.BUTTON1) {
                 Number xMin = null;
@@ -881,6 +888,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             }
         }
         
+        @Override
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             Point point = evt.getPoint();
             if (clickZoomMode == ClickZoomMode.DOUBLE_CLICK_DEMARCATION && chartArea().contains(point)) {
@@ -962,16 +970,16 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private AxisRenderer axisRenderer = null;
     private DemarcationRenderer demarcationRenderer = null;
     
-    private final Map<Object, Style> styles = new HashMap<Object, Style>();
-    private final Map<Object, AbstractDataPointRenderer> renderers = new HashMap<Object, AbstractDataPointRenderer>();
-    private final Map<Object, PointRenderer> pointRenderers = new HashMap<Object, PointRenderer>();
-    private final Map<Object, LineRenderer> lineRenderers = new HashMap<Object, LineRenderer>();
-    private final Map<Object, PieSectorRenderer> pieSectorRenderers = new HashMap<Object, PieSectorRenderer>();
-    private final Map<Object, PointRenderer> pointHighlightRenderers = new HashMap<Object, PointRenderer>();
+    private final Map<Object, Style> styles = new HashMap<>();
+    private final Map<Object, AbstractDataPointRenderer> renderers = new HashMap<>();
+    private final Map<Object, PointRenderer> pointRenderers = new HashMap<>();
+    private final Map<Object, LineRenderer> lineRenderers = new HashMap<>();
+    private final Map<Object, PieSectorRenderer> pieSectorRenderers = new HashMap<>();
+    private final Map<Object, PointRenderer> pointHighlightRenderers = new HashMap<>();
     
-    private final Map<Object, Color> pointColors = new HashMap<Object, Color>();
-    private final Map<Object, Color> lineColors = new HashMap<Object, Color>();
-    private final Map<Object, Palette> piePalettes = new HashMap<Object, Palette>();
+    private final Map<Object, Color> pointColors = new HashMap<>();
+    private final Map<Object, Color> lineColors = new HashMap<>();
+    private final Map<Object, Palette> piePalettes = new HashMap<>();
     
     private Palette pointPalette = null;
     private Palette linePalette = null;
@@ -991,8 +999,9 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private int bottomMargin =  50; // pixels
     
 
-    private final ArrayList<ZoomListener> zoomListeners = new ArrayList<ZoomListener>();
-    
+    private final ArrayList<ZoomListener> zoomListeners = new ArrayList<>();
+
+    private static final Logger logger = Logger.getLogger(ChartPanel.class.getName());
     
     private static final int LEFT_MARGIN_PRINT   = 60;
     private static final int RIGHT_MARGIN_PRINT  =  5;

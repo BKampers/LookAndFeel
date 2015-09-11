@@ -7,6 +7,7 @@ package bka.swing.chart;
 
 import java.awt.*;
 import java.util.*;
+import java.util.logging.*;
 
 
 class DataSet {
@@ -29,6 +30,7 @@ class DataSet {
      * @param locale: to convert numbers and dates to strings
      */
     void initialize(Rectangle area, Number xWindowMin, Number xWindowMax, Number yWindowMin, Number yWindowMax, Number yWindowBase, Locale locale) {
+        logger.log(Level.FINE, "Initialize area {0}", area);
         this.area = area;
         graphs.clear();
         xMin = xWindowMin;
@@ -101,8 +103,7 @@ class DataSet {
         double ratio = area.width / xRange();
         long pixel = Math.round((value(x) - value(xMin)) * ratio);
         if (pixel < Integer.MIN_VALUE || pixel > Integer.MAX_VALUE) {
-            //throw new Exception("Chart data error: " + pixel + " not in [" + Integer.MIN_VALUE + " .. " + Integer.MAX_VALUE + "]");
-            System.err.printf("x pixel %d out of range [%d, %d]\n", pixel, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            logger.log(Level.WARNING, "x pixel {0} out of range [{1}, {2}]\n", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
         }
         return area.x + (int) pixel;
     }
@@ -113,8 +114,7 @@ class DataSet {
         double ratio = height / yRange();
         long pixel = Math.round((value(y) - value(yMin)) * ratio);
         if (pixel < Integer.MIN_VALUE || pixel > Integer.MAX_VALUE) {
-            //throw new Exception("Chart data error: " + pixel + " not in [" + Integer.MIN_VALUE + " .. " + Integer.MAX_VALUE + "]");
-            System.err.printf("y pixel %d out of range [%d, %d]\n", pixel, Integer.MIN_VALUE, Integer.MAX_VALUE);
+            logger.log(Level.WARNING, "y pixel {0} out of range [{1}, {2}]\n", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
         }
         return area.height + area.y - (int) pixel;
     }
@@ -126,7 +126,7 @@ class DataSet {
     private Window computeWindow(Number xWindowMin, Number xWindowMax, Number yWindowMin, Number yWindowMax) {
         Window window = new Window();
         for (Map.Entry<Object, Map<Number, Number>> dataGraph : dataMap.entrySet()) {
-            Map<Number, Number> graphPointsInWindow = new HashMap<Number, Number>();
+            Map<Number, Number> graphPointsInWindow = new HashMap<>();
             window.points.put(dataGraph.getKey(), graphPointsInWindow);
             for (Map.Entry<Number, Number> entry : dataGraph.getValue().entrySet()) {
                 Number x = entry.getKey();
@@ -155,7 +155,7 @@ class DataSet {
      */
     private void computeDataPoints(Window window) {
         for (Map.Entry<Object, Map<Number, Number>> map : window.points.entrySet()) {
-            TreeSet<DataPoint> points = new TreeSet<DataPoint>();
+            TreeSet<DataPoint> points = new TreeSet<>();
             graphs.put(map.getKey(), points);
             for (Map.Entry<Number, Number> entry : map.getValue().entrySet()) {
                 Number x = entry.getKey();
@@ -196,7 +196,7 @@ class DataSet {
     
     
     private class Window {
-        Map<Object, Map<Number, Number>> points = new LinkedHashMap<Object, Map<Number, Number>>();
+        Map<Object, Map<Number, Number>> points = new LinkedHashMap<>();
         Number xMin, xMax, yMin, yMax;
     }
 
@@ -208,11 +208,13 @@ class DataSet {
     private Rectangle area = null;
     
     private Map<Object, Map<Number, Number>> dataMap;    
-    private final Map<Object, TreeSet<DataPoint>> graphs = new LinkedHashMap<Object, TreeSet<DataPoint>>();
+    private final Map<Object, TreeSet<DataPoint>> graphs = new LinkedHashMap<>();
 
     private Number xMin = null;
     private Number xMax = null;
     private Number yMin = null;
     private Number yMax = null;
+
+    private static final Logger logger = Logger.getLogger(DataSet.class.getName());
     
 }
