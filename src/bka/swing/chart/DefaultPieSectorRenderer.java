@@ -6,9 +6,18 @@
 package bka.swing.chart;
 
 import java.awt.*;
+import java.awt.geom.Arc2D;
+import java.util.*;
 
 
 public class DefaultPieSectorRenderer extends PieSectorRenderer {
+
+
+    @Override
+    public void reset(ChartPanel chartPanel, TreeSet<DataPoint> graph) {
+        super.reset(chartPanel, graph);
+        arcs.clear();
+    }
 
     
     @Override
@@ -19,7 +28,11 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
         double value = dataPoint.getY().doubleValue();
         double start = previous / total * 360;
         double extent = value / total * 360;
-        java.awt.geom.Arc2D arc = new java.awt.geom.Arc2D.Double(x, y, diameter, diameter, start, extent, java.awt.geom.Arc2D.PIE);
+        Arc2D arc = arcs.get(dataPoint);
+        if (arc == null) {
+            arc = new Arc2D.Double(x, y, diameter, diameter, start, extent, Arc2D.PIE);
+            arcs.put(dataPoint, arc);
+        }
         g2d.setColor(palette.next());
         g2d.fill(arc);
         g2d.setColor(Color.BLACK);
@@ -52,6 +65,15 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
     public void drawSymbol(Graphics2D g2d, int x, int y) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    boolean pointNearDataPoint(Point mousePoint, DataPoint dataPoint) {
+        Arc2D arc = arcs.get(dataPoint);
+        return arcs.get(dataPoint).contains(mousePoint);
+    }
+
+
+    private static final Map<DataPoint, Arc2D> arcs = new HashMap<>();
     
     
 }

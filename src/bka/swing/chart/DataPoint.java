@@ -18,18 +18,24 @@ public class DataPoint implements Comparable<DataPoint> {
     }
     
     
-    public Number getX() {
+    Number getX() {
         return x;
     }
     
     
-    public Number getY() {
+    Number getY() {
         return y;
     }
     
     
-    public java.awt.Point getPixel() {
+    java.awt.Point getPixel() {
         return pixel;
+    }
+
+
+    boolean contains(java.awt.Point point) {
+        java.awt.Rectangle rectangle = new java.awt.Rectangle(pixel.x-10, pixel.y-10, 20, 20);
+        return rectangle.contains(point);
     }
 
 
@@ -55,7 +61,7 @@ public class DataPoint implements Comparable<DataPoint> {
             0;
     }
 
-    
+
     private final Number x;
     private final Number y;
     private final java.awt.Point pixel;

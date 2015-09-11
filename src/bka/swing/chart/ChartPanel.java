@@ -377,34 +377,16 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                     renderer.draw(g2d, dataPoint);
                 }
                 Style style = getStyle(key);
-                if (style == Style.PIE) {
-//                    PieSectorRenderer pieSectorRenderer = getPieSectorRenderer(key, graph);
-//                    pieSectorRenderer.reset(chartArea(), graph);
-                }
-                else {
+                if (style != Style.PIE) {
                     showAxes = true;
                 }
-//                DataPoint previous = null;
-//                for (DataPoint dataPoint : graph) {
-//                    if (style == Style.POINT || style == Style.POINT_AND_LINE) {
-//                        PointRenderer pointRenderer = getPointRenderer(key);
-//                        pointRenderer.draw(g2d, dataPoint);
-//                    }
-//                    if (previous != null && (style == Style.LINE || style == Style.POINT_AND_LINE)) {
-//                        LineRenderer lineRenderer = getLineRenderer(key);
-//                        lineRenderer.draw(g2d, previous, dataPoint);
-//                    }
-//                    if (style == Style.PIE) {
-//                        PieSectorRenderer pieSectorRenderer = getPieSectorRenderer(key, graph);
-//                        pieSectorRenderer.draw(g2d, dataPoint);
-//                    }
-//                    previous = dataPoint;
-//                    PointRenderer pointHighlightRenderer = pointHighlightRenderers.get(key);
-//                    if (pointHighlightRenderer != null && dataPoint.equals(nearestToMouse)) {
-//                        highlightPoint = dataPoint;
-//                        highlightRenderer = pointHighlightRenderer;
-//                    }
-//                }
+                for (DataPoint dataPoint : graph) {
+                    PointRenderer pointHighlightRenderer = pointHighlightRenderers.get(key);
+                    if (pointHighlightRenderer != null && dataPoint.equals(nearestToMouse)) {
+                        highlightPoint = dataPoint;
+                        highlightRenderer = pointHighlightRenderer;
+                    }
+                }
             }
             if (showAxes) {
                 getAxisRenderer().drawXAxis(g2d);
@@ -499,7 +481,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         double ratio = chartArea().width / (xRangeMax.doubleValue() - xRangeMin.doubleValue());
         long pixel = Math.round((x.doubleValue() - xRangeMin.doubleValue()) * ratio);
         if (pixel < Integer.MIN_VALUE || pixel > Integer.MAX_VALUE) {
-            logger.log(Level.WARNING, "x pixel {0} out of range [{1}, {2}]\n", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
+            logger.log(Level.WARNING, "x pixel {0} out of range [{1}, {2}]", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
         }
         return areaLeft() + (int) pixel;
     }
@@ -512,7 +494,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         double ratio = chartArea().height / (yRangeMax.doubleValue() - yRangeMin.doubleValue());
         long pixel = Math.round((y.doubleValue() - yRangeMin.doubleValue()) * ratio);
         if (pixel < Integer.MIN_VALUE || pixel > Integer.MAX_VALUE) {
-            logger.log(Level.WARNING, "y pixel {0} out of range [{1}, {2}]\n", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
+            logger.log(Level.WARNING, "y pixel {0} out of range [{1}, {2}]", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
         }
         return areaBottom() - (int) pixel;
     }
@@ -787,10 +769,20 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                 }
                 DataPoint nearest = null;
                 synchronized (dataSet) {
-                    for (TreeSet<DataPoint> graph : dataSet.getGraphs().values()) {
+                    for (Map.Entry entry : dataSet.getGraphs().entrySet()) {
+                        Object key = entry.getKey();
+                        AbstractDataPointRenderer renderer = renderers.get(key);
+                        TreeSet<DataPoint> graph = (TreeSet<DataPoint>) entry.getValue();
                         for (DataPoint dataPoint : graph) {
-                            if ((nearest == null) || (squareDistance(mousePoint, dataPoint.getPixel()) < squareDistance(mousePoint, nearest.getPixel()))) {
-                                nearest = dataPoint;
+                            if (renderer instanceof PieSectorRenderer) {
+                                if (((PieSectorRenderer) renderer).pointNearDataPoint(mousePoint, dataPoint)) {
+                                    nearest = dataPoint;
+                                }
+                            }
+                            else {
+                                if (dataPoint.contains(mousePoint)) {
+                                    nearest = dataPoint;
+                                }
                             }
                         }
                     }

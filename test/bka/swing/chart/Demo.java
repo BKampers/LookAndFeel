@@ -3,7 +3,6 @@
 */
 package bka.swing.chart;
 
-import java.awt.*;
 import java.util.*;
 import java.util.logging.*;
 
@@ -13,6 +12,49 @@ public class Demo extends javax.swing.JFrame {
 
     public Demo() {
         initComponents();
+    }
+    
+
+    public static void main(String args[]) {
+        for (Handler handler : Logger.getLogger("").getHandlers()) {
+            if (handler instanceof ConsoleHandler) {
+                handler.setLevel(Level.ALL);
+            }
+        }
+        Logger.getLogger(ChartPanel.class.getName()).setLevel(Level.FINEST);
+        Logger.getLogger(DataSet.class.getName()).setLevel(Level.FINE);
+
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        }
+        catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Demo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Demo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Demo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Demo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> {
+            new Demo().setVisible(true);
+        });
     }
 
 
@@ -62,65 +104,20 @@ public class Demo extends javax.swing.JFrame {
 
 
     private void form_windowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_form_windowActivated
-
         Map graphs = new HashMap<>();
         Map<Number, Number> graph = new HashMap<>();
-        for (int x = 0; x < 10; ++x) {
+        for (int x = 0; x < 5; ++x) {
             graph.put(x, x);
         }
         graphs.put("G1", graph);
         displayPanel.add(chartPanel);
         chartPanel.setGraphs(graphs);
-        chartPanel.setStyle("G1", ChartPanel.Style.POINT);
-        chartPanel.setRenderer("G1", new BarRenderer(1, Color.BLACK));
-        chartPanel.repaint();
+        chartPanel.setStyle("G1", ChartPanel.Style.PIE);
+        chartPanel.setRenderer("G1", new DefaultPieSectorRenderer());
+        //chartPanel.setRenderer("G1", new BarRenderer(1, Color.BLACK));
+        chartPanel.setHighlightFormat("G1", "x = %d", "y = %d");
         displayPanel.revalidate();
-
     }//GEN-LAST:event_form_windowActivated
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        for (Handler handler : Logger.getLogger("").getHandlers()) {
-            if (handler instanceof ConsoleHandler) {
-                handler.setLevel(Level.ALL);
-            }
-        }
-        Logger.getLogger(DataSet.class.getName()).setLevel(Level.FINE);
-
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        }
-        catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Demo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Demo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Demo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Demo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new Demo().setVisible(true);
-        });
-    }
 
 
     private final ChartPanel chartPanel = new ChartPanel();

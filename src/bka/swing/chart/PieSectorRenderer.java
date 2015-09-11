@@ -6,6 +6,7 @@
 package bka.swing.chart;
 
 
+import java.awt.*;
 import java.util.*;
 
 
@@ -38,10 +39,11 @@ public abstract class PieSectorRenderer extends AbstractDataPointRenderer {
     }
     
     
+    abstract boolean pointNearDataPoint(Point mousePoint, DataPoint dataPoint);
+
     protected Palette palette;
   
     protected double previous;
     protected double total;
-    
     
 }
