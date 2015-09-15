@@ -13,8 +13,9 @@ import java.util.logging.*;
 class DataSet {
     
     
-    void setData(Map<Object, Map<Number, Number>> dataMap) {
+    void setData(Map<Object, Map<Number, Number>> dataMap, Map<Object, AbstractDataPointRenderer> renderers) {
         this.dataMap = dataMap;
+        this.renderers = renderers;
     }
     
 
@@ -53,7 +54,7 @@ class DataSet {
     }
 
     
-    Map<Object, TreeSet<DataPoint>> getGraphs() {
+    Map<Object, TreeSet<DataPointInterface>> getGraphs() {
         return graphs;
     }
 
@@ -96,25 +97,25 @@ class DataSet {
     }
     
     
-    int xPixel(Number x) /*throws Exception */{
+    int xPixel(Number x) {
         if (x == null) { 
             return -1;
         }
         double ratio = area.width / xRange();
         long pixel = Math.round((value(x) - value(xMin)) * ratio);
         if (pixel < Integer.MIN_VALUE || pixel > Integer.MAX_VALUE) {
-            logger.log(Level.WARNING, "x pixel {0} out of range [{1}, {2}]\n", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
+            logger.log(Level.WARNING, "x pixel {0} out of range [{1}, {2}]", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
         }
         return area.x + (int) pixel;
     }
 
     
-    int yPixel(Number y) /*throws Exception */{
+    int yPixel(Number y) {
         int height = area.height;
         double ratio = height / yRange();
         long pixel = Math.round((value(y) - value(yMin)) * ratio);
         if (pixel < Integer.MIN_VALUE || pixel > Integer.MAX_VALUE) {
-            logger.log(Level.WARNING, "y pixel {0} out of range [{1}, {2}]\n", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
+            logger.log(Level.WARNING, "y pixel {0} out of range [{1}, {2}]", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
         }
         return area.height + area.y - (int) pixel;
     }
@@ -155,13 +156,32 @@ class DataSet {
      */
     private void computeDataPoints(Window window) {
         for (Map.Entry<Object, Map<Number, Number>> map : window.points.entrySet()) {
-            TreeSet<DataPoint> points = new TreeSet<>();
+            TreeSet<DataPointInterface> points = new TreeSet<>();
             graphs.put(map.getKey(), points);
             for (Map.Entry<Number, Number> entry : map.getValue().entrySet()) {
                 Number x = entry.getKey();
                 Number y = entry.getValue();
-                points.add(new DataPoint(x, y, new Point(xPixel(x), yPixel(y))));
+                points.add(createDataPoint(map.getKey(), x, y));
             }
+            AbstractDataPointRenderer renderer = renderers.get(map.getKey());
+            if (renderer instanceof PieSectorRenderer) {
+                TreeSet<SectorDataPoint> set = new TreeSet<>();
+                for (DataPointInterface point : points) {
+                    set.add((SectorDataPoint) point);
+                }
+            }
+        }
+    }
+
+
+    private DataPointInterface createDataPoint(Object key, Number x, Number y) {
+        logger.log(Level.FINE, "createDataPoint ({0},{1})", new Object[] { x, y });
+        AbstractDataPointRenderer renderer = renderers.get(key);
+        if (renderer instanceof PieSectorRenderer) {
+            return new SectorDataPoint(x, y, (PieSectorRenderer) renderer);
+        }
+        else {
+            return new DataPoint(x, y, new Point(xPixel(x), yPixel((y))));
         }
     }
 
@@ -207,8 +227,10 @@ class DataSet {
     
     private Rectangle area = null;
     
-    private Map<Object, Map<Number, Number>> dataMap;    
-    private final Map<Object, TreeSet<DataPoint>> graphs = new LinkedHashMap<>();
+    private Map<Object, Map<Number, Number>> dataMap;
+    private Map<Object, AbstractDataPointRenderer> renderers;
+
+    private final Map<Object, TreeSet<DataPointInterface>> graphs = new LinkedHashMap<>();
 
     private Number xMin = null;
     private Number xMax = null;

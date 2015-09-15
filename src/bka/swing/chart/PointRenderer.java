@@ -11,10 +11,12 @@ import java.util.*;
 public abstract class PointRenderer extends AbstractDataPointRenderer {
     
     
-    public abstract void drawSymbol(java.awt.Graphics2D g2d, int x, int y);
+//    @Override
+//    public abstract void drawSymbol(java.awt.Graphics2D g2d, int x, int y);
 
     
-    public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint) {
+    @Override
+    public void draw(java.awt.Graphics2D g2d, DataPointInterface dataPoint) {
         drawSymbol(g2d, dataPoint.getPixel().x, dataPoint.getPixel().y);   
     }
     
@@ -39,7 +41,7 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
     }
     
     
-    public String xLabel(DataPoint dataPoint) {
+    public String xLabel(DataPointInterface dataPoint) {
         if (xFormat != null) {
             return label(xFormat, dataPoint.getX());
         }
@@ -49,7 +51,7 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
     }
     
     
-    public String yLabel(DataPoint dataPoint) {
+    public String yLabel(DataPointInterface dataPoint) {
         if (yFormat != null) {
             return label(yFormat, dataPoint.getY());
         }

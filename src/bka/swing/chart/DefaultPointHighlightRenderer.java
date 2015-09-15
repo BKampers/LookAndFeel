@@ -20,8 +20,9 @@ public class DefaultPointHighlightRenderer extends PointRenderer {
     }
 
     
-    public void draw(Graphics2D g2d, DataPoint dataPoint) {
-        Point point = dataPoint.getPixel();
+    @Override
+    public void draw(Graphics2D g2d, DataPointInterface dataPoint) {
+        Point point = dataPoint.getHighlightPosition();
         String xLabel = xLabel(dataPoint);
         String yLabel = yLabel(dataPoint);
         FontMetrics fontMetrics = g2d.getFontMetrics();
@@ -42,7 +43,9 @@ public class DefaultPointHighlightRenderer extends PointRenderer {
     }
     
     
+    @Override
     public void drawSymbol(Graphics2D g2d, int x, int y) {
+        throw new java.lang.NoSuchMethodError();
     }
     
     

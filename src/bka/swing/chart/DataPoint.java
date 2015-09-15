@@ -8,7 +8,7 @@ package bka.swing.chart;
 /**
  * Holds the x-value, y-value and computed pixel of a point in a chart.
  */
-public class DataPoint implements Comparable<DataPoint> {
+public class DataPoint implements DataPointInterface {
 
     
     DataPoint(Number x, Number y, java.awt.Point pixel) {
@@ -18,22 +18,32 @@ public class DataPoint implements Comparable<DataPoint> {
     }
     
     
-    Number getX() {
+    @Override
+    public Number getX() {
         return x;
     }
     
     
-    Number getY() {
+    @Override
+    public Number getY() {
         return y;
     }
     
     
-    java.awt.Point getPixel() {
+    @Override
+    public java.awt.Point getPixel() {
         return pixel;
     }
 
 
-    boolean contains(java.awt.Point point) {
+    @Override
+    public java.awt.Point  getHighlightPosition() {
+        return pixel;
+    }
+
+
+    @Override
+    public boolean contains(java.awt.Point point) {
         java.awt.Rectangle rectangle = new java.awt.Rectangle(pixel.x-10, pixel.y-10, 20, 20);
         return rectangle.contains(point);
     }
@@ -52,12 +62,12 @@ public class DataPoint implements Comparable<DataPoint> {
 
     
     @Override
-    public int compareTo(DataPoint other) {
+    public int compareTo(DataPointInterface other) {
         return
-            (pixel.x < other.pixel.x) ? -1 :
-            (pixel.x > other.pixel.x) ? 1 :
-            (pixel.y < other.pixel.y) ? -1 : 
-            (pixel.y > other.pixel.y) ? 1 :     
+            (pixel.x < other.getPixel().x) ? -1 :
+            (pixel.x > other.getPixel().x) ? 1 :
+            (pixel.y < other.getPixel().y) ? -1 :
+            (pixel.y > other.getPixel().y) ? 1 :
             0;
     }
 

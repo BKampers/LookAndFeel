@@ -25,11 +25,11 @@ public abstract class PieSectorRenderer extends AbstractDataPointRenderer {
     
     
     @Override
-    public void reset(ChartPanel chartPanel, TreeSet<DataPoint> graph) {
+    public void reset(ChartPanel chartPanel, TreeSet<DataPointInterface> graph) {
         super.reset(chartPanel, graph);
         previous = 0.0;
         total = 0.0;
-        for (DataPoint dataPoint : graph) {
+        for (DataPointInterface dataPoint : graph) {
             total += dataPoint.getY().doubleValue();
         }
         if (palette == null) {
@@ -38,8 +38,9 @@ public abstract class PieSectorRenderer extends AbstractDataPointRenderer {
         palette.reset();
     }
     
-    
-    abstract boolean pointNearDataPoint(Point mousePoint, DataPoint dataPoint);
+
+    abstract boolean pointNearDataPoint(Point mousePoint, DataPointInterface dataPoint);
+    abstract java.awt.geom.Arc2D getArc(SectorDataPoint dataPoint);
 
     protected Palette palette;
   

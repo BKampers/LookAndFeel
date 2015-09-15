@@ -21,8 +21,7 @@ public class Demo extends javax.swing.JFrame {
                 handler.setLevel(Level.ALL);
             }
         }
-        Logger.getLogger(ChartPanel.class.getName()).setLevel(Level.FINEST);
-        Logger.getLogger(DataSet.class.getName()).setLevel(Level.FINE);
+        Logger.getLogger("bka.swing.chart").setLevel(Level.ALL);
 
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -114,7 +113,7 @@ public class Demo extends javax.swing.JFrame {
         chartPanel.setGraphs(graphs);
         chartPanel.setStyle("G1", ChartPanel.Style.PIE);
         chartPanel.setRenderer("G1", new DefaultPieSectorRenderer());
-        //chartPanel.setRenderer("G1", new BarRenderer(1, Color.BLACK));
+//        chartPanel.setRenderer("G1", new BarRenderer(5, java.awt.Color.BLACK));
         chartPanel.setHighlightFormat("G1", "x = %d", "y = %d");
         displayPanel.revalidate();
     }//GEN-LAST:event_form_windowActivated
