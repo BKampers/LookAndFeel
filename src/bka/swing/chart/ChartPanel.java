@@ -15,7 +15,6 @@ import javax.swing.UIManager;
 
 public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Printable {
     
-    @Deprecated public enum Style { POINT, LINE, POINT_AND_LINE, PIE }
     public enum AxisPosition { ORIGIN, MINIMUM, MAXIMUM }
     public enum DemarcationMode { NONE, X, Y }
     public enum DragZoomMode { NONE, X, Y, XY }
@@ -57,6 +56,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setGraphs(Map<Object, Map> graphs) {
+        logger.log(Level.FINE, "setGraphs {0}", graphs);
         Map<Object, Map<Number, Number>> data = new LinkedHashMap<>();
         for (Map.Entry<Object, Map> graph : graphs.entrySet()) {
             Map<Number, Number> numbers = new HashMap<>();
@@ -77,6 +77,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void clearGraphs() {
+        logger.log(Level.FINE, "clearGraphs");
         synchronized (dataSet) {
             dataSet.clear();
         }
@@ -86,26 +87,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     public void setTitle(String title) {
         this.title = title;
-    }
-    
-    
-    public void setXTitle(String title) {
-        getAxisRenderer().setXTitle(title);
-    }
-    
-    
-    public void setYTitle(String title) {
-        getAxisRenderer().setYTitle(title);
-    }
-    
-    
-    public void setXUnit(String unit) {
-        getAxisRenderer().setXUnit(unit);
-    }
-    
-    
-    public void setYUnit(String unit) {
-        getAxisRenderer().setYUnit(unit);
     }
     
     
@@ -219,53 +200,13 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     public void setYDemarcations(Demarcations yDemarcations) {
         dataSet.yDemarcations = yDemarcations;
     }
-    
-    
-    @Deprecated
-   public void setStyle(Object key, Style style) {
-       styles.put(key, style);
-   }
-   
-   
-   public void setRenderer(Object key, AbstractDataPointRenderer renderer) {
-       renderers.put(key, renderer);
-   }
-   
-   
-   @Deprecated
-    public void setPointRenderer(Object key, PointRenderer pointRenderer) {
-        if (pointRenderer.getColor() == null) {
-            pointRenderer.setColor(getPointColor(key));
-        }
-        pointRenderer.setChartPanel(this);
-        pointRenderers.put(key, pointRenderer);
+
+
+    public void setRenderer(Object key, AbstractDataPointRenderer renderer) {
+        renderers.put(key, renderer);
     }
     
-    
-    @Deprecated
-    public void setPointColor(Object key, Color color) {
-        pointColors.put(key, color);
-    }
-    
-    
-    @Deprecated
-    public void setLineRenderer(Object key, LineRenderer lineRenderer) {
-        if (lineRenderer.getColor() == null) {
-            lineRenderer.setColor(getLineColor(key));
-        }
-        lineRenderers.put(key, lineRenderer);
-    }
-    
-    
-    @Deprecated
-    public void setPieSectorRenderer(Object key, PieSectorRenderer pieSectorRenderer) {
-        if (pieSectorRenderer.getPalette() == null) {
-            pieSectorRenderer.setPalette(getPiePalette(key));
-        }
-        pieSectorRenderers.put(key, pieSectorRenderer);
-    } 
-    
-    
+
     public void setPointHighlightRenderer(Object key, PointRenderer pointHighlightRenderer) {
         if (pointHighlightRenderer != null) {
             if (pointHighlightRenderer.getColor() == null) {
@@ -285,11 +226,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         }
         highlightRenderer.setXFormat(xFormat);
         highlightRenderer.setYFormat(yFormat);
-    }
-    
-    
-    public void setLineColor(Object key, Color color) {
-        lineColors.put(key, color);
     }
     
     
@@ -367,7 +303,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             if (demarcationRenderer != null) {
                 demarcationRenderer.draw(g2d);
             }
-            boolean showAxes = false;
             for (Map.Entry<Object, TreeSet<DataPointInterface>> entry : dataSet.getGraphs().entrySet()) {
                 Object key = entry.getKey();
                 TreeSet<DataPointInterface> graph = entry.getValue();
@@ -375,12 +310,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                 renderer.reset(this, graph);
                 for (DataPointInterface dataPoint : graph) {
                     renderer.draw(g2d, dataPoint);
-                }
-                Style style = getStyle(key);
-                if (style != Style.PIE) {
-                    showAxes = true;
-                }
-                for (DataPointInterface dataPoint : graph) {
                     PointRenderer pointHighlightRenderer = pointHighlightRenderers.get(key);
                     if (pointHighlightRenderer != null && dataPoint.equals(nearestToMouse)) {
                         highlightPoint = dataPoint;
@@ -388,10 +317,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                     }
                 }
             }
-            if (showAxes) {
-                getAxisRenderer().drawXAxis(g2d);
-                getAxisRenderer().drawYAxis(g2d);
-            }
+            drawAxises(g2d);
             if (showLegend) {
                 drawLegend(g2d);
             }
@@ -402,7 +328,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             drawTitle(g2d);
         }
     }
-    
+
     
     @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
@@ -417,23 +343,14 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             if (demarcationRenderer != null) {
                 demarcationRenderer.draw(g2d);
             }
-            getAxisRenderer().drawXAxis(g2d);
-            getAxisRenderer().drawYAxis(g2d);
+            drawAxises(g2d);
             for (Map.Entry<Object, TreeSet<DataPointInterface>> entry : dataSet.getGraphs().entrySet()) {
                 Object key = entry.getKey();
-                Style style = getStyle(key);
                 TreeSet<DataPointInterface> graph = entry.getValue();
-                DataPointInterface previous = null;
+                AbstractDataPointRenderer renderer = getRenderer(key);
+                renderer.reset(this, graph);
                 for (DataPointInterface dataPoint : graph) {
-                    if (style == Style.POINT || style == Style.POINT_AND_LINE) {
-                        PointRenderer pointRenderer = getPointRenderer(key);
-                        pointRenderer.draw(g2d, dataPoint);
-                    }
-                    if (previous != null && (style == Style.LINE || style == Style.POINT_AND_LINE)) {
-                        LineRenderer lineRenderer = getLineRenderer(key);
-                        lineRenderer.draw(g2d, previous, dataPoint);
-                    }
-                    previous = dataPoint;
+                    renderer.draw(g2d, dataPoint);
                 }
             }
             drawTitle(g2d);
@@ -471,84 +388,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     int areaHeight() {
         return chartArea().height;
-    }
-    
-    
-    int xRangePixel(Number x) {
-        if (x == null || xRangeMin == null || xRangeMax == null) { 
-            return -1;
-        }
-        double ratio = chartArea().width / (xRangeMax.doubleValue() - xRangeMin.doubleValue());
-        long pixel = Math.round((x.doubleValue() - xRangeMin.doubleValue()) * ratio);
-        if (pixel < Integer.MIN_VALUE || pixel > Integer.MAX_VALUE) {
-            logger.log(Level.WARNING, "x pixel {0} out of range [{1}, {2}]", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
-        }
-        return areaLeft() + (int) pixel;
-    }
-
-    
-    int yRangePixel(Number y) {
-        if (y == null || yRangeMin == null || yRangeMax == null) { 
-            return -1;
-        }
-        double ratio = chartArea().height / (yRangeMax.doubleValue() - yRangeMin.doubleValue());
-        long pixel = Math.round((y.doubleValue() - yRangeMin.doubleValue()) * ratio);
-        if (pixel < Integer.MIN_VALUE || pixel > Integer.MAX_VALUE) {
-            logger.log(Level.WARNING, "y pixel {0} out of range [{1}, {2}]", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
-        }
-        return areaBottom() - (int) pixel;
-    }
-
-    
-    double xRangeValue(int pixelX) {
-        if (xRangeMin != null && xRangeMax != null) {
-            Rectangle area = chartArea();
-            double ratio = (xRangeMax.doubleValue() - xRangeMin.doubleValue()) / area.width;
-            return (pixelX - area.x) * ratio + xRangeMin.doubleValue();
-        }
-        else {
-            return 0.0;
-        }
-    }
-
-    
-    double yRangeValue(int pixelY) {
-        if (yRangeMin != null && yRangeMax != null) {
-            Rectangle area = chartArea();
-            double ratio = (yRangeMax.doubleValue() - yRangeMin.doubleValue()) / area.height;
-            return (area.height + area.y - pixelY) * ratio + yRangeMin.doubleValue();
-        }
-        else {
-            return 0.0;
-        }
-    }
-    
-
-    void resetXWindowMin(int xPixel) {
-        xWindowMin = xRangeValue(xPixel);
-        initializeDataSet();
-        repaint();
-    }
-
-    
-    void resetXWindowMax(int xPixel) {
-        xWindowMax = xRangeValue(xPixel);
-        initializeDataSet();
-        repaint();
-    }
-
-    
-    void resetYWindowMin(int yPixel) {
-        yWindowMin = yRangeValue(yPixel);
-        initializeDataSet();
-        repaint();
-    }
-
-    
-    void resetYWindowMax(int yPixel) {
-        yWindowMax = yRangeValue(yPixel);
-        initializeDataSet();
-        repaint();
     }
     
     
@@ -599,15 +438,11 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         int x = areaRight() + 15;
         int y = topMargin;
         ArrayList<Object> keys = new ArrayList<>(dataSet.getGraphs().keySet());
-        for (int i = keys.size() - 1; i >= 0; i--) {
+        for (int i = keys.size() - 1; i >= 0; --i) {
             Object key = keys.get(i);
-            LineRenderer lineRenderer = lineRenderers.get(key);
-            if (lineRenderer != null) {
-                lineRenderer.drawSymbol(g2d, x, y);
-            }
-            PointRenderer pointRenderer = pointRenderers.get(key);
-            if (pointRenderer != null) {
-                pointRenderer.drawSymbol(g2d, x, y);
+            AbstractDataPointRenderer renderer = renderers.get(key);
+            if (renderer != null) {
+                renderer.drawSymbol(g2d, x, y);
             }
             g2d.setColor(Color.BLACK);
             g2d.drawString(key.toString(), x + 15, y + fontMetrics.getDescent());
@@ -616,6 +451,13 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
     
+    private void drawAxises(Graphics2D g2d) {
+        if (axisRenderer != null) {
+            axisRenderer.drawXAxis(g2d);
+            axisRenderer.drawYAxis(g2d);
+        }
+    }
+
     private void drawSelectionRectangle(Graphics2D g2d) {
         if (dragStartPoint != null && dragEndPoint != null) {
            g2d.setColor(selectionRectangleColor);
@@ -637,83 +479,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         return renderer;
     }
 
-    
-    private AxisRenderer getAxisRenderer() {
-        if (axisRenderer == null) {
-            setAxisRenderer(new DefaultAxisRenderer());
-        }
-        return axisRenderer;
-    }
-    
-    
-    private Style getStyle(Object key) {
-        Style style = styles.get(key);
-        return (style != null) ? style : Style.POINT;
-    }
-    
-    
-    private PointRenderer getPointRenderer(Object key) {
-        PointRenderer pointRenderer = pointRenderers.get(key);
-        if (pointRenderer == null) {
-            pointRenderer = new OvalDotRenderer();
-            setPointRenderer(key, pointRenderer);
-        }
-        return pointRenderer;
-    }
-    
-    
-    private LineRenderer getLineRenderer(Object key) {
-        LineRenderer lineRenderer = lineRenderers.get(key);
-        if (lineRenderer == null) {
-            lineRenderer = new DefaultLineRenderer();
-            setLineRenderer(key, lineRenderer);
-        }
-        return lineRenderer;
-    }
-    
-    
-    private Color getPointColor(Object key) {
-        Color color = pointColors.get(key);
-        if (color == null) {
-            color = lineColors.get(key);
-            if (color == null) {
-                if (pointPalette == null) {
-                    pointPalette = new Palette("Chart.pointPalette");
-                }
-                color = pointPalette.next();
-            }
-            pointColors.put(key, color);
-        }
-        return color;
-    }
-    
-    
-    private Color getLineColor(Object key) {
-        Color color = lineColors.get(key);
-        if (color == null) {
-            color = pointColors.get(key);
-            if (color == null) {
-                if (linePalette == null) {
-                    linePalette = new Palette("Chart.pointPalette");
-                }
-                color = linePalette.next();
-            }
-            lineColors.put(key, color);
-        }
-        return color;
-    }
-    
-    
-    private Palette getPiePalette(Object key) {
-        Palette piePalette = piePalettes.get(key);
-        if (piePalette == null) {
-            piePalette = new Palette("Chart.piePalette");
-            piePalettes.put(key, piePalette);
-        }
-        return piePalette;
-    }
-    
-    
     private Color getHighlightColor() {
         Color color = javax.swing.UIManager.getColor("Chart.highlightColor");
         return (color != null) ? color : Color.YELLOW;
@@ -724,10 +489,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         synchronized (dataSet) {
             dataSet.setData(data, renderers);
             initializeDataSet();
-            xRangeMin = dataSet.getXMin();
-            xRangeMax = dataSet.getXMax();
-            yRangeMin = dataSet.getYMin();
-            yRangeMax = dataSet.getYMax();
         }
         repaint();
     }
@@ -956,12 +717,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private DragZoomMode dragZoomMode = DragZoomMode.NONE;
     private ClickZoomMode clickZoomMode = ClickZoomMode.NONE;
     
-    
-    private Number xRangeMin = null;
-    private Number xRangeMax = null;
-    private Number yRangeMin = null;
-    private Number yRangeMax = null;
-    
     private Number xWindowMin = null;
     private Number xWindowMax = null;
     private Number yWindowMin = null;
@@ -972,20 +727,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private AxisRenderer axisRenderer = null;
     private DemarcationRenderer demarcationRenderer = null;
     
-    private final Map<Object, Style> styles = new HashMap<>();
     private final Map<Object, AbstractDataPointRenderer> renderers = new HashMap<>();
-    private final Map<Object, PointRenderer> pointRenderers = new HashMap<>();
-    private final Map<Object, LineRenderer> lineRenderers = new HashMap<>();
-    private final Map<Object, PieSectorRenderer> pieSectorRenderers = new HashMap<>();
     private final Map<Object, PointRenderer> pointHighlightRenderers = new HashMap<>();
-    
-    private final Map<Object, Color> pointColors = new HashMap<>();
-    private final Map<Object, Color> lineColors = new HashMap<>();
-    private final Map<Object, Palette> piePalettes = new HashMap<>();
-    
-    private Palette pointPalette = null;
-    private Palette linePalette = null;
-    
     
     private Point dragStartPoint = null;
     private Point dragEndPoint = null;

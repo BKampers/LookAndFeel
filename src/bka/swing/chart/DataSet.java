@@ -98,8 +98,9 @@ class DataSet {
     
     
     int xPixel(Number x) {
-        if (x == null) { 
-            return -1;
+        if (x == null) {
+            logger.log(Level.SEVERE, "Cannot compute pixel: x = null");
+            throw new java.lang.IllegalArgumentException();
         }
         double ratio = area.width / xRange();
         long pixel = Math.round((value(x) - value(xMin)) * ratio);
@@ -111,6 +112,10 @@ class DataSet {
 
     
     int yPixel(Number y) {
+        if (y == null) {
+            logger.log(Level.SEVERE, "Cannot compute pixel: y = null");
+            throw new java.lang.IllegalArgumentException();
+        }
         int height = area.height;
         double ratio = height / yRange();
         long pixel = Math.round((value(y) - value(yMin)) * ratio);
@@ -152,7 +157,7 @@ class DataSet {
 
     
     /**
-     * Compute pixels for points in window
+     * Compute render data for points in window
      */
     private void computeDataPoints(Window window) {
         for (Map.Entry<Object, Map<Number, Number>> map : window.points.entrySet()) {
@@ -163,19 +168,12 @@ class DataSet {
                 Number y = entry.getValue();
                 points.add(createDataPoint(map.getKey(), x, y));
             }
-            AbstractDataPointRenderer renderer = renderers.get(map.getKey());
-            if (renderer instanceof PieSectorRenderer) {
-                TreeSet<SectorDataPoint> set = new TreeSet<>();
-                for (DataPointInterface point : points) {
-                    set.add((SectorDataPoint) point);
-                }
-            }
         }
     }
 
 
     private DataPointInterface createDataPoint(Object key, Number x, Number y) {
-        logger.log(Level.FINE, "createDataPoint ({0},{1})", new Object[] { x, y });
+        logger.log(Level.FINER, "createDataPoint ({0},{1})", new Object[] { x, y });
         AbstractDataPointRenderer renderer = renderers.get(key);
         if (renderer instanceof PieSectorRenderer) {
             return new SectorDataPoint(x, y, (PieSectorRenderer) renderer);
