@@ -10,6 +10,11 @@ import java.awt.*;
 public class DefaultPointHighlightRenderer extends PointRenderer {
 
 
+    DefaultPointHighlightRenderer() {
+        color = Color.YELLOW;
+    }
+
+
     public void setTextColor(Color textColor) {
         this.textColor = textColor;
     }

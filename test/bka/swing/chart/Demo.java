@@ -3,6 +3,7 @@
 */
 package bka.swing.chart;
 
+import java.awt.*;
 import java.util.*;
 import java.util.logging.*;
 
@@ -78,11 +79,6 @@ public class Demo extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Chart Demo");
         setPreferredSize(new java.awt.Dimension(500, 300));
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowActivated(java.awt.event.WindowEvent evt) {
-                form_windowActivated(evt);
-            }
-        });
 
         displayPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         displayPanel.setMaximumSize(new java.awt.Dimension(500, 500));
@@ -128,32 +124,46 @@ public class Demo extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 
-    private void form_windowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_form_windowActivated
-        
-    }//GEN-LAST:event_form_windowActivated
-
-
     private void styleComboBox_actionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_styleComboBox_actionPerformed
         Map graphs = new HashMap<>();
-        Map<Number, Number> graph = new HashMap<>();
-        for (int x = 0; x < 5; ++x) {
-            graph.put(x, x);
+        Map<Number, Number> g1 = new HashMap<>();
+        Map<Number, Number> g2 = new HashMap<>();
+        for (int x = 0; x < 50; ++x) {
+            if (x % 10 == 0) {
+                g1.put(x, x / 10);
+            }
+            g2.put(x, x);
         }
-        graphs.put("G1", graph);
+        graphs.put("G1", g1);
+        graphs.put("G2", g2);
         AbstractDataPointRenderer pointRenderer = (AbstractDataPointRenderer) styleComboBox.getSelectedItem();
         if (pointRenderer instanceof PieSectorRenderer) {
             chartPanel.setAxisRenderer(null);
+            chartPanel.setAxisPositions(null, null);
             chartPanel.setDemarcations(null, ChartPanel.DemarcationMode.NONE);
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.NONE);
+            chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.NONE);
+            chartPanel.setRenderer("G1", pointRenderer);
         }
         else {
             chartPanel.setAxisRenderer(new DefaultAxisRenderer());
+            chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
             chartPanel.setDemarcations(new DefaultDemarcationRenderer(), ChartPanel.DemarcationMode.X);
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_DEMARCATION);
+            chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
+            if (pointRenderer instanceof BarRenderer) {
+                chartPanel.setRenderer("G1", new BarRenderer(Color.BLUE));
+                chartPanel.setRenderer("G2", new BarRenderer(Color.RED));
+            }
+            else {
+                chartPanel.setRenderer("G1", pointRenderer);
+                //chartPanel.setRenderer("G2", pointRenderer);
+
+            }
         }
         chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer("G1", pointRenderer);
         chartPanel.setHighlightFormat("G1", "x = %d", "y = %d");
+        chartPanel.setHighlightFormat("G2", "x = %d", "y = %d");
         chartPanel.revalidate();
     }//GEN-LAST:event_styleComboBox_actionPerformed
 
