@@ -10,21 +10,21 @@ public class BarRenderer extends PointRenderer {
     
     
     public BarRenderer(int width, java.awt.Color color) {
-        this.width = width;
+        this(width);
         this.color = color;
     }
 
-    
+
+    public BarRenderer(int width) {
+        this.width = width;
+    }
+
+
     public BarRenderer(java.awt.Color color) {
         this(7, color);
     }
 
 
-    public BarRenderer(int width) {
-        this(width, javax.swing.UIManager.getColor("chart.dataPointColor"));
-    }
-    
-    
     public BarRenderer() {
         this(7);
     }

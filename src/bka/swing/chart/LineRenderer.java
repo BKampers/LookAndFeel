@@ -29,7 +29,7 @@ public abstract class LineRenderer extends AbstractDataPointRenderer {
     }
     
     
-    protected Color color;
+    protected Color color = Color.BLACK;
     protected PixelDataPoint previous;
     
 }

@@ -11,10 +11,6 @@ import java.util.*;
 public abstract class PointRenderer extends AbstractDataPointRenderer {
     
     
-//    @Override
-//    public abstract void drawSymbol(java.awt.Graphics2D g2d, int x, int y);
-
-    
     @Override
     public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint) {
         PixelDataPoint pixelDataPoint = (PixelDataPoint) dataPoint;
@@ -62,7 +58,6 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
     }
     
     
-    @Deprecated
     void setChartPanel(ChartPanel chartPanel) {
         this.chartPanel = chartPanel;
     }
@@ -86,9 +81,9 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
     }
     
     
-    protected Color color;
+    protected Color color = Color.BLACK;
     
-    protected String xFormat = null;
-    protected String yFormat = null;
+    protected String xFormat;
+    protected String yFormat;
     
 }

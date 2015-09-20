@@ -143,9 +143,13 @@ public class Demo extends javax.swing.JFrame {
         AbstractDataPointRenderer pointRenderer = (AbstractDataPointRenderer) styleComboBox.getSelectedItem();
         if (pointRenderer instanceof PieSectorRenderer) {
             chartPanel.setAxisRenderer(null);
+            chartPanel.setDemarcations(null, ChartPanel.DemarcationMode.NONE);
+            chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.NONE);
         }
         else {
             chartPanel.setAxisRenderer(new DefaultAxisRenderer());
+            chartPanel.setDemarcations(new DefaultDemarcationRenderer(), ChartPanel.DemarcationMode.X);
+            chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_DEMARCATION);
         }
         chartPanel.setGraphs(graphs);
         chartPanel.setRenderer("G1", pointRenderer);
