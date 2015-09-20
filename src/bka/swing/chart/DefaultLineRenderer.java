@@ -11,23 +11,26 @@ public class DefaultLineRenderer extends LineRenderer {
     
     
     @Override
-    public void draw(java.awt.Graphics2D g2d, DataPointInterface dataPoint) {
+    public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint) {
+        PixelDataPoint current = (PixelDataPoint) dataPoint;
         if (previous != null) {
             java.awt.Point pixel1 = previous.getPixel();
-            java.awt.Point pixel2 = dataPoint.getPixel();
+            java.awt.Point pixel2 = current.getPixel();
             draw(g2d, pixel1.x, pixel1.y, pixel2.x, pixel2.y);
         }
-        previous = dataPoint;
+        previous = current;
     }
     
     
-    public void draw(java.awt.Graphics2D g2d, DataPointInterface dataPoint1, DataPointInterface dataPoint2) {
-        java.awt.Point pixel1 = dataPoint1.getPixel();
-        java.awt.Point pixel2 = dataPoint2.getPixel();
+    @Override
+    public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint1, DataPoint dataPoint2) {
+        java.awt.Point pixel1 = ((PixelDataPoint) dataPoint1).getPixel();
+        java.awt.Point pixel2 = ((PixelDataPoint) dataPoint2).getPixel();
         draw(g2d, pixel1.x, pixel1.y, pixel2.x, pixel2.y);
     }
 
     
+    @Override
     public void drawSymbol(java.awt.Graphics2D g2d, int x, int y) {
         draw(g2d, x - 3, y, x + 3, y);
     }

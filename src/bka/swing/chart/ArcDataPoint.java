@@ -7,10 +7,10 @@ package bka.swing.chart;
 import java.awt.*;
 
 
-class SectorDataPoint implements DataPointInterface {
+class ArcDataPoint implements DataPoint {
 
 
-    SectorDataPoint(Number x, Number y, PieSectorRenderer renderer) {
+    ArcDataPoint(Number x, Number y, PieSectorRenderer renderer) {
         this.x = x;
         this.y = y;
         this.renderer = renderer;
@@ -30,12 +30,6 @@ class SectorDataPoint implements DataPointInterface {
 
 
     @Override
-    public Point getPixel() {
-        return getHighlightPosition();
-    }
-
-
-    @Override
     public Point getHighlightPosition() {
         java.awt.geom.Arc2D arc = renderer.getArc(this);
         return new Point((int) arc.getX(), (int) arc.getY());
@@ -49,22 +43,23 @@ class SectorDataPoint implements DataPointInterface {
 
     @Override
     public int hashCode() {
-        return x.hashCode() ^ y.hashCode();
+        return x.hashCode() + 3 * y.hashCode();
     }
 
 
     @Override
     public boolean equals(Object other) {
         return
-            other instanceof SectorDataPoint &&
-            renderer == ((SectorDataPoint) other).renderer &&
-            x.equals(((SectorDataPoint) other).x) &&
-            y.equals(((SectorDataPoint) other).y);
+            other == this ||
+            other instanceof ArcDataPoint &&
+            renderer == ((ArcDataPoint) other).renderer &&
+            x.equals(((ArcDataPoint) other).x) &&
+            y.equals(((ArcDataPoint) other).y);
     }
 
 
     @Override
-    public int compareTo(DataPointInterface other) {
+    public int compareTo(DataPoint other) {
         return
             (x.doubleValue() < other.getX().doubleValue()) ? -1 :
             (x.doubleValue() > other.getX().doubleValue()) ? 1 :

@@ -10,11 +10,11 @@ import java.awt.*;
 public abstract class LineRenderer extends AbstractDataPointRenderer {
     
     
-    public abstract void draw(java.awt.Graphics2D g2d, DataPointInterface dataPoint1, DataPointInterface dataPoint2);
+    public abstract void draw(java.awt.Graphics2D g2d, DataPoint dataPoint1, DataPoint dataPoint2);
     
     
     @Override
-    public void reset(ChartPanel chartPanel, java.util.TreeSet<DataPointInterface> graph) {
+    public void reset(ChartPanel chartPanel, java.util.TreeSet<DataPoint> graph) {
         super.reset(chartPanel, graph);
         previous = null;
     }
@@ -30,6 +30,6 @@ public abstract class LineRenderer extends AbstractDataPointRenderer {
     
     
     protected Color color;
-    protected DataPointInterface previous;
+    protected PixelDataPoint previous;
     
 }

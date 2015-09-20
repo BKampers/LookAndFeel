@@ -204,6 +204,9 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
     public void setRenderer(Object key, AbstractDataPointRenderer renderer) {
         renderers.put(key, renderer);
+        dataSet.setRenderers(renderers);
+        initializeDataSet();
+
     }
     
 
@@ -298,17 +301,17 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         super.paint(g);
         synchronized (dataSet) {
             Graphics2D g2d = (Graphics2D) g;
-            DataPointInterface highlightPoint = null;
+            DataPoint highlightPoint = null;
             PointRenderer highlightRenderer = null;
             if (demarcationRenderer != null) {
                 demarcationRenderer.draw(g2d);
             }
-            for (Map.Entry<Object, TreeSet<DataPointInterface>> entry : dataSet.getGraphs().entrySet()) {
+            for (Map.Entry<Object, TreeSet<DataPoint>> entry : dataSet.getGraphs().entrySet()) {
                 Object key = entry.getKey();
-                TreeSet<DataPointInterface> graph = entry.getValue();
+                TreeSet<DataPoint> graph = entry.getValue();
                 AbstractDataPointRenderer renderer = getRenderer(key);
                 renderer.reset(this, graph);
-                for (DataPointInterface dataPoint : graph) {
+                for (DataPoint dataPoint : graph) {
                     renderer.draw(g2d, dataPoint);
                     PointRenderer pointHighlightRenderer = pointHighlightRenderers.get(key);
                     if (pointHighlightRenderer != null && dataPoint.equals(nearestToMouse)) {
@@ -344,12 +347,12 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                 demarcationRenderer.draw(g2d);
             }
             drawAxises(g2d);
-            for (Map.Entry<Object, TreeSet<DataPointInterface>> entry : dataSet.getGraphs().entrySet()) {
+            for (Map.Entry<Object, TreeSet<DataPoint>> entry : dataSet.getGraphs().entrySet()) {
                 Object key = entry.getKey();
-                TreeSet<DataPointInterface> graph = entry.getValue();
+                TreeSet<DataPoint> graph = entry.getValue();
                 AbstractDataPointRenderer renderer = getRenderer(key);
                 renderer.reset(this, graph);
-                for (DataPointInterface dataPoint : graph) {
+                for (DataPoint dataPoint : graph) {
                     renderer.draw(g2d, dataPoint);
                 }
             }
@@ -538,13 +541,13 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                     defaultCursor = getCursor();
                     setCursor(new Cursor(Cursor.HAND_CURSOR));
                 }
-                DataPointInterface nearest = null;
+                DataPoint nearest = null;
                 synchronized (dataSet) {
                     for (Map.Entry entry : dataSet.getGraphs().entrySet()) {
                         Object key = entry.getKey();
                         AbstractDataPointRenderer renderer = renderers.get(key);
-                        TreeSet<DataPoint> graph = (TreeSet<DataPoint>) entry.getValue();
-                        for (DataPointInterface dataPoint : graph) {
+                        TreeSet<PixelDataPoint> graph = (TreeSet<PixelDataPoint>) entry.getValue();
+                        for (DataPoint dataPoint : graph) {
                             if (renderer instanceof PieSectorRenderer) {
                                 if (((PieSectorRenderer) renderer).pointNearDataPoint(mousePoint, dataPoint)) {
                                     nearest = dataPoint;
@@ -733,7 +736,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private Point dragStartPoint = null;
     private Point dragEndPoint = null;
 
-    private DataPointInterface nearestToMouse = null;
+    private DataPoint nearestToMouse = null;
     
     
     private Rectangle page = null;

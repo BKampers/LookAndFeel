@@ -18,7 +18,8 @@ public class BarRenderer extends PointRenderer {
     public BarRenderer(java.awt.Color color) {
         this(7, color);
     }
-    
+
+
     public BarRenderer(int width) {
         this(width, javax.swing.UIManager.getColor("chart.dataPointColor"));
     }
@@ -40,9 +41,10 @@ public class BarRenderer extends PointRenderer {
     
     
     @Override
-    public void draw(java.awt.Graphics2D g2d, DataPointInterface dataPoint) {
+    public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint) {
         g2d.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-        java.awt.Point pixel = dataPoint.getPixel();
+        PixelDataPoint pixelDataPoint = (PixelDataPoint) dataPoint;
+        java.awt.Point pixel = pixelDataPoint.getPixel();
         g2d.setColor(color);
         g2d.fillRect(pixel.x - width / 2 + shift, pixel.y, width, chartPanel.areaBottom() - pixel.y);
     }

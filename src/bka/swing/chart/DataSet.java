@@ -17,6 +17,14 @@ class DataSet {
         this.dataMap = dataMap;
         this.renderers = renderers;
     }
+
+
+    void setRenderers(Map<Object, AbstractDataPointRenderer> renderers) {
+        this.renderers = renderers;
+        for (AbstractDataPointRenderer renderer : renderers.values()) {
+            renderer.setDataSet(this);
+        }
+    }
     
 
     /**
@@ -45,8 +53,12 @@ class DataSet {
             if (yMin == null) { yMin = window.yMin; }
             if (yMax == null) { yMax = window.yMax; }
             if (yWindowBase != null) {
-                if (yMin != null && yMin.doubleValue() > yWindowBase.doubleValue()) { yMin = yWindowBase; }
-                if (yMax != null && yMax.doubleValue() < yWindowBase.doubleValue()) { yMax = yWindowBase; }
+                if (yMin != null && yMin.doubleValue() > yWindowBase.doubleValue()) {
+                    yMin = yWindowBase;
+                }
+                if (yMax != null && yMax.doubleValue() < yWindowBase.doubleValue()) {
+                    yMax = yWindowBase;
+                }
             }
             computeDataPoints(window);
         }
@@ -54,7 +66,7 @@ class DataSet {
     }
 
     
-    Map<Object, TreeSet<DataPointInterface>> getGraphs() {
+    Map<Object, TreeSet<DataPoint>> getGraphs() {
         return graphs;
     }
 
@@ -161,29 +173,20 @@ class DataSet {
      */
     private void computeDataPoints(Window window) {
         for (Map.Entry<Object, Map<Number, Number>> map : window.points.entrySet()) {
-            TreeSet<DataPointInterface> points = new TreeSet<>();
-            graphs.put(map.getKey(), points);
-            for (Map.Entry<Number, Number> entry : map.getValue().entrySet()) {
-                Number x = entry.getKey();
-                Number y = entry.getValue();
-                points.add(createDataPoint(map.getKey(), x, y));
+            AbstractDataPointRenderer renderer = renderers.get(map.getKey());
+            if (renderer != null) {
+                TreeSet<DataPoint> points = new TreeSet<>();
+                graphs.put(map.getKey(), points);
+                for (Map.Entry<Number, Number> entry : map.getValue().entrySet()) {
+                    Number x = entry.getKey();
+                    Number y = entry.getValue();
+                    points.add(renderer.createDataPoint(x, y));
+                }
             }
         }
     }
 
 
-    private DataPointInterface createDataPoint(Object key, Number x, Number y) {
-        logger.log(Level.FINER, "createDataPoint ({0},{1})", new Object[] { x, y });
-        AbstractDataPointRenderer renderer = renderers.get(key);
-        if (renderer instanceof PieSectorRenderer) {
-            return new SectorDataPoint(x, y, (PieSectorRenderer) renderer);
-        }
-        else {
-            return new DataPoint(x, y, new Point(xPixel(x), yPixel((y))));
-        }
-    }
-
-    
     private void initializeDemarcations(Locale locale) {
         if (xDemarcations == null) {
             xDemarcations = new Demarcations();
@@ -228,7 +231,7 @@ class DataSet {
     private Map<Object, Map<Number, Number>> dataMap;
     private Map<Object, AbstractDataPointRenderer> renderers;
 
-    private final Map<Object, TreeSet<DataPointInterface>> graphs = new LinkedHashMap<>();
+    private final Map<Object, TreeSet<DataPoint>> graphs = new LinkedHashMap<>();
 
     private Number xMin = null;
     private Number xMax = null;

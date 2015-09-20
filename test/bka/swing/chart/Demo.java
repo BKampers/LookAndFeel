@@ -129,7 +129,7 @@ public class Demo extends javax.swing.JFrame {
 
 
     private void form_windowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_form_windowActivated
-        styleComboBox.setSelectedIndex(-1);
+        
     }//GEN-LAST:event_form_windowActivated
 
 

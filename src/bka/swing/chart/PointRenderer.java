@@ -16,8 +16,9 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
 
     
     @Override
-    public void draw(java.awt.Graphics2D g2d, DataPointInterface dataPoint) {
-        drawSymbol(g2d, dataPoint.getPixel().x, dataPoint.getPixel().y);   
+    public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint) {
+        PixelDataPoint pixelDataPoint = (PixelDataPoint) dataPoint;
+        drawSymbol(g2d, pixelDataPoint.getPixel().x, pixelDataPoint.getPixel().y);
     }
     
     
@@ -41,7 +42,7 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
     }
     
     
-    public String xLabel(DataPointInterface dataPoint) {
+    public String xLabel(DataPoint dataPoint) {
         if (xFormat != null) {
             return label(xFormat, dataPoint.getX());
         }
@@ -51,7 +52,7 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
     }
     
     
-    public String yLabel(DataPointInterface dataPoint) {
+    public String yLabel(DataPoint dataPoint) {
         if (yFormat != null) {
             return label(yFormat, dataPoint.getY());
         }
@@ -70,12 +71,12 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
     private String label(String format, Number number) {
         try {
             if (format.indexOf('%') >= 0) {
-                Formatter formatter = new Formatter(chartPanel.getLocale());
+                Formatter formatter = new Formatter(Locale.getDefault());
                 formatter.format(format, number);
                 return formatter.toString();
             }
             else {
-                java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat(format, chartPanel.getLocale());
+                java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat(format, Locale.getDefault());
                 return formatter.format(new Date(number.longValue()));
             }
         }

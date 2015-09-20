@@ -21,7 +21,7 @@ public class DefaultPointHighlightRenderer extends PointRenderer {
 
     
     @Override
-    public void draw(Graphics2D g2d, DataPointInterface dataPoint) {
+    public void draw(Graphics2D g2d, DataPoint dataPoint) {
         Point point = dataPoint.getHighlightPosition();
         String xLabel = xLabel(dataPoint);
         String yLabel = yLabel(dataPoint);
