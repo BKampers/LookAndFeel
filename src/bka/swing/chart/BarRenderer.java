@@ -34,7 +34,11 @@ public class BarRenderer extends PointRenderer {
         this.width = width;
     }
     
-    
+    /**
+     * Set horizontal shift of the bar w.r.t. the x value.
+     * Useful when plotting multiple bar graphs into one chart.
+     * @param shift
+     */
     public void setShift(int shift) {
         this.shift = shift;
     }

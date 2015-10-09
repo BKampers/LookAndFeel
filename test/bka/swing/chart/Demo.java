@@ -128,10 +128,8 @@ public class Demo extends javax.swing.JFrame {
         Map graphs = new HashMap<>();
         Map<Number, Number> g1 = new HashMap<>();
         Map<Number, Number> g2 = new HashMap<>();
-        for (int x = 0; x < 50; ++x) {
-            if (x % 10 == 0) {
-                g1.put(x, x / 10);
-            }
+        for (int x = 1; x <= 20; ++x) {
+            g1.put(x, 1.0 / x * 25.0);
             g2.put(x, x);
         }
         graphs.put("G1", g1);
@@ -151,9 +149,13 @@ public class Demo extends javax.swing.JFrame {
             chartPanel.setDemarcations(new DefaultDemarcationRenderer(), ChartPanel.DemarcationMode.X);
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_DEMARCATION);
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
+            BarRenderer b1 = new BarRenderer(Color.BLUE);
+            b1.setShift(-5);
+            BarRenderer b2 = new BarRenderer(Color.RED);
+            b2.setShift(5);
             if (pointRenderer instanceof BarRenderer) {
-                chartPanel.setRenderer("G1", new BarRenderer(Color.BLUE));
-                chartPanel.setRenderer("G2", new BarRenderer(Color.RED));
+                chartPanel.setRenderer("G1", b1);
+                chartPanel.setRenderer("G2", b2);
             }
             else {
                 chartPanel.setRenderer("G1", pointRenderer);
