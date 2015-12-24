@@ -14,6 +14,12 @@ public abstract class LineRenderer extends AbstractDataPointRenderer {
     
     
     @Override
+    public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint, java.awt.Point location) {
+        draw(g2d, dataPoint);
+    }
+    
+    
+    @Override
     public void reset(ChartPanel chartPanel, java.util.TreeSet<DataPoint> graph) {
         super.reset(chartPanel, graph);
         previous = null;

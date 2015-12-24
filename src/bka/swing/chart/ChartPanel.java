@@ -26,18 +26,9 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         if (selectionRectangleColor == null) {
             selectionRectangleColor = Color.GRAY;
         }
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            @Override
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                synchronized (dataSet) {
-                    initializeDataSet();
-                }
-            }
-        });
-        addMouseMotionListener(MOUSE_ADAPTER);
-        addMouseListener(MOUSE_ADAPTER);
+        addListeners();
     }
-    
+
     
     public ChartPanel(int leftMargin, int rightMargin, int topMargin, int bottomMargin) {
         this();
@@ -56,7 +47,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setGraphs(Map<Object, Map> graphs) {
-        logger.log(Level.FINE, "setGraphs {0}", graphs);
+        LOGGER.log(Level.FINE, "setGraphs {0}", graphs);
         Map<Object, Map<Number, Number>> data = new LinkedHashMap<>();
         for (Map.Entry<Object, Map> graph : graphs.entrySet()) {
             Map<Number, Number> numbers = new HashMap<>();
@@ -77,7 +68,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void clearGraphs() {
-        logger.log(Level.FINE, "clearGraphs");
+        LOGGER.log(Level.FINE, "clearGraphs");
         synchronized (dataSet) {
             dataSet.clear();
         }
@@ -326,7 +317,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             }
             drawSelectionRectangle(g2d);
             if (highlightRenderer != null && highlightPoint != null) {
-                highlightRenderer.draw(g2d, highlightPoint);
+                highlightRenderer.draw(g2d, highlightPoint, mousePoint);
             }
             drawTitle(g2d);
         }
@@ -482,6 +473,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         return renderer;
     }
 
+    
     private Color getHighlightColor() {
         Color color = javax.swing.UIManager.getColor("Chart.highlightColor");
         return (color != null) ? color : Color.YELLOW;
@@ -531,11 +523,30 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
     
+    private void addListeners() {
+        addComponentListener(COMPONENT_ADAPTER);
+        addMouseMotionListener(MOUSE_ADAPTER);
+        addMouseListener(MOUSE_ADAPTER);
+    }
+    
+    
+    private final java.awt.event.ComponentAdapter COMPONENT_ADAPTER = new java.awt.event.ComponentAdapter() {
+        
+        @Override
+        public void componentResized(java.awt.event.ComponentEvent evt) {
+            synchronized (dataSet) {
+                initializeDataSet();
+            }
+        }
+        
+    };
+    
+    
     private final java.awt.event.MouseAdapter MOUSE_ADAPTER = new java.awt.event.MouseAdapter() {
 
         @Override
         public void mouseMoved(java.awt.event.MouseEvent evt) {
-            Point mousePoint = evt.getPoint();
+            mousePoint = evt.getPoint();
             if (chartArea().contains(mousePoint)) {
                 if ((dragZoomMode != DragZoomMode.NONE || clickZoomMode != ClickZoomMode.NONE) && defaultCursor == null) {
                     defaultCursor = getCursor();
@@ -642,9 +653,15 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                 dragStartPoint = null;
                 dragEndPoint = null;
                 switch (dragZoomMode) {
-                    case X  : setXWindow(xMin, xMax);            break;
-                    case Y  : setYWindow(yMin, yMax);            break;
-                    case XY : setWindow(xMin, xMax, yMin, yMax); break;
+                    case X: 
+                        setXWindow(xMin, xMax); 
+                        break;
+                    case Y:
+                        setYWindow(yMin, yMax);
+                        break;
+                    case XY:
+                        setWindow(xMin, xMax, yMin, yMax);
+                        break;
                 }
             }
             else {
@@ -690,14 +707,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                 }
             }
         }
-        
-        private long squareDistance(Point p, Point q) {
-            long Δx = p.x - q.x;
-            long Δy = p.y - q.y;
-            return Δx * Δx + Δy * Δy;
-        }
-        
-        private Cursor defaultCursor = null;
+               
+        private Cursor defaultCursor;
         
     };
 
@@ -708,38 +719,38 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private final DataSet dataSet = new DataSet();
     
     
-    private String title = null;
+    private String title;
     
     private AxisPosition xAxisPosition = AxisPosition.ORIGIN;
     private AxisPosition yAxisPosition = AxisPosition.ORIGIN;
 
     private DemarcationMode demarcationMode = DemarcationMode.NONE;
     
-    private boolean showLegend = false;
+    private boolean showLegend;
         
     private DragZoomMode dragZoomMode = DragZoomMode.NONE;
     private ClickZoomMode clickZoomMode = ClickZoomMode.NONE;
     
-    private Number xWindowMin = null;
-    private Number xWindowMax = null;
-    private Number yWindowMin = null;
-    private Number yWindowMax = null;
-    private Number yWindowBase = null;
+    private Number xWindowMin;
+    private Number xWindowMax;
+    private Number yWindowMin;
+    private Number yWindowMax;
+    private Number yWindowBase;
 
     
-    private AxisRenderer axisRenderer = null;
-    private DemarcationRenderer demarcationRenderer = null;
+    private AxisRenderer axisRenderer;
+    private DemarcationRenderer demarcationRenderer;
     
     private final Map<Object, AbstractDataPointRenderer> renderers = new HashMap<>();
     private final Map<Object, PointRenderer> pointHighlightRenderers = new HashMap<>();
     
-    private Point dragStartPoint = null;
-    private Point dragEndPoint = null;
+    private Point dragStartPoint;
+    private Point dragEndPoint;
 
-    private DataPoint nearestToMouse = null;
+    private DataPoint nearestToMouse;
+    private Point mousePoint;
     
-    
-    private Rectangle page = null;
+    private Rectangle page;
     
     private int leftMargin   = 100; // pixels
     private int rightMargin  = 100; // pixels
@@ -749,7 +760,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
     private final ArrayList<ZoomListener> zoomListeners = new ArrayList<>();
 
-    private static final Logger logger = Logger.getLogger(ChartPanel.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ChartPanel.class.getName());
     
     private static final int LEFT_MARGIN_PRINT   = 60;
     private static final int RIGHT_MARGIN_PRINT  =  5;

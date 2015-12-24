@@ -12,7 +12,6 @@ public interface DataPoint extends Comparable<DataPoint> {
 
     Number getX();
     Number getY();
-    java.awt.Point  getHighlightPosition();
     boolean contains(java.awt.Point point);
     
 }

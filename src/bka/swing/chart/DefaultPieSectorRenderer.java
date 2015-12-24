@@ -50,6 +50,12 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
     @Override
+    public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint, java.awt.Point location) {
+        draw(g2d, dataPoint);
+    }
+
+    
+    @Override
     public void drawSymbol(Graphics2D g2d, int x, int y) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

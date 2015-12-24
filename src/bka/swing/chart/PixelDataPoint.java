@@ -30,18 +30,6 @@ public class PixelDataPoint implements DataPoint {
     }
     
     
-//    @Override
-    public java.awt.Point getPixel() {
-        return pixel;
-    }
-
-
-    @Override
-    public java.awt.Point  getHighlightPosition() {
-        return pixel;
-    }
-
-
     @Override
     public boolean contains(java.awt.Point point) {
         java.awt.Rectangle rectangle = new java.awt.Rectangle(pixel.x-10, pixel.y-10, 20, 20);
@@ -65,11 +53,16 @@ public class PixelDataPoint implements DataPoint {
     public int compareTo(DataPoint other) {
         PixelDataPoint otherPoint = (PixelDataPoint) other;
         return
-            (pixel.x < otherPoint.getPixel().x) ? -1 :
-            (pixel.x > otherPoint.getPixel().x) ? 1 :
-            (pixel.y < otherPoint.getPixel().y) ? -1 :
-            (pixel.y > otherPoint.getPixel().y) ? 1 :
+            (pixel.x < otherPoint.pixel.x) ? -1 :
+            (pixel.x > otherPoint.pixel.x) ? 1 :
+            (pixel.y < otherPoint.pixel.y) ? -1 :
+            (pixel.y > otherPoint.pixel.y) ? 1 :
             0;
+    }
+
+
+    public java.awt.Point getPixel() {
+        return pixel;
     }
 
 

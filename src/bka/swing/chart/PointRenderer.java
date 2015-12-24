@@ -18,6 +18,12 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
     }
     
     
+    @Override
+    public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint, java.awt.Point location) {
+        draw(g2d, dataPoint);
+    }
+
+    
     public void setColor(Color color) {
         this.color = color;
     }

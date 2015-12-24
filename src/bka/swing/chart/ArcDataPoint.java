@@ -30,13 +30,6 @@ class ArcDataPoint implements DataPoint {
 
 
     @Override
-    public Point getHighlightPosition() {
-        java.awt.geom.Arc2D arc = renderer.getArc(this);
-        return new Point((int) arc.getX(), (int) arc.getY());
-    }
-
-
-    @Override
     public boolean contains(Point point) {
         return renderer.getArc(this).contains(point);
     }
@@ -60,11 +53,12 @@ class ArcDataPoint implements DataPoint {
 
     @Override
     public int compareTo(DataPoint other) {
+        ArcDataPoint otherPoint = (ArcDataPoint) other;
         return
-            (x.doubleValue() < other.getX().doubleValue()) ? -1 :
-            (x.doubleValue() > other.getX().doubleValue()) ? 1 :
-            (y.doubleValue() < other.getY().doubleValue()) ? -1 :
-            (y.doubleValue() > other.getY().doubleValue()) ? 1 :
+            (x.doubleValue() < otherPoint.x.doubleValue()) ? -1 :
+            (x.doubleValue() > otherPoint.x.doubleValue()) ? 1 :
+            (y.doubleValue() < otherPoint.y.doubleValue()) ? -1 :
+            (y.doubleValue() > otherPoint.y.doubleValue()) ? 1 :
             0;
     }
 
