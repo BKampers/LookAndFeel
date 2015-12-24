@@ -53,6 +53,13 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
     public void drawSymbol(Graphics2D g2d, int x, int y) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    
+    protected RadialGradientPaint getGradientPaint(Color color1, Color color2) {
+        final float[] fractions = new float[] { 0.0f, 1.0f };
+        return new RadialGradientPaint(center, (float) diameter, fractions, new Color[] { color1, color2 });
+    }
+
 
 
     @Override
@@ -69,10 +76,8 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
     private void drawArc(Graphics2D g2d, Sector sector) {
-        g2d.setColor(palette.next());
+        g2d.setPaint(getGradientPaint(palette.next(), Color.BLACK));
         g2d.fill(sector.arc);
-        g2d.setColor(Color.BLACK);
-        g2d.draw(sector.arc);
     }
 
 

@@ -5,18 +5,15 @@
 
 package bka.swing.chart;
 
+import java.awt.*;
+
 
 public class BarRenderer extends PointRenderer {
-    
-    
-    public BarRenderer(int width, java.awt.Color color) {
-        this(width);
-        this.color = color;
-    }
 
 
-    public BarRenderer(int width) {
+    public BarRenderer(int width, Color color) {
         this.width = width;
+        this.color = color;
     }
 
 
@@ -25,8 +22,13 @@ public class BarRenderer extends PointRenderer {
     }
 
 
+    public BarRenderer(int width) {
+        this(width, null);
+    }
+
+
     public BarRenderer() {
-        this(7);
+        this(null);
     }
     
     
@@ -44,13 +46,20 @@ public class BarRenderer extends PointRenderer {
     }
     
     
+    public void setSecondaryColor(Color color) {
+        secondaryColor = color;
+    }
+    
+    
     @Override
     public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint) {
         g2d.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
         PixelDataPoint pixelDataPoint = (PixelDataPoint) dataPoint;
         java.awt.Point pixel = pixelDataPoint.getPixel();
-        g2d.setColor(color);
-        g2d.fillRect(pixel.x - width / 2 + shift, pixel.y, width, chartPanel.areaBottom() - pixel.y);
+        double left = pixel.x - width / 2.0 + shift;
+        double height = chartPanel.areaBottom() - pixel.y;
+        g2d.setPaint(getGradientPaint());
+        g2d.fill(new java.awt.geom.Rectangle2D.Double(left, pixel.y, width, height));
     }
 
     
@@ -61,10 +70,18 @@ public class BarRenderer extends PointRenderer {
         g2d.setColor(color);
         g2d.fillRect(x - width / 2, y - height / 2, width, height);
     }
+    
+    
+    protected GradientPaint getGradientPaint() {
+        if (secondaryColor == null) {
+            secondaryColor = color;
+        }
+        return new GradientPaint(0, 0, secondaryColor, width, chartPanel.areaBottom(), color);
+    }
 
     
     private int width;
-    
-    private int shift = 0;
+    private int shift;
+    private Color secondaryColor;
     
 }
