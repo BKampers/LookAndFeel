@@ -194,6 +194,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
 
     public void setRenderer(Object key, AbstractDataPointRenderer renderer) {
+        renderer.setChartPanel(this);
         renderers.put(key, renderer);
         dataSet.setRenderers(renderers);
         initializeDataSet();
@@ -301,7 +302,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                 Object key = entry.getKey();
                 TreeSet<DataPoint> graph = entry.getValue();
                 AbstractDataPointRenderer renderer = getRenderer(key);
-                renderer.reset(this, graph);
+                renderer.setGraph(graph);
                 for (DataPoint dataPoint : graph) {
                     renderer.draw(g2d, dataPoint);
                     PointRenderer pointHighlightRenderer = pointHighlightRenderers.get(key);
@@ -342,7 +343,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                 Object key = entry.getKey();
                 TreeSet<DataPoint> graph = entry.getValue();
                 AbstractDataPointRenderer renderer = getRenderer(key);
-                renderer.reset(this, graph);
+                renderer.setGraph(graph);
                 for (DataPoint dataPoint : graph) {
                     renderer.draw(g2d, dataPoint);
                 }

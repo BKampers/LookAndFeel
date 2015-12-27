@@ -20,8 +20,8 @@ public abstract class LineRenderer extends AbstractDataPointRenderer {
     
     
     @Override
-    public void reset(ChartPanel chartPanel, java.util.TreeSet<DataPoint> graph) {
-        super.reset(chartPanel, graph);
+    public void setGraph(java.util.TreeSet<DataPoint> graph) {
+        super.setGraph(graph);
         previous = null;
     }
     

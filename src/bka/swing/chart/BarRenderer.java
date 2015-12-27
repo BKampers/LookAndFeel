@@ -52,6 +52,16 @@ public class BarRenderer extends PointRenderer {
     
     
     @Override
+    public DataPoint createDataPoint(Number x, Number y) {
+        Point pixel = new Point(dataSet.xPixel(x), dataSet.yPixel(y));
+        double left = pixel.x - width / 2.0 + shift;
+        double height = chartPanel.areaBottom() - pixel.y;
+        java.awt.geom.Rectangle2D rectangle = new java.awt.geom.Rectangle2D.Double(left, pixel.y, width, height);
+        return new PixelDataPoint(rectangle, x, y, new Point(dataSet.xPixel(x), dataSet.yPixel(y)));
+    }
+
+
+    @Override
     public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint) {
         g2d.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
         PixelDataPoint pixelDataPoint = (PixelDataPoint) dataPoint;

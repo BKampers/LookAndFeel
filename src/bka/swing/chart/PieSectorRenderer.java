@@ -31,8 +31,8 @@ public abstract class PieSectorRenderer extends AbstractDataPointRenderer {
     
     
     @Override
-    void reset(ChartPanel chartPanel, TreeSet<DataPoint> graph) {
-        super.reset(chartPanel, graph);
+    void setGraph(TreeSet<DataPoint> graph) {
+        super.setGraph(graph);
         previous = 0.0;
         total = 0.0;
         for (DataPoint dataPoint : graph) {

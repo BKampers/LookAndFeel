@@ -23,9 +23,13 @@ public abstract class AbstractDataPointRenderer {
     }
 
 
-    void reset(ChartPanel chartPanel, TreeSet<DataPoint> graph) {
-        this.chartPanel = chartPanel;
+    void setGraph(TreeSet<DataPoint> graph) {
         this.graph = graph;
+    }
+    
+    
+    void setChartPanel(ChartPanel chartPanel) {
+        this.chartPanel = chartPanel;
     }
 
 
@@ -36,6 +40,6 @@ public abstract class AbstractDataPointRenderer {
 
     protected ChartPanel chartPanel;
     protected TreeSet<DataPoint> graph;
-    private DataSet dataSet;
+    DataSet dataSet;
     
 }

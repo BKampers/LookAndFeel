@@ -26,25 +26,24 @@ public class DefaultPointHighlightRenderer extends PointRenderer {
 
     
     @Override
-    public void draw(Graphics2D g2d, DataPoint dataPoint, Point location) {
-        Point point = location; //dataPoint.getHighlightPosition();
+    public void draw(Graphics2D g2d, DataPoint dataPoint, Point labelLocation) {
         String xLabel = xLabel(dataPoint);
         String yLabel = yLabel(dataPoint);
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int xWidth = fontMetrics.stringWidth(xLabel);
         int yWidth = fontMetrics.stringWidth(yLabel);
         int labelWidth = Math.max(xWidth, yWidth);
-        int labelBase = point.y - fontMetrics.getHeight();
+        int labelBase = labelLocation.y - fontMetrics.getHeight();
         Composite originalComposite = g2d.getComposite();
         g2d.setPaint(color);
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-        g2d.fillRoundRect(point.x - labelWidth / 2, labelBase - fontMetrics.getAscent(), labelWidth, fontMetrics.getHeight() * 2, 5, 5);
+        g2d.fillRoundRect(labelLocation.x - labelWidth / 2, labelBase - fontMetrics.getAscent(), labelWidth, fontMetrics.getHeight() * 2, 5, 5);
         g2d.setComposite(originalComposite);
         g2d.setColor(borderColor);
-        g2d.drawRoundRect(point.x - labelWidth / 2, labelBase - fontMetrics.getAscent(), labelWidth, fontMetrics.getHeight() * 2, 5, 5);
+        g2d.drawRoundRect(labelLocation.x - labelWidth / 2, labelBase - fontMetrics.getAscent(), labelWidth, fontMetrics.getHeight() * 2, 5, 5);
         g2d.setColor(textColor);
-        g2d.drawString(xLabel, point.x - xWidth / 2, labelBase);
-        g2d.drawString(yLabel, point.x - yWidth / 2, labelBase + fontMetrics.getHeight());
+        g2d.drawString(xLabel, labelLocation.x - xWidth / 2, labelBase);
+        g2d.drawString(yLabel, labelLocation.x - yWidth / 2, labelBase + fontMetrics.getHeight());
     }
     
     

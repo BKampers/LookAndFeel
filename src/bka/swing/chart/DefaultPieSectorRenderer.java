@@ -14,8 +14,8 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
     @Override
-    void reset(ChartPanel chartPanel, TreeSet<DataPoint> graph) {
-        super.reset(chartPanel, graph);
+    void setGraph(TreeSet<DataPoint> graph) {
+        super.setGraph(graph);
         diameter = Math.min(chartPanel.areaWidth(), chartPanel.areaHeight()) - 50;
         sectors.clear();
         textRadius = diameter / 2.0 + TEXT_RADIUS_EXTENT;

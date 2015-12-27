@@ -14,6 +14,15 @@ public class PixelDataPoint implements DataPoint {
     PixelDataPoint(Number x, Number y, java.awt.Point pixel) {
         this.x = x;
         this.y = y;
+        rectangle = new java.awt.geom.Rectangle2D.Double(pixel.x - 10, pixel.y - 10, 20, 20);
+        this.pixel = pixel;
+    }
+    
+    
+    PixelDataPoint(java.awt.geom.Rectangle2D rectangle, Number x, Number y, java.awt.Point pixel) {
+        this.x = x;
+        this.y = y;
+        this.rectangle = rectangle;
         this.pixel = pixel;
     }
     
@@ -32,7 +41,7 @@ public class PixelDataPoint implements DataPoint {
     
     @Override
     public boolean contains(java.awt.Point point) {
-        java.awt.Rectangle rectangle = new java.awt.Rectangle(pixel.x-10, pixel.y-10, 20, 20);
+        //java.awt.Rectangle rectangle = new java.awt.Rectangle(pixel.x-10, pixel.y-10, 20, 20);
         return rectangle.contains(point);
     }
 
@@ -69,5 +78,6 @@ public class PixelDataPoint implements DataPoint {
     private final Number x;
     private final Number y;
     private final java.awt.Point pixel;
+    private final java.awt.geom.Rectangle2D rectangle;
     
 }
