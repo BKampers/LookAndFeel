@@ -5,24 +5,31 @@
 package bka.swing.chart;
 
 import java.awt.Color;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class Palette {
 
     
-    Palette(String uiManagerKey) {
+    public Palette(String uiManagerKey) {
         try {
             colors = (Color[]) javax.swing.UIManager.get(uiManagerKey);
         }
         catch (Exception ex) {
-            colors = null;
+            Logger.getLogger(Palette.class.getName()).log(Level.WARNING, uiManagerKey, ex);
+            colors = new Color[] { Color.WHITE };
         }
-        if (colors == null) {
-            colors = new Color[10];
-            for (int i = 0; i < 10; ++i) {
-                colors[i] = new Color((i + 1) * 10, (i + 1) * 10, (i + 1) * 25);
-            }
+    }
+    
+    
+    public Palette(int count) {
+        if (count >= 2) {
+            generateColors(count);
         }
+        else {
+            colors = new Color[] { Color.WHITE };
+        } 
     }
 
     
@@ -36,9 +43,18 @@ public class Palette {
     void reset() {
         index = 0;
     }
-
+    
+    
+    private void generateColors(int count) {
+        colors = new Color[count];
+        float range = count;
+        for (int i = 0; i < count; ++i) {
+            colors[i] = new Color(Color.HSBtoRGB(i / range, 1.0f, 1.0f));
+        }
+    }
+    
     
     private Color[] colors;
-    private int index = 0;
+    private int index;
 
 }

@@ -57,7 +57,7 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
     
     @Override
     public void drawSymbol(Graphics2D g2d, int x, int y) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     
