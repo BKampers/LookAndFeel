@@ -82,8 +82,11 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
     private void drawArc(Graphics2D g2d, Sector sector) {
-        g2d.setPaint(getGradientPaint(palette.next(), Color.BLACK));
+        Color color = palette.next();
+        g2d.setPaint(getGradientPaint(color, Color.BLACK));
         g2d.fill(sector.arc);
+        g2d.setColor(color.darker());
+        g2d.draw(sector.arc);
     }
 
 
@@ -92,6 +95,7 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int stringWidth = fontMetrics.stringWidth(text);
         int yText = sector.textPoint.y + fontMetrics.getHeight() / 2;
+        g2d.setColor(Color.BLACK);
         if (LEFT_SIDE_MIN < sector.degrees && sector.degrees < LEFT_SIDE_MAX) {
             g2d.drawString(text, sector.textPoint.x - stringWidth, yText);
         }

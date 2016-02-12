@@ -24,7 +24,7 @@ public class Palette {
     
     
     public Palette(int count) {
-        if (count >= 2) {
+        if (count > 0) {
             generateColors(count);
         }
         else {
