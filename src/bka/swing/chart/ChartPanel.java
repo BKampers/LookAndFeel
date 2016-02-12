@@ -39,29 +39,18 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
 
-    public void setGraph(Object key, Map graph) {
-        Map<Object, Map> graphs = new HashMap<>();
+    public void setGraph(Object key, Map<Number, Number> graph) {
+        Map<Object, Map<Number, Number>> graphs = new HashMap<>();
         graphs.put(key, graph);
         setGraphs(graphs);
     }
     
     
-    public void setGraphs(Map<Object, Map> graphs) {
+    public void setGraphs(Map<Object, Map<Number, Number>> graphs) {
         LOGGER.log(Level.FINE, "setGraphs {0}", graphs);
         Map<Object, Map<Number, Number>> data = new LinkedHashMap<>();
-        for (Map.Entry<Object, Map> graph : graphs.entrySet()) {
-            Map<Number, Number> numbers = new HashMap<>();
-            for (Object point : graph.getValue().entrySet()) {
-                Object x = ((Map.Entry) point).getKey();
-                Object y = ((Map.Entry) point).getValue();
-                if (x instanceof Number && y instanceof Number) {
-                    numbers.put((Number) x, (Number) y);
-                }
-                else {
-                    throw new ClassCastException("ChartPanel needs Map containing Numbers only");
-                }
-            }
-            data.put(graph.getKey(), numbers);
+        for (Map.Entry<Object, Map<Number, Number>> graph : graphs.entrySet()) {
+            data.put(graph.getKey(), new HashMap<>(graph.getValue()));
         }
         setData(data);
     }
