@@ -136,6 +136,7 @@ public class Demo extends javax.swing.JFrame {
         graphs.put("G2", g2);
         AbstractDataPointRenderer pointRenderer = (AbstractDataPointRenderer) styleComboBox.getSelectedItem();
         if (pointRenderer instanceof PieSectorRenderer) {
+            ((PieSectorRenderer) pointRenderer).setPalette(new Palette(g1.size()));
             chartPanel.setAxisRenderer(null);
             chartPanel.setAxisPositions(null, null);
             chartPanel.setDemarcations(null, ChartPanel.DemarcationMode.NONE);

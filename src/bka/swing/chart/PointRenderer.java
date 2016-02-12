@@ -6,6 +6,8 @@ package bka.swing.chart;
 
 import java.awt.Color;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public abstract class PointRenderer extends AbstractDataPointRenderer {
@@ -82,6 +84,7 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
             }
         }
         catch (Exception ex) {
+            Logger.getLogger(PointRenderer.class.getName()).log(Level.FINEST, format, ex);
             return number.toString();
         }
     }

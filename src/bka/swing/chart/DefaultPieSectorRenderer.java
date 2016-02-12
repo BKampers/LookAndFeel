@@ -28,14 +28,11 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
             double start = previous / total * 360;
             double extent = value / total * 360;
             sector.arc = new Arc2D.Double(pieLeft, pieTop, diameter, diameter, start, extent, Arc2D.PIE);
-
             sector.degrees = (int) Math.round(start + 0.5 * extent);
             double angle = (previous + value / 2.0) / total * -2 * Math.PI + 0.5 * Math.PI;
             sector.textPoint.x = center.x + Math.round((float) (Math.sin(angle) * textRadius));
             sector.textPoint.y = center.y - Math.round((float) (Math.sin(Math.PI / 2 - angle) * textRadius));
-
             sectors.put(dataPoint, sector);
-
             previous += value;
         }
     }

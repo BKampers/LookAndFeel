@@ -63,7 +63,6 @@ public class BarRenderer extends PointRenderer {
 
     @Override
     public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint) {
-        g2d.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
         PixelDataPoint pixelDataPoint = (PixelDataPoint) dataPoint;
         java.awt.Point pixel = pixelDataPoint.getPixel();
         double left = pixel.x - width / 2.0 + shift;
@@ -75,7 +74,6 @@ public class BarRenderer extends PointRenderer {
     
     @Override
     public void drawSymbol(java.awt.Graphics2D g2d, int x, int y) {
-        g2d.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
         int height = g2d.getFontMetrics().getHeight();
         g2d.setColor(color);
         g2d.fillRect(x - width / 2, y - height / 2, width, height);

@@ -42,7 +42,6 @@ public class DefaultLineRenderer extends LineRenderer {
     
     
     private void draw(java.awt.Graphics2D g2d, int x1, int y1, int x2, int y2) {
-        g2d.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setColor(color);
         Stroke defaultStroke = g2d.getStroke();
         if (stroke != null)  {
