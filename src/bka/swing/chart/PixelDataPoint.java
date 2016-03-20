@@ -41,7 +41,6 @@ public class PixelDataPoint implements DataPoint {
     
     @Override
     public boolean contains(java.awt.Point point) {
-        //java.awt.Rectangle rectangle = new java.awt.Rectangle(pixel.x-10, pixel.y-10, 20, 20);
         return rectangle.contains(point);
     }
 

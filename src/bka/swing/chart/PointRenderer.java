@@ -15,8 +15,8 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
     
     @Override
     public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint) {
-        PixelDataPoint pixelDataPoint = (PixelDataPoint) dataPoint;
-        drawSymbol(g2d, pixelDataPoint.getPixel().x, pixelDataPoint.getPixel().y);
+        java.awt.Point pixel = ((PixelDataPoint) dataPoint).getPixel();
+        drawSymbol(g2d, pixel.x, pixel.y);
     }
     
     

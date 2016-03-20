@@ -32,10 +32,10 @@ class DataSet {
      * the data map changes or the area to draw on is resized.
      * 
      * @param area: area to draw on
-     * @param xWindowMin: minimum of the x-axis, null means minimum x-value of the data set
-     * @param xWindowMax: maximum of the x-axis, null means maximum x-value of the data set
-     * @param yWindowMin: minimum of the y-axis, null means minimum y-value of the data set
-     * @param yWindowMax: maximum of the y-axis, null means maximum y-value of the data set
+     * @param xWindowMin: start of the x-axis, null means minimum x-value of the data set
+     * @param xWindowMax: end of the x-axis, null means maximum x-value of the data set
+     * @param yWindowMin: start of the y-axis, null means minimum y-value of the data set
+     * @param yWindowMax: end of the y-axis, null means maximum y-value of the data set
      * @param locale: to convert numbers and dates to strings
      */
     void initialize(Rectangle area, Number xWindowMin, Number xWindowMax, Number yWindowMin, Number yWindowMax, Number yWindowBase, Locale locale) {
@@ -48,10 +48,18 @@ class DataSet {
         yMax = yWindowMax;
         if (dataMap != null) {
             Window window = computeWindow(xWindowMin, xWindowMax, yWindowMin, yWindowMax);
-            if (xMin == null) { xMin = window.xMin; }
-            if (xMax == null) { xMax = window.xMax; }
-            if (yMin == null) { yMin = window.yMin; }
-            if (yMax == null) { yMax = window.yMax; }
+            if (xMin == null) {
+                xMin = window.xMin;
+            }
+            if (xMax == null) {
+                xMax = window.xMax;
+            }
+            if (yMin == null) {
+                yMin = window.yMin;
+            }
+            if (yMax == null) {
+                yMax = window.yMax;
+            }
             if (yWindowBase != null) {
                 if (yMin != null && yMin.doubleValue() > yWindowBase.doubleValue()) {
                     yMin = yWindowBase;
@@ -139,7 +147,8 @@ class DataSet {
 
     
     /**
-     * Select all points in window and determine ranges for x and y
+     * Collect all points in x,y range and determine their min and max values for x and y.
+     * return everything in a Dataset.Window object 
      */
     private Window computeWindow(Number xWindowMin, Number xWindowMax, Number yWindowMin, Number yWindowMax) {
         Window window = new Window();
@@ -149,22 +158,31 @@ class DataSet {
             for (Map.Entry<Number, Number> entry : dataGraph.getValue().entrySet()) {
                 Number x = entry.getKey();
                 Number y = entry.getValue();
-                if (
-                        (xWindowMin == null || value(xWindowMin) <= value(x)) &&
-                        (xWindowMax == null || value(x) <= value(xWindowMax)) &&
-                        (yWindowMin == null || value(yWindowMin) <= value(y)) &&
-                        (yWindowMax == null || value(y) <= value(yWindowMax)))
-                {
-                    /** Point (x,y) is in window **/
+                double valueX = value(x);
+                double valueY = value(y);
+                if (inRange(xWindowMin, xWindowMax, valueX) && inRange(yWindowMin, yWindowMax, valueY)) {
                     graphPointsInWindow.put(x, y);
-                    if (window.xMin == null || value(window.xMin) > value(x)) { window.xMin = x; }
-                    if (window.xMax == null || value(window.xMax) < value(x)) { window.xMax = x; }
-                    if (window.yMin == null || value(window.yMin) > value(y)) { window.yMin = y; }
-                    if (window.yMax == null || value(window.yMax) < value(y)) { window.yMax = y; }
+                    if (window.xMin == null || valueX < value(window.xMin)) { 
+                        window.xMin = x;
+                    }
+                    if (window.xMax == null || value(window.xMax) < valueX) {
+                        window.xMax = x;
+                    }
+                    if (window.yMin == null || valueY < value(window.yMin)) {
+                        window.yMin = y;
+                    }
+                    if (window.yMax == null || value(window.yMax) < valueY) {
+                        window.yMax = y;
+                    }
                 }
             }
         }
         return window;
+    }
+    
+    
+    private boolean inRange(Number min, Number max, double value) {
+        return (min == null || value(min) <= value) && (max == null || value <= value(max));
     }
 
     
