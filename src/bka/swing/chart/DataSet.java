@@ -39,7 +39,7 @@ class DataSet {
      * @param locale: to convert numbers and dates to strings
      */
     void initialize(Rectangle area, Number xWindowMin, Number xWindowMax, Number yWindowMin, Number yWindowMax, Number yWindowBase, Locale locale) {
-        logger.log(Level.FINE, "Initialize area {0}", area);
+        LOGGER.log(Level.FINE, "Initialize area {0}", area);
         this.area = area;
         graphs.clear();
         xMin = xWindowMin;
@@ -119,13 +119,13 @@ class DataSet {
     
     int xPixel(Number x) {
         if (x == null) {
-            logger.log(Level.SEVERE, "Cannot compute pixel: x = null");
+            LOGGER.log(Level.SEVERE, "Cannot compute pixel: x = null");
             throw new java.lang.IllegalArgumentException();
         }
         double ratio = area.width / xRange();
         long pixel = Math.round((value(x) - value(xMin)) * ratio);
         if (pixel < Integer.MIN_VALUE || pixel > Integer.MAX_VALUE) {
-            logger.log(Level.WARNING, "x pixel {0} out of range [{1}, {2}]", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
+            LOGGER.log(Level.WARNING, "x pixel {0} out of range [{1}, {2}]", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
         }
         return area.x + (int) pixel;
     }
@@ -133,14 +133,14 @@ class DataSet {
     
     int yPixel(Number y) {
         if (y == null) {
-            logger.log(Level.SEVERE, "Cannot compute pixel: y = null");
+            LOGGER.log(Level.SEVERE, "Cannot compute pixel: y = null");
             throw new java.lang.IllegalArgumentException();
         }
         int height = area.height;
         double ratio = height / yRange();
         long pixel = Math.round((value(y) - value(yMin)) * ratio);
         if (pixel < Integer.MIN_VALUE || pixel > Integer.MAX_VALUE) {
-            logger.log(Level.WARNING, "y pixel {0} out of range [{1}, {2}]", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
+            LOGGER.log(Level.WARNING, "y pixel {0} out of range [{1}, {2}]", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
         }
         return area.height + area.y - (int) pixel;
     }
@@ -256,6 +256,6 @@ class DataSet {
     private Number yMin = null;
     private Number yMax = null;
 
-    private static final Logger logger = Logger.getLogger(DataSet.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DataSet.class.getName());
     
 }

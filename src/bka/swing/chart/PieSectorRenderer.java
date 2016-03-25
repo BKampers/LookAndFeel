@@ -6,7 +6,6 @@
 package bka.swing.chart;
 
 
-import java.awt.*;
 import java.util.*;
 
 
@@ -45,7 +44,6 @@ public abstract class PieSectorRenderer extends AbstractDataPointRenderer {
     }
     
 
-    abstract boolean pointNearDataPoint(Point mousePoint, DataPoint dataPoint);
     abstract java.awt.geom.Arc2D getArc(ArcDataPoint dataPoint);
 
     protected Palette palette;

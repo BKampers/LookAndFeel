@@ -516,13 +516,18 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     private void addListeners() {
-        addComponentListener(COMPONENT_ADAPTER);
-        addMouseMotionListener(MOUSE_ADAPTER);
-        addMouseListener(MOUSE_ADAPTER);
+        addComponentListener(componentAdapter);
+        addMouseMotionListener(mouseAdapter);
+        addMouseListener(mouseAdapter);
     }
     
-    
-    private final java.awt.event.ComponentAdapter COMPONENT_ADAPTER = new java.awt.event.ComponentAdapter() {
+
+    private boolean zoomEnabled() {
+        return dragZoomMode != DragZoomMode.NONE || clickZoomMode != ClickZoomMode.NONE;
+    }
+
+
+    private final java.awt.event.ComponentAdapter componentAdapter = new java.awt.event.ComponentAdapter() {
         
         @Override
         public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -534,47 +539,24 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     };
     
     
-    private final java.awt.event.MouseAdapter MOUSE_ADAPTER = new java.awt.event.MouseAdapter() {
+    private final java.awt.event.MouseAdapter mouseAdapter = new java.awt.event.MouseAdapter() {
 
         @Override
         public void mouseMoved(java.awt.event.MouseEvent evt) {
             mousePoint = evt.getPoint();
             if (chartArea().contains(mousePoint)) {
-                if ((dragZoomMode != DragZoomMode.NONE || clickZoomMode != ClickZoomMode.NONE) && defaultCursor == null) {
+                if (defaultCursor == null && zoomEnabled()) {
                     defaultCursor = getCursor();
-                    setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    setCursor(new Cursor(ZOOM_CURSOR));
                 }
-                DataPoint nearest = null;
-                synchronized (dataSet) {
-                    for (Map.Entry entry : dataSet.getGraphs().entrySet()) {
-                        Object key = entry.getKey();
-                        AbstractDataPointRenderer renderer = renderers.get(key);
-                        TreeSet<PixelDataPoint> graph = (TreeSet<PixelDataPoint>) entry.getValue();
-                        for (DataPoint dataPoint : graph) {
-                            if (renderer instanceof PieSectorRenderer) {
-                                if (((PieSectorRenderer) renderer).pointNearDataPoint(mousePoint, dataPoint)) {
-                                    nearest = dataPoint;
-                                }
-                            }
-                            else {
-                                if (dataPoint.contains(mousePoint)) {
-                                    nearest = dataPoint;
-                                }
-                            }
-                        }
-                    }
-                }
-                if (nearestToMouse != nearest) {
-                    nearestToMouse = nearest;
-                    repaint();
-                }
+                highlight();
             }
             else if (defaultCursor != null) {
                 setCursor(defaultCursor);
                 defaultCursor = null;
             }
         }
-        
+
         @Override
         public void mousePressed(java.awt.event.MouseEvent evt) {
             if (dragZoomMode != DragZoomMode.NONE && evt.getButton() == java.awt.event.MouseEvent.BUTTON1) {
@@ -675,6 +657,27 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             }
         }
         
+        private void highlight() {
+            DataPoint nearest = findContainingDataPoint();
+            if (nearestToMouse != nearest) {
+                nearestToMouse = nearest;
+                repaint();
+            }
+        }
+
+        private DataPoint findContainingDataPoint() {
+            synchronized (dataSet) {
+                for (Map.Entry<Object, TreeSet<DataPoint>> entry : dataSet.getGraphs().entrySet()) {
+                    for (DataPoint dataPoint : entry.getValue()) {
+                        if (dataPoint.contains(mousePoint)) {
+                            return dataPoint;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         private void zoom(Point point) {
             boolean xMode = demarcationMode == DemarcationMode.X;
             java.util.List<Number> values = (xMode) ? dataSet.xDemarcations.values : dataSet.yDemarcations.values;
@@ -752,11 +755,14 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
     private final ArrayList<ZoomListener> zoomListeners = new ArrayList<>();
 
-    private static final Logger LOGGER = Logger.getLogger(ChartPanel.class.getName());
+    private static final int ZOOM_CURSOR = Cursor.HAND_CURSOR;
     
     private static final int LEFT_MARGIN_PRINT   = 60;
     private static final int RIGHT_MARGIN_PRINT  =  5;
     private static final int TOP_MARGIN_PRINT    = 40;
     private static final int BOTTOM_MARGIN_PRINT = 20;
+
     
+    private static final Logger LOGGER = Logger.getLogger(ChartPanel.class.getName());
+
 }

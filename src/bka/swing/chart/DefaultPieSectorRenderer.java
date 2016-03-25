@@ -64,14 +64,6 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
     }
 
 
-
-    @Override
-    boolean pointNearDataPoint(Point mousePoint, DataPoint dataPoint) {
-        Arc2D arc = sectors.get(dataPoint).arc;
-        return arc.contains(mousePoint);
-    }
-
-
     @Override
     Arc2D getArc(ArcDataPoint dataPoint) {
         return sectors.get(dataPoint).arc;

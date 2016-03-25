@@ -52,23 +52,9 @@ public class BarRenderer extends PointRenderer {
     
     
     @Override
-    public DataPoint createDataPoint(Number x, Number y) {
-        Point pixel = new Point(dataSet.xPixel(x), dataSet.yPixel(y));
-        double left = pixel.x - width / 2.0 + shift;
-        double height = chartPanel.areaBottom() - pixel.y;
-        java.awt.geom.Rectangle2D rectangle = new java.awt.geom.Rectangle2D.Double(left, pixel.y, width, height);
-        return new PixelDataPoint(rectangle, x, y, new Point(dataSet.xPixel(x), dataSet.yPixel(y)));
-    }
-
-
-    @Override
     public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint) {
-        PixelDataPoint pixelDataPoint = (PixelDataPoint) dataPoint;
-        java.awt.Point pixel = pixelDataPoint.getPixel();
-        double left = pixel.x - width / 2.0 + shift;
-        double height = chartPanel.areaBottom() - pixel.y;
         g2d.setPaint(getGradientPaint());
-        g2d.fill(new java.awt.geom.Rectangle2D.Double(left, pixel.y, width, height));
+        g2d.fill(dataPoint.getArea());
     }
 
     
@@ -77,6 +63,15 @@ public class BarRenderer extends PointRenderer {
         int height = g2d.getFontMetrics().getHeight();
         g2d.setColor(color);
         g2d.fillRect(x - width / 2, y - height / 2, width, height);
+    }
+
+
+    @Override
+    protected Shape createArea(int x, int y) {
+        double left = x - width / 2.0 + shift;
+        double height = chartPanel.areaBottom() - y;
+        return new java.awt.geom.Rectangle2D.Double(left, y, width, height);
+
     }
     
     

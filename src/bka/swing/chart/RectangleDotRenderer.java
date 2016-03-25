@@ -24,9 +24,9 @@ public class RectangleDotRenderer extends PointRenderer {
     }
     
 
-    public void drawSymbol(java.awt.Graphics2D g2d, int x, int y) {
-        g2d.setColor(color);
-        g2d.fillRect(x - width / 2, y - height / 2, width, height);
+    @Override
+    protected java.awt.Shape createArea(int x, int y) {
+        return new java.awt.geom.Rectangle2D.Double(x - width / 2, y - height / 2, width, height);
     }
     
 

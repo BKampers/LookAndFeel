@@ -4,6 +4,9 @@
 
 package bka.swing.chart;
 
+import java.awt.*;
+import java.awt.geom.*;
+
 
 public class OvalDotRenderer extends PointRenderer {
     
@@ -25,9 +28,8 @@ public class OvalDotRenderer extends PointRenderer {
     
     
     @Override
-    public void drawSymbol(java.awt.Graphics2D g2d, int x, int y) {
-        g2d.setColor(color);
-        g2d.fillOval(x - width / 2, y - height / 2, width, height);
+    protected Shape createArea(int x, int y) {
+        return new Ellipse2D.Double(x - width / 2, y - height / 2, width, height);
     }
     
 

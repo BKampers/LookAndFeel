@@ -4,19 +4,26 @@
 
 package bka.swing.chart;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 public abstract class PointRenderer extends AbstractDataPointRenderer {
-    
-    
+
+
+    @Override
+     public DataPoint createDataPoint(Number x, Number y) {
+        Point point = new Point(dataSet.xPixel(x), dataSet.yPixel(y));
+        return new PixelDataPoint(createArea(point.x, point.y), x, y, point);
+    }
+
+
     @Override
     public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint) {
-        java.awt.Point pixel = ((PixelDataPoint) dataPoint).getPixel();
-        drawSymbol(g2d, pixel.x, pixel.y);
+        g2d.setColor(color);
+        g2d.fill(dataPoint.getArea());
     }
     
     
@@ -26,6 +33,13 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
     }
 
     
+   @Override
+    public void drawSymbol(java.awt.Graphics2D g2d, int x, int y) {
+        g2d.setColor(color);
+        g2d.fill(createArea(x, y));
+    }
+
+
     public void setColor(Color color) {
         this.color = color;
     }
@@ -64,8 +78,12 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
             return dataPoint.getY().toString();
         }
     }
+
+
+    protected abstract Shape createArea(int x, int y);
     
     
+    @Override
     void setChartPanel(ChartPanel chartPanel) {
         this.chartPanel = chartPanel;
     }

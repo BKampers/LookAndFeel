@@ -8,6 +8,7 @@ import java.awt.*;
 
 
 public class DefaultPointHighlightRenderer extends PointRenderer {
+    //FIXME: This class should not inherit form PointRenderer
 
 
     DefaultPointHighlightRenderer() {
@@ -49,10 +50,16 @@ public class DefaultPointHighlightRenderer extends PointRenderer {
     
     @Override
     public void drawSymbol(Graphics2D g2d, int x, int y) {
-        throw new java.lang.NoSuchMethodError();
+        throw new UnsupportedOperationException("Not supported.");
     }
     
     
+    @Override
+    protected Shape createArea(int x, int y) {
+        throw new UnsupportedOperationException("Not supported"); 
+    }
+
+
     private Color textColor = Color.BLACK;
     private Color borderColor = new Color(137, 51, 0);
 

@@ -30,8 +30,14 @@ class ArcDataPoint implements DataPoint {
 
 
     @Override
+    public Shape getArea() {
+        return renderer.getArc(this);
+    }
+
+
+    @Override
     public boolean contains(Point point) {
-        return renderer.getArc(this).contains(point);
+        return getArea().contains(point);
     }
 
     @Override
