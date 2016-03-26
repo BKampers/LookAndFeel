@@ -5,9 +5,6 @@
 package bka.swing.chart;
 
 import java.awt.*;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public abstract class PointRenderer extends AbstractDataPointRenderer {
@@ -50,61 +47,12 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
     }
 
     
-    public void setXFormat(String xFormat) {
-        this.xFormat = xFormat;
-    }
-
-    
-    public void setYFormat(String yFormat) {
-        this.yFormat = yFormat;
-    }
-    
-    
-    public String xLabel(DataPoint dataPoint) {
-        if (xFormat != null) {
-            return label(xFormat, dataPoint.getX());
-        }
-        else {
-            return dataPoint.getX().toString();
-        }
-    }
-    
-    
-    public String yLabel(DataPoint dataPoint) {
-        if (yFormat != null) {
-            return label(yFormat, dataPoint.getY());
-        }
-        else {
-            return dataPoint.getY().toString();
-        }
-    }
-
-
     protected abstract Shape createArea(int x, int y);
     
     
     @Override
     void setChartPanel(ChartPanel chartPanel) {
         this.chartPanel = chartPanel;
-    }
-    
-    
-    private String label(String format, Number number) {
-        try {
-            if (format.indexOf('%') >= 0) {
-                Formatter formatter = new Formatter(Locale.getDefault());
-                formatter.format(format, number);
-                return formatter.toString();
-            }
-            else {
-                java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat(format, Locale.getDefault());
-                return formatter.format(new Date(number.longValue()));
-            }
-        }
-        catch (Exception ex) {
-            Logger.getLogger(PointRenderer.class.getName()).log(Level.FINEST, format, ex);
-            return number.toString();
-        }
     }
     
     

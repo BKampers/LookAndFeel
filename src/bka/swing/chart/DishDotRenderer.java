@@ -4,6 +4,9 @@
 
 package bka.swing.chart;
 
+import java.awt.*;
+import java.awt.geom.*;
+
 
 public class DishDotRenderer extends OvalDotRenderer {
     
@@ -13,15 +16,32 @@ public class DishDotRenderer extends OvalDotRenderer {
         this.offset = offset;
     }
 
-    
+
+    @Override
+    public void draw(Graphics2D g2d, DataPoint dataPoint) {
+        draw(g2d, dataPoint.getArea());
+    }
+
+
+   @Override
     public void drawSymbol(java.awt.Graphics2D g2d, int x, int y) {
-        super.drawSymbol(g2d, x, y);
-        int xRadius = width / 2 + offset / 2;
-        int yRadius = height / 2 + offset / 2;
-        g2d.drawOval(x - xRadius, y - yRadius, width + offset, height + offset);
+        draw(g2d, createArea(x, y));
+    }
+
+
+    private void draw(Graphics2D g2d, Shape area) {
+        g2d.setColor(color);
+        Ellipse2D.Float outer = (Ellipse2D.Float) area;
+        g2d.draw(outer);
+        Ellipse2D inner = new Ellipse2D.Float(
+            (float) outer.getX() + offset,
+            (float) outer.getY() + offset,
+            (float) outer.getWidth() - 2 * offset,
+            (float) outer.getHeight() - 2 * offset);
+        g2d.fill(inner);
     }
     
     
-    private int offset;
+    private final int offset;
 
 }

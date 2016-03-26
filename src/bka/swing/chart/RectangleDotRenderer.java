@@ -26,7 +26,7 @@ public class RectangleDotRenderer extends PointRenderer {
 
     @Override
     protected java.awt.Shape createArea(int x, int y) {
-        return new java.awt.geom.Rectangle2D.Double(x - width / 2, y - height / 2, width, height);
+        return new java.awt.Rectangle(x - width / 2, y - height / 2, width, height);
     }
     
 

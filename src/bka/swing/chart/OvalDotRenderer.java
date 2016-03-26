@@ -29,7 +29,7 @@ public class OvalDotRenderer extends PointRenderer {
     
     @Override
     protected Shape createArea(int x, int y) {
-        return new Ellipse2D.Double(x - width / 2, y - height / 2, width, height);
+        return new Ellipse2D.Float(x - width / 2.0f, y - height / 2.0f, width, height);
     }
     
 

@@ -183,27 +183,31 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
 
     public void setRenderer(Object key, AbstractDataPointRenderer renderer) {
-        renderer.setChartPanel(this);
-        renderers.put(key, renderer);
+        if (renderer != null) {
+            renderer.setChartPanel(this);
+            renderers.put(key, renderer);
+        }
+        else {
+            renderers.remove(key);
+        }
         dataSet.setRenderers(renderers);
         initializeDataSet();
 
     }
     
 
-    public void setPointHighlightRenderer(Object key, PointRenderer pointHighlightRenderer) {
+    public void setPointHighlightRenderer(Object key, DefaultPointHighlightRenderer pointHighlightRenderer) {
         if (pointHighlightRenderer != null) {
-            if (pointHighlightRenderer.getColor() == null) {
-                pointHighlightRenderer.setColor(getHighlightColor());
+            if (pointHighlightRenderer.setBackground() == null) {
+                pointHighlightRenderer.getBackground(getHighlightColor());
             }
-            pointHighlightRenderer.setChartPanel(this);
         }
         pointHighlightRenderers.put(key, pointHighlightRenderer);
     }
     
     
     public void setHighlightFormat(Object key, String xFormat, String yFormat) {
-        PointRenderer highlightRenderer = pointHighlightRenderers.get(key);
+        DefaultPointHighlightRenderer highlightRenderer = pointHighlightRenderers.get(key);
         if (highlightRenderer == null) {
             highlightRenderer = new DefaultPointHighlightRenderer();
             setPointHighlightRenderer(key, highlightRenderer);
@@ -285,7 +289,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             DataPoint highlightPoint = null;
-            PointRenderer highlightRenderer = null;
+            DefaultPointHighlightRenderer highlightRenderer = null;
             if (demarcationRenderer != null) {
                 demarcationRenderer.draw(g2d);
             }
@@ -296,7 +300,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                 renderer.setGraph(graph);
                 for (DataPoint dataPoint : graph) {
                     renderer.draw(g2d, dataPoint);
-                    PointRenderer pointHighlightRenderer = pointHighlightRenderers.get(key);
+                    DefaultPointHighlightRenderer pointHighlightRenderer = pointHighlightRenderers.get(key);
                     if (pointHighlightRenderer != null && dataPoint.equals(nearestToMouse)) {
                         highlightPoint = dataPoint;
                         highlightRenderer = pointHighlightRenderer;
@@ -737,7 +741,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private DemarcationRenderer demarcationRenderer;
     
     private final Map<Object, AbstractDataPointRenderer> renderers = new HashMap<>();
-    private final Map<Object, PointRenderer> pointHighlightRenderers = new HashMap<>();
+    private final Map<Object, DefaultPointHighlightRenderer> pointHighlightRenderers = new HashMap<>();
     
     private Point dragStartPoint;
     private Point dragEndPoint;

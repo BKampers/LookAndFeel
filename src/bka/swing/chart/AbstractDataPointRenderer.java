@@ -15,7 +15,7 @@ public abstract class AbstractDataPointRenderer {
     
     public abstract void draw(Graphics2D g2d, DataPoint dataPoint);
     public abstract void draw(Graphics2D g2d, DataPoint dataPoint, Point location);
-    public abstract void drawSymbol(java.awt.Graphics2D g2d, int x, int y);
+    public abstract void drawSymbol(Graphics2D g2d, int x, int y);
 
     
     public DataPoint createDataPoint(Number x, Number y) {
