@@ -5,7 +5,7 @@
 package bka.swing.chart;
 
 
-import java.awt.Shape;
+import java.awt.*;
 
 
 /**
@@ -14,15 +14,7 @@ import java.awt.Shape;
 public class PixelDataPoint implements DataPoint {
 
     
-    PixelDataPoint(Number x, Number y, java.awt.Point pixel) {
-        this.x = x;
-        this.y = y;
-        area = new java.awt.geom.Rectangle2D.Double(pixel.x - 10, pixel.y - 10, 20, 20);
-        this.pixel = pixel;
-    }
-    
-    
-    PixelDataPoint(Shape area, Number x, Number y, java.awt.Point pixel) {
+    PixelDataPoint(Number x, Number y, Shape area, Point pixel) {
         this.x = x;
         this.y = y;
         this.area = area;
@@ -30,6 +22,11 @@ public class PixelDataPoint implements DataPoint {
     }
     
     
+    PixelDataPoint(Number x, Number y, Point pixel) {
+        this(x, y, new Rectangle(pixel.x - 1, pixel.y - 1, 3, 3), pixel);
+    }
+
+
     @Override
     public Number getX() {
         return x;
@@ -45,12 +42,6 @@ public class PixelDataPoint implements DataPoint {
     @Override
     public Shape getArea() {
         return area;
-    }
-
-
-    @Override
-    public boolean contains(java.awt.Point point) {
-        return area.contains(point);
     }
 
 
@@ -85,7 +76,7 @@ public class PixelDataPoint implements DataPoint {
 
     private final Number x;
     private final Number y;
-    private final java.awt.Point pixel;
     private final Shape area;
+    private final Point pixel;
     
 }

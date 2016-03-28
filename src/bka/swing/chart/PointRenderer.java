@@ -5,16 +5,13 @@
 package bka.swing.chart;
 
 import java.awt.*;
+import java.util.*;
 
 
 public abstract class PointRenderer extends AbstractDataPointRenderer {
 
 
-    @Override
-     public DataPoint createDataPoint(Number x, Number y) {
-        Point point = new Point(dataSet.xPixel(x), dataSet.yPixel(y));
-        return new PixelDataPoint(createArea(point.x, point.y), x, y, point);
-    }
+    protected abstract Shape createArea(int x, int y);
 
 
     @Override
@@ -46,19 +43,23 @@ public abstract class PointRenderer extends AbstractDataPointRenderer {
         return color;
     }
 
-    
-    protected abstract Shape createArea(int x, int y);
-    
-    
+
     @Override
-    void setChartPanel(ChartPanel chartPanel) {
-        this.chartPanel = chartPanel;
+    TreeSet<DataPoint> createDataPoints(Map<Number, Number> graph) {
+        TreeSet<DataPoint> dataPoints = new TreeSet<>();
+        for (Map.Entry<Number, Number> entry : graph.entrySet()) {
+            Number x = entry.getKey();
+            Number y = entry.getValue();
+            int pixelX = dataSet.xPixel(x);
+            int pixelY = dataSet.yPixel(y);
+            Shape area = createArea(pixelX, pixelY);
+            Point pixel = new Point(pixelX, pixelY);
+            dataPoints.add(new PixelDataPoint(x, y, area, pixel));
+        }
+        return dataPoints;
     }
-    
+
     
     protected Color color = Color.BLACK;
-    
-    protected String xFormat;
-    protected String yFormat;
     
 }

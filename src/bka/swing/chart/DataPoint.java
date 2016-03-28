@@ -15,6 +15,5 @@ public interface DataPoint extends Comparable<DataPoint> {
     Number getX();
     Number getY();
     Shape getArea();
-    boolean contains(java.awt.Point point);
     
 }

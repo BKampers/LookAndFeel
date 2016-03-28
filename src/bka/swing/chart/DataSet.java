@@ -193,13 +193,8 @@ class DataSet {
         for (Map.Entry<Object, Map<Number, Number>> map : window.points.entrySet()) {
             AbstractDataPointRenderer renderer = renderers.get(map.getKey());
             if (renderer != null) {
-                TreeSet<DataPoint> points = new TreeSet<>();
+                TreeSet<DataPoint> points = renderer.createDataPoints(map.getValue());
                 graphs.put(map.getKey(), points);
-                for (Map.Entry<Number, Number> entry : map.getValue().entrySet()) {
-                    Number x = entry.getKey();
-                    Number y = entry.getValue();
-                    points.add(renderer.createDataPoint(x, y));
-                }
             }
         }
     }

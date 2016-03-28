@@ -673,7 +673,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             synchronized (dataSet) {
                 for (Map.Entry<Object, TreeSet<DataPoint>> entry : dataSet.getGraphs().entrySet()) {
                     for (DataPoint dataPoint : entry.getValue()) {
-                        if (dataPoint.contains(mousePoint)) {
+                        if (dataPoint.getArea().contains(mousePoint)) {
                             return dataPoint;
                         }
                     }

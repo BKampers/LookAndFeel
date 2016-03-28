@@ -17,9 +17,15 @@ public abstract class AbstractDataPointRenderer {
     public abstract void draw(Graphics2D g2d, DataPoint dataPoint, Point location);
     public abstract void drawSymbol(Graphics2D g2d, int x, int y);
 
-    
-    public DataPoint createDataPoint(Number x, Number y) {
-        return new PixelDataPoint(x, y, new Point(dataSet.xPixel(x), dataSet.yPixel(y)));
+
+    TreeSet<DataPoint> createDataPoints(Map<Number, Number> graph) {
+        TreeSet<DataPoint> dataPoints = new TreeSet<>();
+        for (Map.Entry<Number, Number> entry : graph.entrySet()) {
+            Number x = entry.getKey();
+            Number y = entry.getValue();
+            dataPoints.add(new PixelDataPoint(x, y, new Point(dataSet.xPixel(x), dataSet.yPixel(y))));
+        }
+        return dataPoints;
     }
 
 
@@ -39,7 +45,7 @@ public abstract class AbstractDataPointRenderer {
 
 
     protected ChartPanel chartPanel;
-    protected TreeSet<DataPoint> graph;
+    private TreeSet<DataPoint> graph;
     DataSet dataSet;
     
 }

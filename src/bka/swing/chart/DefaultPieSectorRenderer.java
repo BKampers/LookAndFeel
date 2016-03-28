@@ -7,42 +7,15 @@ package bka.swing.chart;
 
 import java.awt.*;
 import java.awt.geom.Arc2D;
-import java.util.*;
 
 
 public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
     @Override
-    void setGraph(TreeSet<DataPoint> graph) {
-        super.setGraph(graph);
-        diameter = Math.min(chartPanel.areaWidth(), chartPanel.areaHeight()) - 50;
-        sectors.clear();
-        textRadius = diameter / 2.0 + TEXT_RADIUS_EXTENT;
-        double pieLeft = chartPanel.areaLeft() + (chartPanel.areaWidth() - diameter) / 2;
-        double pieTop = chartPanel.areaTop() + (chartPanel.areaHeight() - diameter) / 2;
-        center = new Point((int) (pieLeft + diameter / 2.0), (int) (pieTop + diameter / 2.0));
-        for (DataPoint dataPoint : graph) {
-            Sector sector = new Sector();
-            double value = dataPoint.getY().doubleValue();
-            double start = previous / total * 360;
-            double extent = value / total * 360;
-            sector.arc = new Arc2D.Double(pieLeft, pieTop, diameter, diameter, start, extent, Arc2D.PIE);
-            sector.degrees = (int) Math.round(start + 0.5 * extent);
-            double angle = (previous + value / 2.0) / total * -2 * Math.PI + 0.5 * Math.PI;
-            sector.textPoint.x = center.x + Math.round((float) (Math.sin(angle) * textRadius));
-            sector.textPoint.y = center.y - Math.round((float) (Math.sin(Math.PI / 2 - angle) * textRadius));
-            sectors.put(dataPoint, sector);
-            previous += value;
-        }
-    }
-
-
-    @Override
     public void draw(Graphics2D g2d, DataPoint dataPoint) {
-        Sector sector = sectors.get((ArcDataPoint) dataPoint);
-        drawArc(g2d, sector);
-        drawText(g2d, sector, dataPoint);
+        drawArc(g2d, dataPoint);
+        drawLabel(g2d, (ArcDataPoint) dataPoint);
     }
 
 
@@ -56,58 +29,46 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
     public void drawSymbol(Graphics2D g2d, int x, int y) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    
+
+
     protected RadialGradientPaint getGradientPaint(Color color1, Color color2) {
         final float[] fractions = new float[] { 0.0f, 1.0f };
-        return new RadialGradientPaint(center, (float) diameter, fractions, new Color[] { color1, color2 });
+        return new RadialGradientPaint(getCenter(), (float) getDiameter(), fractions, new Color[] { color1, color2 });
     }
 
 
-    @Override
-    Arc2D getArc(ArcDataPoint dataPoint) {
-        return sectors.get(dataPoint).arc;
-    }
-
-
-    private void drawArc(Graphics2D g2d, Sector sector) {
+    private void drawArc(Graphics2D g2d, DataPoint dataPoint) {
         Color color = palette.next();
         g2d.setPaint(getGradientPaint(color, Color.BLACK));
-        g2d.fill(sector.arc);
+        g2d.fill(dataPoint.getArea());
         g2d.setColor(color.darker());
-        g2d.draw(sector.arc);
+        g2d.draw(dataPoint.getArea());
     }
 
 
-    private void drawText(Graphics2D g2d, Sector sector, DataPoint dataPoint) {
-        String text = dataPoint.getX().toString();
+    private void drawLabel(Graphics2D g2d, ArcDataPoint dataPoint) {
+        String label = dataPoint.getX().toString();
         FontMetrics fontMetrics = g2d.getFontMetrics();
-        int stringWidth = fontMetrics.stringWidth(text);
-        int yText = sector.textPoint.y + fontMetrics.getHeight() / 2;
+        int stringWidth = fontMetrics.stringWidth(label);
+        Arc2D.Float arc = (Arc2D.Float) dataPoint.getArea();
+        double angle = Math.toRadians(arc.start + arc.extent / 2.0);
+        double labelRadius = getDiameter() / 2.0 + TEXT_RADIUS_EXTENT;
+        Point center = getCenter();
+        int labelX = (int) Math.round(center.x + Math.cos(angle) * labelRadius);
+        int labelY = (int) Math.round(center.y - Math.sin(angle) * labelRadius + fontMetrics.getHeight() / 2.0);
         g2d.setColor(Color.BLACK);
-        if (LEFT_SIDE_MIN < sector.degrees && sector.degrees < LEFT_SIDE_MAX) {
-            g2d.drawString(text, sector.textPoint.x - stringWidth, yText);
+        if (LEFT_SIDE_MIN < angle && angle < LEFT_SIDE_MAX) {
+            g2d.drawString(label, labelX - stringWidth, labelY);
         }
         else {
-            g2d.drawString(text, sector.textPoint.x, yText);
+            g2d.drawString(label, labelX, labelY);
         }
     }
 
 
-    private class Sector {
-        int degrees;
-        Arc2D arc;
-        Point textPoint = new Point();
-    }
+    private static final double LEFT_SIDE_MIN = 0.5 * Math.PI; // radians
+    private static final double LEFT_SIDE_MAX = 1.5 * Math.PI; // radians
 
-    private Point center;
-    private double diameter;
-    private double textRadius;
-
-    private final Map<DataPoint, Sector> sectors = new HashMap<>();
-
-    private static final int LEFT_SIDE_MIN = 90; // degrees
-    private static final int LEFT_SIDE_MAX = 270; // degrees
     private static final int TEXT_RADIUS_EXTENT = 15; // pixels
 
 

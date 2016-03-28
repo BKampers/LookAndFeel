@@ -5,15 +5,16 @@
 package bka.swing.chart;
 
 import java.awt.*;
+import java.awt.geom.Arc2D;
 
 
 class ArcDataPoint implements DataPoint {
 
 
-    ArcDataPoint(Number x, Number y, PieSectorRenderer renderer) {
+    ArcDataPoint(Number x, Number y, Arc2D area) {
         this.x = x;
         this.y = y;
-        this.renderer = renderer;
+        this.area = area;
     }
 
 
@@ -31,14 +32,9 @@ class ArcDataPoint implements DataPoint {
 
     @Override
     public Shape getArea() {
-        return renderer.getArc(this);
+        return area;
     }
 
-
-    @Override
-    public boolean contains(Point point) {
-        return getArea().contains(point);
-    }
 
     @Override
     public int hashCode() {
@@ -51,9 +47,7 @@ class ArcDataPoint implements DataPoint {
         return
             other == this ||
             other instanceof ArcDataPoint &&
-            renderer == ((ArcDataPoint) other).renderer &&
-            x.equals(((ArcDataPoint) other).x) &&
-            y.equals(((ArcDataPoint) other).y);
+            area.equals(((ArcDataPoint) other).area);
     }
 
 
@@ -71,6 +65,6 @@ class ArcDataPoint implements DataPoint {
 
     private final Number x;
     private final Number y;
-    private final PieSectorRenderer renderer;
-
+    private final Arc2D area;
+    
 }
