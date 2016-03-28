@@ -8,21 +8,21 @@ import java.awt.*;
 import java.util.*;
 
 
-public abstract class PointRenderer<S extends Shape> extends AbstractDataPointRenderer<PixelAreaGeometry> {
+public abstract class PointRenderer<S extends Shape> extends AbstractDataPointRenderer<PixelAreaGeometry<S>> {
 
 
     protected abstract S createArea(int x, int y);
 
 
     @Override
-    public void draw(Graphics2D g2d, PixelAreaGeometry geometry) {
+    public void draw(Graphics2D g2d, PixelAreaGeometry<S> geometry) {
         g2d.setColor(color);
         g2d.fill(geometry.getArea());
     }
     
     
     @Override
-    public void draw(Graphics2D g2d, PixelAreaGeometry geometry, java.awt.Point location) {
+    public void draw(Graphics2D g2d, PixelAreaGeometry<S> geometry, java.awt.Point location) {
         draw(g2d, geometry);
     }
 
@@ -51,8 +51,8 @@ public abstract class PointRenderer<S extends Shape> extends AbstractDataPointRe
 
 
     @Override
-    TreeSet<PixelAreaGeometry> createDataGeomerty(Map<Number, Number> graph) {
-        TreeSet<PixelAreaGeometry> geometry = new TreeSet<>();
+    TreeSet<PixelAreaGeometry<S>> createDataGeomerty(Map<Number, Number> graph) {
+        TreeSet<PixelAreaGeometry<S>> geometry = new TreeSet<>();
         for (Map.Entry<Number, Number> entry : graph.entrySet()) {
             Number x = entry.getKey();
             Number y = entry.getValue();

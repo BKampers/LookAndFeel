@@ -52,9 +52,9 @@ public class BarRenderer extends PointRenderer<Rectangle> {
     
     
     @Override
-    public void draw(Graphics2D g2d, PixelAreaGeometry dataAreaGeometry) {
+    public void draw(Graphics2D g2d, PixelAreaGeometry<Rectangle> geometry) {
         g2d.setPaint(getGradientPaint());
-        g2d.fill(dataAreaGeometry.getArea());
+        g2d.fill(geometry.getArea());
     }
 
     

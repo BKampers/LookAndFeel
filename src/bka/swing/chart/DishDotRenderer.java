@@ -18,7 +18,7 @@ public class DishDotRenderer extends OvalDotRenderer {
 
 
     @Override
-    public void draw(Graphics2D g2d, PixelAreaGeometry geometry) {
+    public void draw(Graphics2D g2d, PixelAreaGeometry<Ellipse2D.Float> geometry) {
         draw(g2d, geometry.getArea());
     }
 
@@ -29,15 +29,14 @@ public class DishDotRenderer extends OvalDotRenderer {
     }
 
 
-    private void draw(Graphics2D g2d, Shape area) {
+    private void draw(Graphics2D g2d, Ellipse2D.Float area) {
         g2d.setColor(color);
-        Ellipse2D.Float outer = (Ellipse2D.Float) area;
-        g2d.draw(outer);
+        g2d.draw(area);
         Ellipse2D inner = new Ellipse2D.Float(
-            (float) outer.getX() + offset,
-            (float) outer.getY() + offset,
-            (float) outer.getWidth() - 2 * offset,
-            (float) outer.getHeight() - 2 * offset);
+            (float) area.getX() + offset,
+            (float) area.getY() + offset,
+            (float) area.getWidth() - 2 * offset,
+            (float) area.getHeight() - 2 * offset);
         g2d.fill(inner);
     }
     
