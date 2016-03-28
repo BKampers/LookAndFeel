@@ -13,15 +13,15 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
     @Override
-    public void draw(Graphics2D g2d, DataPoint dataPoint) {
-        drawArc(g2d, dataPoint);
-        drawLabel(g2d, (ArcDataPoint) dataPoint);
+    public void draw(Graphics2D g2d, ArcAreaGeometry geometry) {
+        drawArc(g2d, geometry);
+        drawLabel(g2d, geometry);
     }
 
 
     @Override
-    public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint, java.awt.Point location) {
-        draw(g2d, dataPoint);
+    public void draw(Graphics2D g2d, ArcAreaGeometry geometry, Point location) {
+        draw(g2d, geometry);
     }
 
     
@@ -37,20 +37,20 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
     }
 
 
-    private void drawArc(Graphics2D g2d, DataPoint dataPoint) {
+    private void drawArc(Graphics2D g2d, DataAreaGeometry geometry) {
         Color color = palette.next();
         g2d.setPaint(getGradientPaint(color, Color.BLACK));
-        g2d.fill(dataPoint.getArea());
+        g2d.fill(geometry.getArea());
         g2d.setColor(color.darker());
-        g2d.draw(dataPoint.getArea());
+        g2d.draw(geometry.getArea());
     }
 
 
-    private void drawLabel(Graphics2D g2d, ArcDataPoint dataPoint) {
-        String label = dataPoint.getX().toString();
+    private void drawLabel(Graphics2D g2d, ArcAreaGeometry geometry) {
+        String label = geometry.getX().toString();
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int stringWidth = fontMetrics.stringWidth(label);
-        Arc2D.Float arc = (Arc2D.Float) dataPoint.getArea();
+        Arc2D.Float arc = geometry.getArea();
         double angle = Math.toRadians(arc.start + arc.extent / 2.0);
         double labelRadius = getDiameter() / 2.0 + TEXT_RADIUS_EXTENT;
         Point center = getCenter();

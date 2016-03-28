@@ -33,9 +33,9 @@ public class DefaultPointHighlightRenderer {
     }
 
     
-    public void draw(Graphics2D g2d, DataPoint dataPoint, Point labelLocation) {
-        String xLabel = xLabel(dataPoint);
-        String yLabel = yLabel(dataPoint);
+    public void draw(Graphics2D g2d, DataAreaGeometry geometry, Point labelLocation) {
+        String xLabel = xLabel(geometry);
+        String yLabel = yLabel(geometry);
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int xWidth = fontMetrics.stringWidth(xLabel);
         int yWidth = fontMetrics.stringWidth(yLabel);
@@ -64,22 +64,22 @@ public class DefaultPointHighlightRenderer {
     }
 
 
-    public String xLabel(DataPoint dataPoint) {
+    public String xLabel(DataAreaGeometry geometry) {
         if (xFormat != null) {
-            return label(xFormat, dataPoint.getX());
+            return label(xFormat, geometry.getX());
         }
         else {
-            return dataPoint.getX().toString();
+            return geometry.getX().toString();
         }
     }
 
 
-    public String yLabel(DataPoint dataPoint) {
+    public String yLabel(DataAreaGeometry geometry) {
         if (yFormat != null) {
-            return label(yFormat, dataPoint.getY());
+            return label(yFormat, geometry.getY());
         }
         else {
-            return dataPoint.getY().toString();
+            return geometry.getY().toString();
         }
     }
 

@@ -19,7 +19,7 @@ public abstract class AxisRenderer {
     
     
     int xPixel(Number value) {
-        return panel.getDataSet().xPixel(value);
+        return panel.getChartGeometry().xPixel(value);
     }
     
     
@@ -39,7 +39,7 @@ public abstract class AxisRenderer {
 
     
     int yPixel(Number value) {
-        return panel.getDataSet().yPixel(value);
+        return panel.getChartGeometry().yPixel(value);
     }
     
     
@@ -59,27 +59,27 @@ public abstract class AxisRenderer {
     
     
     public String xDemarcationLabel(Number value) {
-        return dataSet.xDemarcations.label(value);
+        return chartGeometry.xDemarcations.label(value);
     }
     
     
     public java.util.List<Number> xDemarcationValues() {
         java.util.List<Number> values = new java.util.ArrayList<Number>();
-        if (dataSet.xDemarcations != null) {
-            values.addAll(dataSet.xDemarcations.values);
+        if (chartGeometry.xDemarcations != null) {
+            values.addAll(chartGeometry.xDemarcations.values);
         }
         return values;
     }
 
     
     public String yDemarcationLabel(Number value) {
-        return dataSet.yDemarcations.label(value);
+        return chartGeometry.yDemarcations.label(value);
     }
     
     
     public java.util.List<Number> yDemarcationValues() {
         java.util.List<Number> values = new java.util.ArrayList<Number>();
-        Demarcations yDemarcations = dataSet.yDemarcations;
+        Demarcations yDemarcations = chartGeometry.yDemarcations;
         if (yDemarcations != null) {
             values.addAll(yDemarcations.values);
         }
@@ -113,7 +113,7 @@ public abstract class AxisRenderer {
     
     void setPanel(ChartPanel panel) {
         this.panel = panel;
-        dataSet = panel.getDataSet();
+        chartGeometry = panel.getChartGeometry();
     }
     
     
@@ -126,6 +126,6 @@ public abstract class AxisRenderer {
     
     // Private attributes must be initialized by a Panel.
     private ChartPanel panel; 
-    private DataSet dataSet;
+    private ChartGeometry chartGeometry;
     
 }

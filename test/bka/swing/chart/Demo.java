@@ -19,7 +19,7 @@ public class Demo extends javax.swing.JFrame {
         styleComboBox.addItem(new RectangleDotRenderer());
         styleComboBox.addItem(new DishDotRenderer(30, 10));
         styleComboBox.addItem(new BarRenderer());
-        styleComboBox.setSelectedIndex(3);
+//        styleCoxmboBox.setSelectedIndex(3);
     }
     
 
@@ -168,7 +168,7 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setRenderer("G1", b1);
                 chartPanel.setRenderer("G2", b2);
             }
-            else if ((pointRenderer instanceof DefaultLineRenderer) || pointRenderer instanceof RectangleDotRenderer) {
+            else if (pointRenderer instanceof RectangleDotRenderer) {
                 Map graphs = new HashMap<>();
                 graphs.put("G3", g3);
                 chartPanel.setGraphs(graphs);

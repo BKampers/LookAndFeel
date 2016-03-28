@@ -18,13 +18,13 @@ public class DishDotRenderer extends OvalDotRenderer {
 
 
     @Override
-    public void draw(Graphics2D g2d, DataPoint dataPoint) {
-        draw(g2d, dataPoint.getArea());
+    public void draw(Graphics2D g2d, PixelAreaGeometry geometry) {
+        draw(g2d, geometry.getArea());
     }
 
 
    @Override
-    public void drawSymbol(java.awt.Graphics2D g2d, int x, int y) {
+    public void drawSymbol(Graphics2D g2d, int x, int y) {
         draw(g2d, createArea(x, y));
     }
 

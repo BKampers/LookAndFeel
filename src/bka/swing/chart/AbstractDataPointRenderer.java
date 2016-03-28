@@ -10,42 +10,38 @@ import java.util.*;
 
 
 
-public abstract class AbstractDataPointRenderer {
+public abstract class AbstractDataPointRenderer<G extends DataAreaGeometry> {
 
     
-    public abstract void draw(Graphics2D g2d, DataPoint dataPoint);
-    public abstract void draw(Graphics2D g2d, DataPoint dataPoint, Point location);
+    public abstract void draw(Graphics2D g2d, G geometry);
+    public abstract void draw(Graphics2D g2d, G geometry, Point location);
     public abstract void drawSymbol(Graphics2D g2d, int x, int y);
 
+    abstract void reset();
 
-    TreeSet<DataPoint> createDataPoints(Map<Number, Number> graph) {
-        TreeSet<DataPoint> dataPoints = new TreeSet<>();
+    
+    TreeSet<G> createDataGeomerty(Map<Number, Number> graph) {
+        TreeSet<PixelAreaGeometry> dataGeometry = new TreeSet<>();
         for (Map.Entry<Number, Number> entry : graph.entrySet()) {
             Number x = entry.getKey();
             Number y = entry.getValue();
-            dataPoints.add(new PixelDataPoint(x, y, new Point(dataSet.xPixel(x), dataSet.yPixel(y))));
+            dataGeometry.add(new PixelAreaGeometry(x, y, new Point(chartGeometry.xPixel(x), chartGeometry.yPixel(y))));
         }
-        return dataPoints;
+        return (TreeSet<G>) dataGeometry;
     }
 
 
-    void setGraph(TreeSet<DataPoint> graph) {
-        this.graph = graph;
-    }
-    
-    
     void setChartPanel(ChartPanel chartPanel) {
         this.chartPanel = chartPanel;
     }
 
 
-    void setDataSet(DataSet dataSet) {
-        this.dataSet = dataSet;
+    void setDataSet(ChartGeometry chartGeometry) {
+        this.chartGeometry = chartGeometry;
     }
 
 
     protected ChartPanel chartPanel;
-    private TreeSet<DataPoint> graph;
-    DataSet dataSet;
+    ChartGeometry chartGeometry;
     
 }

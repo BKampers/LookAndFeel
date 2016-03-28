@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.logging.*;
 
 
-class DataSet {
+class ChartGeometry {
     
     
     void setData(Map<Object, Map<Number, Number>> dataMap, Map<Object, AbstractDataPointRenderer> renderers) {
@@ -74,7 +74,7 @@ class DataSet {
     }
 
     
-    Map<Object, TreeSet<DataPoint>> getGraphs() {
+    Map<Object, TreeSet<DataAreaGeometry>> getGraphs() {
         return graphs;
     }
 
@@ -193,7 +193,7 @@ class DataSet {
         for (Map.Entry<Object, Map<Number, Number>> map : window.points.entrySet()) {
             AbstractDataPointRenderer renderer = renderers.get(map.getKey());
             if (renderer != null) {
-                TreeSet<DataPoint> points = renderer.createDataPoints(map.getValue());
+                TreeSet<DataAreaGeometry> points = renderer.createDataGeomerty(map.getValue());
                 graphs.put(map.getKey(), points);
             }
         }
@@ -244,13 +244,13 @@ class DataSet {
     private Map<Object, Map<Number, Number>> dataMap;
     private Map<Object, AbstractDataPointRenderer> renderers;
 
-    private final Map<Object, TreeSet<DataPoint>> graphs = new LinkedHashMap<>();
+    private final Map<Object, TreeSet<DataAreaGeometry>> graphs = new LinkedHashMap<>();
 
     private Number xMin = null;
     private Number xMax = null;
     private Number yMin = null;
     private Number yMax = null;
 
-    private static final Logger LOGGER = Logger.getLogger(DataSet.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ChartGeometry.class.getName());
     
 }

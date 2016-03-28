@@ -45,13 +45,13 @@ public class DefaultDemarcationRenderer extends DemarcationRenderer {
         int areaHeight = chartPanel.areaHeight();
         int areaLeft = chartPanel.areaLeft();
         int areaRight = chartPanel.areaRight();
-        DataSet dataSet = chartPanel.getDataSet();
-        java.util.List<Number> values = dataSet.xDemarcations.values;
+        ChartGeometry chartGeometry = chartPanel.getChartGeometry();
+        java.util.List<Number> values = chartGeometry.xDemarcations.values;
         int count = values.size();
         int colorIndex = 0;
         for (int i = 1; i < count; ++i) {
-            int left = Math.max(dataSet.xPixel(values.get(i-1)), areaLeft);
-            int right = Math.min(dataSet.xPixel(values.get(i)), areaRight);
+            int left = Math.max(chartGeometry.xPixel(values.get(i-1)), areaLeft);
+            int right = Math.min(chartGeometry.xPixel(values.get(i)), areaRight);
             g2d.setColor(palette[colorIndex]);
             g2d.fillRect(left, areaTop, right - left, areaHeight);
             colorIndex = (colorIndex + 1) % palette.length;
@@ -64,13 +64,13 @@ public class DefaultDemarcationRenderer extends DemarcationRenderer {
         int areaBottom = chartPanel.areaBottom();
         int areaLeft = chartPanel.areaLeft();
         int width = chartPanel.areaWidth();
-        DataSet dataSet = chartPanel.getDataSet();
-        java.util.List<Number> values = dataSet.yDemarcations.values;
+        ChartGeometry chartGeometry = chartPanel.getChartGeometry();
+        java.util.List<Number> values = chartGeometry.yDemarcations.values;
         int count = values.size();
         int colorIndex = 0;
         for (int i = 1; i < count; ++i) {
-            int bottom = Math.min(dataSet.yPixel(values.get(i-1)), areaBottom);
-            int top = Math.max(dataSet.yPixel(values.get(i)), areaTop);
+            int bottom = Math.min(chartGeometry.yPixel(values.get(i-1)), areaBottom);
+            int top = Math.max(chartGeometry.yPixel(values.get(i)), areaTop);
             g2d.setColor(palette[colorIndex]);
             g2d.fillRect(areaLeft, top, width, bottom - top);
             colorIndex = (colorIndex + 1) % palette.length;

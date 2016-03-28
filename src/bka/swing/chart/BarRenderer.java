@@ -17,7 +17,7 @@ public class BarRenderer extends PointRenderer {
     }
 
 
-    public BarRenderer(java.awt.Color color) {
+    public BarRenderer(Color color) {
         this(7, color);
     }
 
@@ -52,14 +52,14 @@ public class BarRenderer extends PointRenderer {
     
     
     @Override
-    public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint) {
+    public void draw(Graphics2D g2d, PixelAreaGeometry dataAreaGeometry) {
         g2d.setPaint(getGradientPaint());
-        g2d.fill(dataPoint.getArea());
+        g2d.fill(dataAreaGeometry.getArea());
     }
 
     
     @Override
-    public void drawSymbol(java.awt.Graphics2D g2d, int x, int y) {
+    public void drawSymbol(Graphics2D g2d, int x, int y) {
         int height = g2d.getFontMetrics().getHeight();
         g2d.setColor(color);
         g2d.fillRect(x - width / 2, y - height / 2, width, height);

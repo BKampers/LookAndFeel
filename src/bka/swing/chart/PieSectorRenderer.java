@@ -12,12 +12,12 @@ import java.util.*;
 
 
 
-public abstract class PieSectorRenderer extends AbstractDataPointRenderer {
+public abstract class PieSectorRenderer extends AbstractDataPointRenderer<ArcAreaGeometry> {
         
     
     @Override
-    public TreeSet<DataPoint> createDataPoints(Map<Number, Number> graph) {
-        TreeSet<DataPoint> dataPoints = new TreeSet<>();
+    TreeSet<ArcAreaGeometry> createDataGeomerty(Map<Number, Number> graph) {
+        TreeSet<ArcAreaGeometry> geometry = new TreeSet<>();
         diameter = Math.min(chartPanel.areaWidth(), chartPanel.areaHeight()) - DIAMETER_MARGIN;
         float pieLeft = chartPanel.areaLeft() + (chartPanel.areaWidth() - diameter) / 2.0f;
         float pieTop = chartPanel.areaTop() + (chartPanel.areaHeight() - diameter) / 2.0f;
@@ -29,12 +29,12 @@ public abstract class PieSectorRenderer extends AbstractDataPointRenderer {
             double value = entry.getValue().doubleValue();
             double startAngle = previous / total * 360;
             double angularExtent = value / total * 360;
-            Arc2D arc = new Arc2D.Float(pieLeft, pieTop, diameter, diameter, (float) startAngle, (float) angularExtent, Arc2D.PIE);
-            ArcDataPoint dataPoint = new ArcDataPoint(entry.getKey(), entry.getValue(), arc);
-            dataPoints.add(dataPoint);
+            Arc2D.Float arc = new Arc2D.Float(pieLeft, pieTop, diameter, diameter, (float) startAngle, (float) angularExtent, Arc2D.PIE);
+            ArcAreaGeometry arcGeometry = new ArcAreaGeometry(entry.getKey(), entry.getValue(), arc);
+            geometry.add(arcGeometry);
             previous += value;
         }
-        return dataPoints;
+        return geometry;
     }
 
 
@@ -49,8 +49,7 @@ public abstract class PieSectorRenderer extends AbstractDataPointRenderer {
 
 
     @Override
-    void setGraph(TreeSet<DataPoint> graph) {
-        super.setGraph(graph);
+    void reset() {
         if (palette == null) {
             palette = new Palette("chart.piePalette");
         }

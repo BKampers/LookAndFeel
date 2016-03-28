@@ -7,21 +7,20 @@ package bka.swing.chart;
 import java.awt.*;
 
 
-public abstract class LineRenderer extends AbstractDataPointRenderer {
+public abstract class LineRenderer extends AbstractDataPointRenderer<PixelAreaGeometry> {
     
     
-    public abstract void draw(java.awt.Graphics2D g2d, DataPoint dataPoint1, DataPoint dataPoint2);
+    public abstract void draw(Graphics2D g2d, PixelAreaGeometry geometry1, PixelAreaGeometry geometry2);
     
     
     @Override
-    public void draw(java.awt.Graphics2D g2d, DataPoint dataPoint, java.awt.Point location) {
-        draw(g2d, dataPoint);
+    public void draw(Graphics2D g2d, PixelAreaGeometry geometry, Point location) {
+        draw(g2d, geometry);
     }
     
     
     @Override
-    public void setGraph(java.util.TreeSet<DataPoint> graph) {
-        super.setGraph(graph);
+    public void reset() {
         previous = null;
     }
     
@@ -36,6 +35,6 @@ public abstract class LineRenderer extends AbstractDataPointRenderer {
     
     
     protected Color color = Color.BLACK;
-    protected PixelDataPoint previous;
+    protected PixelAreaGeometry previous;
     
 }

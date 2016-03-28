@@ -58,8 +58,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     public void clearGraphs() {
         LOGGER.log(Level.FINE, "clearGraphs");
-        synchronized (dataSet) {
-            dataSet.clear();
+        synchronized (geometry) {
+            geometry.clear();
         }
         repaint();
     }
@@ -76,7 +76,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setXWindowMinimum(Number min) {
-        synchronized (dataSet) {
+        synchronized (geometry) {
             xWindowMin = min;
             initializeDataSet();
         }
@@ -86,7 +86,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setXWindowMaximum(Number max) {
-        synchronized (dataSet) {
+        synchronized (geometry) {
             xWindowMax = max;
             initializeDataSet();
         }
@@ -96,7 +96,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setXWindow(Number min, Number max) {
-        synchronized (dataSet) {
+        synchronized (geometry) {
             xWindowMin = min;
             xWindowMax = max;
             initializeDataSet();
@@ -107,7 +107,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setYWindowMinimum(Number min) {
-        synchronized (dataSet) {
+        synchronized (geometry) {
             yWindowMin = min;
             initializeDataSet();
         }
@@ -117,7 +117,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setYWindowMaximum(Number max) {
-        synchronized (dataSet) {
+        synchronized (geometry) {
             yWindowMax = max;
             initializeDataSet();
         }
@@ -129,13 +129,13 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     public void setYWindowBase(Number base) {
         Number min = null;
         Number max = null;
-        synchronized (dataSet) {
-            Number oldMin = dataSet.getYMin();
-            Number oldMax = dataSet.getYMax();
+        synchronized (geometry) {
+            Number oldMin = geometry.getYMin();
+            Number oldMax = geometry.getYMax();
             yWindowBase = base;
             initializeDataSet();
-            Number newMin = dataSet.getYMin();
-            Number newMax = dataSet.getYMax();
+            Number newMin = geometry.getYMin();
+            Number newMax = geometry.getYMax();
             if (oldMin != null && ! oldMin.equals(newMin)) {
                 min = newMin;
             }
@@ -149,7 +149,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setYWindow(Number min, Number max) {
-        synchronized (dataSet) {
+        synchronized (geometry) {
             yWindowMin = min;
             yWindowMax = max;
             initializeDataSet();
@@ -160,7 +160,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setWindow(Number xMin, Number xMax, Number yMin, Number yMax) {
-        synchronized (dataSet) {
+        synchronized (geometry) {
             xWindowMin = xMin;
             xWindowMax = xMax;
             yWindowMin = yMin;
@@ -173,12 +173,12 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setXDemarcations(Demarcations xDemarcations) {
-        dataSet.xDemarcations = xDemarcations;
+        geometry.xDemarcations = xDemarcations;
     }
     
     
     public void setYDemarcations(Demarcations yDemarcations) {
-        dataSet.yDemarcations = yDemarcations;
+        geometry.yDemarcations = yDemarcations;
     }
 
 
@@ -190,7 +190,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         else {
             renderers.remove(key);
         }
-        dataSet.setRenderers(renderers);
+        geometry.setRenderers(renderers);
         initializeDataSet();
 
     }
@@ -284,25 +284,25 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-        synchronized (dataSet) {
+        synchronized (geometry) {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            DataPoint highlightPoint = null;
+            DataAreaGeometry highlightGeometry = null;
             DefaultPointHighlightRenderer highlightRenderer = null;
             if (demarcationRenderer != null) {
                 demarcationRenderer.draw(g2d);
             }
-            for (Map.Entry<Object, TreeSet<DataPoint>> entry : dataSet.getGraphs().entrySet()) {
+            for (Map.Entry<Object, TreeSet<DataAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
                 Object key = entry.getKey();
-                TreeSet<DataPoint> graph = entry.getValue();
+                TreeSet<DataAreaGeometry> graphgeometry = entry.getValue();
                 AbstractDataPointRenderer renderer = getRenderer(key);
-                renderer.setGraph(graph);
-                for (DataPoint dataPoint : graph) {
-                    renderer.draw(g2d, dataPoint);
+                renderer.reset();
+                for (DataAreaGeometry dataAreaGeometry : graphgeometry) {
+                    renderer.draw(g2d, dataAreaGeometry);
                     DefaultPointHighlightRenderer pointHighlightRenderer = pointHighlightRenderers.get(key);
-                    if (pointHighlightRenderer != null && dataPoint.equals(nearestToMouse)) {
-                        highlightPoint = dataPoint;
+                    if (pointHighlightRenderer != null && dataAreaGeometry.equals(nearestToMouse)) {
+                        highlightGeometry = dataAreaGeometry;
                         highlightRenderer = pointHighlightRenderer;
                     }
                 }
@@ -312,8 +312,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                 drawLegend(g2d);
             }
             drawSelectionRectangle(g2d);
-            if (highlightRenderer != null && highlightPoint != null) {
-                highlightRenderer.draw(g2d, highlightPoint, mousePoint);
+            if (highlightRenderer != null && highlightGeometry != null) {
+                highlightRenderer.draw(g2d, highlightGeometry, mousePoint);
             }
             drawTitle(g2d);
         }
@@ -322,7 +322,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-        synchronized (dataSet) {
+        synchronized (geometry) {
             Graphics2D g2d = (Graphics2D) graphics;
             page = new Rectangle(
                 (int) pageFormat.getImageableX(),
@@ -334,13 +334,13 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                 demarcationRenderer.draw(g2d);
             }
             drawAxises(g2d);
-            for (Map.Entry<Object, TreeSet<DataPoint>> entry : dataSet.getGraphs().entrySet()) {
+            for (Map.Entry<Object, TreeSet<DataAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
                 Object key = entry.getKey();
-                TreeSet<DataPoint> graph = entry.getValue();
+                TreeSet<DataAreaGeometry> graphGeometry = entry.getValue();
                 AbstractDataPointRenderer renderer = getRenderer(key);
-                renderer.setGraph(graph);
-                for (DataPoint dataPoint : graph) {
-                    renderer.draw(g2d, dataPoint);
+                renderer.reset();
+                for (DataAreaGeometry dataAreaGeometry : graphGeometry) {
+                    renderer.draw(g2d, dataAreaGeometry);
                 }
             }
             drawTitle(g2d);
@@ -381,8 +381,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
     
-    DataSet getDataSet() {
-        return dataSet;
+    ChartGeometry getChartGeometry() {
+        return geometry;
     }
     
     
@@ -402,12 +402,12 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
 
     int xPixel(Number x) {
-        return dataSet.xPixel(x);
+        return geometry.xPixel(x);
     }
 
 
     int yPixel(Number y) {
-        return dataSet.yPixel(y);
+        return geometry.yPixel(y);
     }
 
 
@@ -427,7 +427,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int x = areaRight() + 15;
         int y = topMargin;
-        ArrayList<Object> keys = new ArrayList<>(dataSet.getGraphs().keySet());
+        ArrayList<Object> keys = new ArrayList<>(geometry.getGraphs().keySet());
         for (int i = keys.size() - 1; i >= 0; --i) {
             Object key = keys.get(i);
             AbstractDataPointRenderer renderer = renderers.get(key);
@@ -477,8 +477,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
     
     private synchronized void setData(Map<Object, Map<Number, Number>> data) {
-        synchronized (dataSet) {
-            dataSet.setData(data, renderers);
+        synchronized (geometry) {
+            geometry.setData(data, renderers);
             initializeDataSet();
         }
         repaint();
@@ -486,7 +486,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     private void initializeDataSet() {
-        dataSet.initialize(chartArea(), xWindowMin, xWindowMax, yWindowMin, yWindowMax, yWindowBase, getLocale());
+        geometry.initialize(chartArea(), xWindowMin, xWindowMax, yWindowMin, yWindowMax, yWindowBase, getLocale());
     }
 
     
@@ -535,7 +535,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         
         @Override
         public void componentResized(java.awt.event.ComponentEvent evt) {
-            synchronized (dataSet) {
+            synchronized (geometry) {
                 initializeDataSet();
             }
         }
@@ -620,13 +620,13 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                 Number xMax = null;
                 Number yMin = null;
                 Number yMax = null;
-                if (dataSet.getXMin() != null && dataSet.getXMax() != null) {
-                    xMin = dataSet.xValue(Math.min(dragStartPoint.x, dragEndPoint.x));
-                    xMax = dataSet.xValue(Math.max(dragStartPoint.x, dragEndPoint.x));
+                if (geometry.getXMin() != null && geometry.getXMax() != null) {
+                    xMin = geometry.xValue(Math.min(dragStartPoint.x, dragEndPoint.x));
+                    xMax = geometry.xValue(Math.max(dragStartPoint.x, dragEndPoint.x));
                 }
-                if (dataSet.getYMin() != null && dataSet.getYMax() != null) {
-                    yMin = dataSet.yValue(Math.max(dragStartPoint.y, dragEndPoint.y));
-                    yMax = dataSet.yValue(Math.min(dragStartPoint.y, dragEndPoint.y));
+                if (geometry.getYMin() != null && geometry.getYMax() != null) {
+                    yMin = geometry.yValue(Math.max(dragStartPoint.y, dragEndPoint.y));
+                    yMax = geometry.yValue(Math.min(dragStartPoint.y, dragEndPoint.y));
                 }
                 dragStartPoint = null;
                 dragEndPoint = null;
@@ -662,19 +662,19 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         }
         
         private void highlight() {
-            DataPoint nearest = findContainingDataPoint();
+            DataAreaGeometry nearest = findContainingDataPoint();
             if (nearestToMouse != nearest) {
                 nearestToMouse = nearest;
                 repaint();
             }
         }
 
-        private DataPoint findContainingDataPoint() {
-            synchronized (dataSet) {
-                for (Map.Entry<Object, TreeSet<DataPoint>> entry : dataSet.getGraphs().entrySet()) {
-                    for (DataPoint dataPoint : entry.getValue()) {
-                        if (dataPoint.getArea().contains(mousePoint)) {
-                            return dataPoint;
+        private DataAreaGeometry findContainingDataPoint() {
+            synchronized (geometry) {
+                for (Map.Entry<Object, TreeSet<DataAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
+                    for (DataAreaGeometry dataAreaGeometry : entry.getValue()) {
+                        if (dataAreaGeometry.getArea().contains(mousePoint)) {
+                            return dataAreaGeometry;
                         }
                     }
                 }
@@ -684,18 +684,18 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
         private void zoom(Point point) {
             boolean xMode = demarcationMode == DemarcationMode.X;
-            java.util.List<Number> values = (xMode) ? dataSet.xDemarcations.values : dataSet.yDemarcations.values;
+            java.util.List<Number> values = (xMode) ? geometry.xDemarcations.values : geometry.yDemarcations.values;
             if (values.size() >= 2) {
                 Number min = values.get(0);
                 boolean zoomed = false;
                 int i = 1;
                 while (! zoomed && i < values.size()) {
                     Number max = values.get(i);
-                    if (xMode && dataSet.xPixel(min) <= point.x && point.x <= dataSet.xPixel(max)) {
+                    if (xMode && geometry.xPixel(min) <= point.x && point.x <= geometry.xPixel(max)) {
                         setXWindow(min, max);
                         zoomed = true;
                     }
-                    else if (! xMode && dataSet.yPixel(min) <= point.y && point.y <= dataSet.yPixel(max)) {
+                    else if (! xMode && geometry.yPixel(min) <= point.y && point.y <= geometry.yPixel(max)) {
                         setYWindow(min, max);
                         zoomed = true;
                     }
@@ -715,7 +715,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private Color selectionRectangleColor;
 
     
-    private final DataSet dataSet = new DataSet();
+    private final ChartGeometry geometry = new ChartGeometry();
     
     
     private String title;
@@ -746,7 +746,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private Point dragStartPoint;
     private Point dragEndPoint;
 
-    private DataPoint nearestToMouse;
+    private DataAreaGeometry nearestToMouse;
     private Point mousePoint;
     
     private Rectangle page;
