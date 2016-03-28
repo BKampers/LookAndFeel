@@ -288,34 +288,31 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            DataAreaGeometry highlightGeometry = null;
-            DefaultPointHighlightRenderer highlightRenderer = null;
             if (demarcationRenderer != null) {
                 demarcationRenderer.draw(g2d);
             }
-            for (Map.Entry<Object, TreeSet<DataAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
-                Object key = entry.getKey();
-                TreeSet<DataAreaGeometry> graphgeometry = entry.getValue();
-                AbstractDataAreaRenderer renderer = getRenderer(key);
-                renderer.reset();
-                for (DataAreaGeometry dataAreaGeometry : graphgeometry) {
-                    renderer.draw(g2d, dataAreaGeometry);
-                    DefaultPointHighlightRenderer pointHighlightRenderer = pointHighlightRenderers.get(key);
-                    if (pointHighlightRenderer != null && dataAreaGeometry.equals(nearestToMouse)) {
-                        highlightGeometry = dataAreaGeometry;
-                        highlightRenderer = pointHighlightRenderer;
-                    }
-                }
-            }
+            drawData(g2d);
             drawAxises(g2d);
             if (showLegend) {
                 drawLegend(g2d);
             }
             drawSelectionRectangle(g2d);
-            if (highlightRenderer != null && highlightGeometry != null) {
-                highlightRenderer.draw(g2d, highlightGeometry, mousePoint);
+            if (highlightRenderer != null && nearestToMouse != null) {
+                highlightRenderer.draw(g2d, nearestToMouse, mousePoint);
             }
             drawTitle(g2d);
+        }
+    }
+
+    private void drawData(Graphics2D g2d) {
+        for (Map.Entry<Object, TreeSet<DataAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
+            Object key = entry.getKey();
+            TreeSet<DataAreaGeometry> graphGeometry = entry.getValue();
+            AbstractDataAreaRenderer renderer = getRenderer(key);
+            renderer.reset();
+            for (DataAreaGeometry dataAreaGeometry : graphGeometry) {
+                renderer.draw(g2d, dataAreaGeometry);
+            }
         }
     }
 
@@ -652,23 +649,25 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         }
         
         private void highlight() {
-            DataAreaGeometry nearest = findContainingDataPoint();
+            DataAreaGeometry nearest = findContainingDataArea();
             if (nearestToMouse != nearest) {
                 nearestToMouse = nearest;
                 repaint();
             }
         }
 
-        private DataAreaGeometry findContainingDataPoint() {
+        private DataAreaGeometry findContainingDataArea() {
             synchronized (geometry) {
                 for (Map.Entry<Object, TreeSet<DataAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
                     for (DataAreaGeometry dataAreaGeometry : entry.getValue()) {
                         if (dataAreaGeometry.getArea().contains(mousePoint)) {
+                            highlightRenderer = pointHighlightRenderers.get(entry.getKey());
                             return dataAreaGeometry;
                         }
                     }
                 }
             }
+            highlightRenderer = null;
             return null;
         }
 
@@ -736,6 +735,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private Point dragStartPoint;
     private Point dragEndPoint;
 
+    private DefaultPointHighlightRenderer highlightRenderer;
     private DataAreaGeometry nearestToMouse;
     private Point mousePoint;
     

@@ -36,7 +36,7 @@ public abstract class AbstractDataAreaRenderer<G extends DataAreaGeometry> {
     }
 
 
-    void setDataSet(ChartGeometry chartGeometry) {
+    void setGeometry(ChartGeometry chartGeometry) {
         this.chartGeometry = chartGeometry;
     }
 

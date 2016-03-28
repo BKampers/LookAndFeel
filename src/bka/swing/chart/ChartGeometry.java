@@ -22,7 +22,7 @@ class ChartGeometry {
     void setRenderers(Map<Object, AbstractDataAreaRenderer> renderers) {
         this.renderers = renderers;
         for (AbstractDataAreaRenderer renderer : renderers.values()) {
-            renderer.setDataSet(this);
+            renderer.setGeometry(this);
         }
     }
     
@@ -61,10 +61,10 @@ class ChartGeometry {
                 yMax = window.yMax;
             }
             if (yWindowBase != null) {
-                if (yMin != null && yMin.doubleValue() > yWindowBase.doubleValue()) {
+                if (yMin != null && value(yMin) > value(yWindowBase)) {
                     yMin = yWindowBase;
                 }
-                if (yMax != null && yMax.doubleValue() < yWindowBase.doubleValue()) {
+                if (yMax != null && value(yMax) < value(yWindowBase)) {
                     yMax = yWindowBase;
                 }
             }
