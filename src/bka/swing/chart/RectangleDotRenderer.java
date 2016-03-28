@@ -5,7 +5,10 @@
 package bka.swing.chart;
 
 
-public class RectangleDotRenderer extends PointRenderer {
+import java.awt.Rectangle;
+
+
+public class RectangleDotRenderer extends PointRenderer<Rectangle> {
     
     
     public RectangleDotRenderer(int width, int height) {
@@ -25,8 +28,8 @@ public class RectangleDotRenderer extends PointRenderer {
     
 
     @Override
-    protected java.awt.Shape createArea(int x, int y) {
-        return new java.awt.Rectangle(x - width / 2, y - height / 2, width, height);
+    protected Rectangle createArea(int x, int y) {
+        return new Rectangle(x - width / 2, y - height / 2, width, height);
     }
     
 

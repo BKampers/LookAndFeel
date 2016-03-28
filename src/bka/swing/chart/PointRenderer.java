@@ -8,27 +8,27 @@ import java.awt.*;
 import java.util.*;
 
 
-public abstract class PointRenderer extends AbstractDataPointRenderer<PixelAreaGeometry> {
+public abstract class PointRenderer<S extends Shape> extends AbstractDataPointRenderer<PixelAreaGeometry> {
 
 
-    protected abstract Shape createArea(int x, int y);
+    protected abstract S createArea(int x, int y);
 
 
     @Override
-    public void draw(java.awt.Graphics2D g2d, PixelAreaGeometry geometry) {
+    public void draw(Graphics2D g2d, PixelAreaGeometry geometry) {
         g2d.setColor(color);
         g2d.fill(geometry.getArea());
     }
     
     
     @Override
-    public void draw(java.awt.Graphics2D g2d, PixelAreaGeometry geometry, java.awt.Point location) {
+    public void draw(Graphics2D g2d, PixelAreaGeometry geometry, java.awt.Point location) {
         draw(g2d, geometry);
     }
 
     
    @Override
-    public void drawSymbol(java.awt.Graphics2D g2d, int x, int y) {
+    public void drawSymbol(Graphics2D g2d, int x, int y) {
         g2d.setColor(color);
         g2d.fill(createArea(x, y));
     }
@@ -58,7 +58,7 @@ public abstract class PointRenderer extends AbstractDataPointRenderer<PixelAreaG
             Number y = entry.getValue();
             int pixelX = chartGeometry.xPixel(x);
             int pixelY = chartGeometry.yPixel(y);
-            Shape area = createArea(pixelX, pixelY);
+            S area = createArea(pixelX, pixelY);
             Point pixel = new Point(pixelX, pixelY);
             geometry.add(new PixelAreaGeometry(x, y, area, pixel));
         }

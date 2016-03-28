@@ -4,11 +4,10 @@
 
 package bka.swing.chart;
 
-import java.awt.*;
 import java.awt.geom.*;
 
 
-public class OvalDotRenderer extends PointRenderer {
+public class OvalDotRenderer extends PointRenderer<Ellipse2D.Float> {
     
     
     public OvalDotRenderer(int width, int height) {
@@ -28,7 +27,7 @@ public class OvalDotRenderer extends PointRenderer {
     
     
     @Override
-    protected Shape createArea(int x, int y) {
+    protected Ellipse2D.Float createArea(int x, int y) {
         return new Ellipse2D.Float(x - width / 2.0f, y - height / 2.0f, width, height);
     }
     

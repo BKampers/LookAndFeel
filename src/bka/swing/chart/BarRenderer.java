@@ -8,7 +8,7 @@ package bka.swing.chart;
 import java.awt.*;
 
 
-public class BarRenderer extends PointRenderer {
+public class BarRenderer extends PointRenderer<Rectangle> {
 
 
     public BarRenderer(int width, Color color) {
@@ -67,10 +67,10 @@ public class BarRenderer extends PointRenderer {
 
 
     @Override
-    protected Shape createArea(int x, int y) {
-        double left = x - width / 2.0 + shift;
-        double height = chartPanel.areaBottom() - y;
-        return new java.awt.geom.Rectangle2D.Double(left, y, width, height);
+    protected Rectangle createArea(int x, int y) {
+        int left = Math.round(x - width / 2.0f + shift);
+        int height = chartPanel.areaBottom() - y;
+        return new Rectangle(left, y, width, height);
 
     }
     
