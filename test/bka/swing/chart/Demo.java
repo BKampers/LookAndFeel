@@ -44,16 +44,7 @@ public class Demo extends javax.swing.JFrame {
                 }
             }
         }
-        catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Demo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Demo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Demo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Demo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
@@ -137,7 +128,7 @@ public class Demo extends javax.swing.JFrame {
         for (int x = 1; x <= 1000000; ++x) {
             g3.put(x, x);
         }
-        AbstractDataPointRenderer pointRenderer = (AbstractDataPointRenderer) styleComboBox.getSelectedItem();
+        AbstractDataAreaRenderer pointRenderer = (AbstractDataAreaRenderer) styleComboBox.getSelectedItem();
         if (pointRenderer instanceof PieSectorRenderer) {
             ((PieSectorRenderer) pointRenderer).setPalette(new Palette(g1.size()));
             Map graphs = new HashMap<>();

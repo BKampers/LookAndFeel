@@ -78,7 +78,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     public void setXWindowMinimum(Number min) {
         synchronized (geometry) {
             xWindowMin = min;
-            initializeDataSet();
+            initializeGeometry();
         }
         repaint();
         notifyZoomListeners(min, null, null, null);
@@ -88,7 +88,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     public void setXWindowMaximum(Number max) {
         synchronized (geometry) {
             xWindowMax = max;
-            initializeDataSet();
+            initializeGeometry();
         }
         repaint();
         notifyZoomListeners(null, max, null, null);
@@ -99,7 +99,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         synchronized (geometry) {
             xWindowMin = min;
             xWindowMax = max;
-            initializeDataSet();
+            initializeGeometry();
         }
         repaint();
         notifyZoomListeners(min, max, null, null);
@@ -109,7 +109,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     public void setYWindowMinimum(Number min) {
         synchronized (geometry) {
             yWindowMin = min;
-            initializeDataSet();
+            initializeGeometry();
         }
         repaint();
         notifyZoomListeners(null, null, min, null);
@@ -119,7 +119,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     public void setYWindowMaximum(Number max) {
         synchronized (geometry) {
             yWindowMax = max;
-            initializeDataSet();
+            initializeGeometry();
         }
         repaint();
         notifyZoomListeners(null, null, null, max);
@@ -133,7 +133,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             Number oldMin = geometry.getYMin();
             Number oldMax = geometry.getYMax();
             yWindowBase = base;
-            initializeDataSet();
+            initializeGeometry();
             Number newMin = geometry.getYMin();
             Number newMax = geometry.getYMax();
             if (oldMin != null && ! oldMin.equals(newMin)) {
@@ -152,7 +152,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         synchronized (geometry) {
             yWindowMin = min;
             yWindowMax = max;
-            initializeDataSet();
+            initializeGeometry();
         }
         repaint();
         notifyZoomListeners(null, null, min, max);
@@ -165,7 +165,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             xWindowMax = xMax;
             yWindowMin = yMin;
             yWindowMax = yMax;
-            initializeDataSet();
+            initializeGeometry();
         }        
         repaint();
         notifyZoomListeners(xMin, xMax, yMin, yMax);
@@ -182,7 +182,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
 
 
-    public void setRenderer(Object key, AbstractDataPointRenderer renderer) {
+    public void setRenderer(Object key, AbstractDataAreaRenderer renderer) {
         if (renderer != null) {
             renderer.setChartPanel(this);
             renderers.put(key, renderer);
@@ -191,7 +191,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             renderers.remove(key);
         }
         geometry.setRenderers(renderers);
-        initializeDataSet();
+        initializeGeometry();
 
     }
     
@@ -276,7 +276,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     @Override
     public void invalidate() {
-        initializeDataSet();
+        initializeGeometry();
         super.invalidate();
     }
     
@@ -296,7 +296,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             for (Map.Entry<Object, TreeSet<DataAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
                 Object key = entry.getKey();
                 TreeSet<DataAreaGeometry> graphgeometry = entry.getValue();
-                AbstractDataPointRenderer renderer = getRenderer(key);
+                AbstractDataAreaRenderer renderer = getRenderer(key);
                 renderer.reset();
                 for (DataAreaGeometry dataAreaGeometry : graphgeometry) {
                     renderer.draw(g2d, dataAreaGeometry);
@@ -329,7 +329,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                 (int) pageFormat.getImageableY(),
                 (int) pageFormat.getImageableWidth(),
                 (int) pageFormat.getImageableHeight());
-            initializeDataSet();
+            initializeGeometry();
             if (demarcationRenderer != null) {
                 demarcationRenderer.draw(g2d);
             }
@@ -337,7 +337,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             for (Map.Entry<Object, TreeSet<DataAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
                 Object key = entry.getKey();
                 TreeSet<DataAreaGeometry> graphGeometry = entry.getValue();
-                AbstractDataPointRenderer renderer = getRenderer(key);
+                AbstractDataAreaRenderer renderer = getRenderer(key);
                 renderer.reset();
                 for (DataAreaGeometry dataAreaGeometry : graphGeometry) {
                     renderer.draw(g2d, dataAreaGeometry);
@@ -345,7 +345,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             }
             drawTitle(g2d);
             page = null;
-            initializeDataSet();
+            initializeGeometry();
         }
         return java.awt.print.Printable.PAGE_EXISTS;
     }
@@ -401,16 +401,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
 
 
-    int xPixel(Number x) {
-        return geometry.xPixel(x);
-    }
-
-
-    int yPixel(Number y) {
-        return geometry.yPixel(y);
-    }
-
-
     private void drawTitle(Graphics2D g2d) {
         FontMetrics fontMetrics = g2d.getFontMetrics();
         if (title != null) {
@@ -430,7 +420,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         ArrayList<Object> keys = new ArrayList<>(geometry.getGraphs().keySet());
         for (int i = keys.size() - 1; i >= 0; --i) {
             Object key = keys.get(i);
-            AbstractDataPointRenderer renderer = renderers.get(key);
+            AbstractDataAreaRenderer renderer = renderers.get(key);
             if (renderer != null) {
                 renderer.drawSymbol(g2d, x, y);
             }
@@ -460,8 +450,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
     
-    private AbstractDataPointRenderer getRenderer(Object key) {
-        AbstractDataPointRenderer renderer = renderers.get(key);
+    private AbstractDataAreaRenderer getRenderer(Object key) {
+        AbstractDataAreaRenderer renderer = renderers.get(key);
         if (renderer == null) {
             renderer = new OvalDotRenderer();
             renderers.put(key, renderer);
@@ -479,13 +469,13 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private synchronized void setData(Map<Object, Map<Number, Number>> data) {
         synchronized (geometry) {
             geometry.setData(data, renderers);
-            initializeDataSet();
+            initializeGeometry();
         }
         repaint();
     }
     
     
-    private void initializeDataSet() {
+    private void initializeGeometry() {
         geometry.initialize(chartArea(), xWindowMin, xWindowMax, yWindowMin, yWindowMax, yWindowBase, getLocale());
     }
 
@@ -536,7 +526,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         @Override
         public void componentResized(java.awt.event.ComponentEvent evt) {
             synchronized (geometry) {
-                initializeDataSet();
+                initializeGeometry();
             }
         }
         
@@ -740,7 +730,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private AxisRenderer axisRenderer;
     private DemarcationRenderer demarcationRenderer;
     
-    private final Map<Object, AbstractDataPointRenderer> renderers = new HashMap<>();
+    private final Map<Object, AbstractDataAreaRenderer> renderers = new HashMap<>();
     private final Map<Object, DefaultPointHighlightRenderer> pointHighlightRenderers = new HashMap<>();
     
     private Point dragStartPoint;

@@ -8,7 +8,7 @@ import java.awt.*;
 import java.util.*;
 
 
-public abstract class PointRenderer<S extends Shape> extends AbstractDataPointRenderer<PixelAreaGeometry<S>> {
+public abstract class PointRenderer<S extends Shape> extends AbstractDataAreaRenderer<PixelAreaGeometry<S>> {
 
 
     protected abstract S createArea(int x, int y);

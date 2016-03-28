@@ -13,15 +13,15 @@ import java.util.logging.*;
 class ChartGeometry {
     
     
-    void setData(Map<Object, Map<Number, Number>> dataMap, Map<Object, AbstractDataPointRenderer> renderers) {
+    void setData(Map<Object, Map<Number, Number>> dataMap, Map<Object, AbstractDataAreaRenderer> renderers) {
         this.dataMap = dataMap;
         this.renderers = renderers;
     }
 
 
-    void setRenderers(Map<Object, AbstractDataPointRenderer> renderers) {
+    void setRenderers(Map<Object, AbstractDataAreaRenderer> renderers) {
         this.renderers = renderers;
-        for (AbstractDataPointRenderer renderer : renderers.values()) {
+        for (AbstractDataAreaRenderer renderer : renderers.values()) {
             renderer.setDataSet(this);
         }
     }
@@ -191,7 +191,7 @@ class ChartGeometry {
      */
     private void computeDataPoints(Window window) {
         for (Map.Entry<Object, Map<Number, Number>> map : window.points.entrySet()) {
-            AbstractDataPointRenderer renderer = renderers.get(map.getKey());
+            AbstractDataAreaRenderer renderer = renderers.get(map.getKey());
             if (renderer != null) {
                 TreeSet<DataAreaGeometry> points = renderer.createDataGeomerty(map.getValue());
                 graphs.put(map.getKey(), points);
@@ -242,7 +242,7 @@ class ChartGeometry {
     private Rectangle area = null;
     
     private Map<Object, Map<Number, Number>> dataMap;
-    private Map<Object, AbstractDataPointRenderer> renderers;
+    private Map<Object, AbstractDataAreaRenderer> renderers;
 
     private final Map<Object, TreeSet<DataAreaGeometry>> graphs = new LinkedHashMap<>();
 

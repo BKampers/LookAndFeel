@@ -10,7 +10,7 @@ import java.util.*;
 
 
 
-public abstract class AbstractDataPointRenderer<G extends DataAreaGeometry> {
+public abstract class AbstractDataAreaRenderer<G extends DataAreaGeometry> {
 
     
     public abstract void draw(Graphics2D g2d, G geometry);

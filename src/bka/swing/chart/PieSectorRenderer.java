@@ -12,7 +12,7 @@ import java.util.*;
 
 
 
-public abstract class PieSectorRenderer extends AbstractDataPointRenderer<ArcAreaGeometry> {
+public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcAreaGeometry> {
         
     
     @Override

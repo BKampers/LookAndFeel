@@ -7,7 +7,7 @@ package bka.swing.chart;
 import java.awt.*;
 
 
-public abstract class LineRenderer extends AbstractDataPointRenderer<PixelAreaGeometry> {
+public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeometry> {
     
     
     public abstract void draw(Graphics2D g2d, PixelAreaGeometry geometry1, PixelAreaGeometry geometry2);
