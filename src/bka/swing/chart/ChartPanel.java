@@ -288,30 +288,10 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            if (demarcationRenderer != null) {
-                demarcationRenderer.draw(g2d);
-            }
-            drawData(g2d);
-            drawAxises(g2d);
-            if (showLegend) {
-                drawLegend(g2d);
-            }
+            draw(g2d);
             drawSelectionRectangle(g2d);
             if (highlightRenderer != null && nearestToMouse != null) {
                 highlightRenderer.draw(g2d, nearestToMouse, mousePoint);
-            }
-            drawTitle(g2d);
-        }
-    }
-
-    private void drawData(Graphics2D g2d) {
-        for (Map.Entry<Object, TreeSet<DataAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
-            Object key = entry.getKey();
-            TreeSet<DataAreaGeometry> graphGeometry = entry.getValue();
-            AbstractDataAreaRenderer renderer = getRenderer(key);
-            renderer.reset();
-            for (DataAreaGeometry dataAreaGeometry : graphGeometry) {
-                renderer.draw(g2d, dataAreaGeometry);
             }
         }
     }
@@ -330,17 +310,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             if (demarcationRenderer != null) {
                 demarcationRenderer.draw(g2d);
             }
-            drawAxises(g2d);
-            for (Map.Entry<Object, TreeSet<DataAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
-                Object key = entry.getKey();
-                TreeSet<DataAreaGeometry> graphGeometry = entry.getValue();
-                AbstractDataAreaRenderer renderer = getRenderer(key);
-                renderer.reset();
-                for (DataAreaGeometry dataAreaGeometry : graphGeometry) {
-                    renderer.draw(g2d, dataAreaGeometry);
-                }
-            }
-            drawTitle(g2d);
+            draw(g2d);
             page = null;
             initializeGeometry();
         }
@@ -398,17 +368,36 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
 
 
-    private void drawTitle(Graphics2D g2d) {
-        FontMetrics fontMetrics = g2d.getFontMetrics();
-        if (title != null) {
-            g2d.setColor(Color.BLACK);
-            int width = fontMetrics.stringWidth(title);
-            int x = areaLeft() + areaWidth() / 2 - width / 2;
-            int y = areaTop() - fontMetrics.getAscent();
-            g2d.drawString(title, x, y);
+    private void draw(Graphics2D g2d) {
+        if (demarcationRenderer != null) {
+            demarcationRenderer.draw(g2d);
+        }
+        drawData(g2d);
+        drawAxises(g2d);
+        if (showLegend) {
+            drawLegend(g2d);
+        }
+        drawTitle(g2d);
+    }
+
+
+    private void drawData(Graphics2D g2d) {
+        for (Map.Entry<Object, TreeSet<DataAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
+            Object key = entry.getKey();
+            TreeSet<DataAreaGeometry> graphGeometry = entry.getValue();
+            AbstractDataAreaRenderer renderer = getRenderer(key);
+            renderer.draw(g2d, graphGeometry);
         }
     }
-    
+
+
+    private void drawAxises(Graphics2D g2d) {
+        if (axisRenderer != null) {
+            axisRenderer.drawXAxis(g2d);
+            axisRenderer.drawYAxis(g2d);
+        }
+    }
+
     
     private void drawLegend(Graphics2D g2d) {
         FontMetrics fontMetrics = g2d.getFontMetrics();
@@ -428,12 +417,17 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
     
-    private void drawAxises(Graphics2D g2d) {
-        if (axisRenderer != null) {
-            axisRenderer.drawXAxis(g2d);
-            axisRenderer.drawYAxis(g2d);
+    private void drawTitle(Graphics2D g2d) {
+        FontMetrics fontMetrics = g2d.getFontMetrics();
+        if (title != null) {
+            g2d.setColor(Color.BLACK);
+            int width = fontMetrics.stringWidth(title);
+            int x = areaLeft() + areaWidth() / 2 - width / 2;
+            int y = areaTop() - fontMetrics.getAscent();
+            g2d.drawString(title, x, y);
         }
     }
+
 
     private void drawSelectionRectangle(Graphics2D g2d) {
         if (dragStartPoint != null && dragEndPoint != null) {

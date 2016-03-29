@@ -15,7 +15,7 @@ public abstract class PointRenderer<S extends Shape> extends AbstractDataAreaRen
 
 
     @Override
-    public void draw(Graphics2D g2d, PixelAreaGeometry<S> geometry) {
+    protected void draw(Graphics2D g2d, PixelAreaGeometry<S> geometry) {
         g2d.setColor(color);
         g2d.fill(geometry.getArea());
     }
@@ -31,12 +31,6 @@ public abstract class PointRenderer<S extends Shape> extends AbstractDataAreaRen
     public void drawSymbol(Graphics2D g2d, int x, int y) {
         g2d.setColor(color);
         g2d.fill(createArea(x, y));
-    }
-
-
-    @Override
-    public void reset() {
-        // No operation required
     }
 
 

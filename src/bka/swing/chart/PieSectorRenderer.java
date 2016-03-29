@@ -49,11 +49,12 @@ public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcArea
 
 
     @Override
-    void reset() {
+    public void draw(Graphics2D g2d, TreeSet<ArcAreaGeometry> graphGeometry) {
         if (palette == null) {
             palette = new Palette("chart.piePalette");
         }
         palette.reset();
+        super.draw(g2d, graphGeometry);
     }
 
 

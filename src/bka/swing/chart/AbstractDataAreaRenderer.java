@@ -13,11 +13,16 @@ import java.util.*;
 public abstract class AbstractDataAreaRenderer<G extends DataAreaGeometry> {
 
     
-    public abstract void draw(Graphics2D g2d, G geometry);
+    protected abstract void draw(Graphics2D g2d, G geometry);
     public abstract void draw(Graphics2D g2d, G geometry, Point location);
     public abstract void drawSymbol(Graphics2D g2d, int x, int y);
 
-    abstract void reset();
+
+    public void draw(Graphics2D g2d, TreeSet<G> graphGeometry) {
+        for (G dataAreaGeometry : graphGeometry) {
+            draw(g2d, dataAreaGeometry);
+        }
+    }
 
     
     TreeSet<G> createDataGeomerty(Map<Number, Number> graph) {

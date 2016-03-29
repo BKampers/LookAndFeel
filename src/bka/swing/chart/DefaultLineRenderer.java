@@ -11,18 +11,6 @@ public class DefaultLineRenderer extends LineRenderer {
     
     
     @Override
-    public void draw(Graphics2D g2d, PixelAreaGeometry geometry) {
-        PixelAreaGeometry current = (PixelAreaGeometry) geometry;
-        if (previous != null) {
-            java.awt.Point pixel1 = previous.getPixel();
-            java.awt.Point pixel2 = current.getPixel();
-            draw(g2d, pixel1.x, pixel1.y, pixel2.x, pixel2.y);
-        }
-        previous = current;
-    }
-    
-    
-    @Override
     public void draw(Graphics2D g2d, PixelAreaGeometry geometry1, PixelAreaGeometry geometry2) {
         java.awt.Point pixel1 = geometry1.getPixel();
         java.awt.Point pixel2 = geometry2.getPixel();
@@ -41,6 +29,18 @@ public class DefaultLineRenderer extends LineRenderer {
     }
     
     
+    @Override
+    protected void draw(Graphics2D g2d, PixelAreaGeometry geometry) {
+        PixelAreaGeometry current = (PixelAreaGeometry) geometry;
+        if (previous != null) {
+            java.awt.Point pixel1 = previous.getPixel();
+            java.awt.Point pixel2 = current.getPixel();
+            draw(g2d, pixel1.x, pixel1.y, pixel2.x, pixel2.y);
+        }
+        previous = current;
+    }
+
+
     private void draw(Graphics2D g2d, int x1, int y1, int x2, int y2) {
         g2d.setColor(color);
         Stroke defaultStroke = g2d.getStroke();

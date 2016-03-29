@@ -13,13 +13,6 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
     @Override
-    public void draw(Graphics2D g2d, ArcAreaGeometry geometry) {
-        drawArc(g2d, geometry);
-        drawLabel(g2d, geometry);
-    }
-
-
-    @Override
     public void draw(Graphics2D g2d, ArcAreaGeometry geometry, Point location) {
         draw(g2d, geometry);
     }
@@ -31,9 +24,16 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
     }
 
 
+    @Override
+    protected void draw(Graphics2D g2d, ArcAreaGeometry geometry) {
+        drawArc(g2d, geometry);
+        drawLabel(g2d, geometry);
+    }
+
+
     protected RadialGradientPaint getGradientPaint(Color color1, Color color2) {
         final float[] fractions = new float[] { 0.0f, 1.0f };
-        return new RadialGradientPaint(getCenter(), (float) getDiameter(), fractions, new Color[] { color1, color2 });
+        return new RadialGradientPaint(getCenter(), getDiameter(), fractions, new Color[] { color1, color2 });
     }
 
 

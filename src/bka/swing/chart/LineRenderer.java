@@ -5,12 +5,12 @@
 package bka.swing.chart;
 
 import java.awt.*;
-
+import java.util.*;
 
 public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeometry> {
     
     
-    public abstract void draw(Graphics2D g2d, PixelAreaGeometry geometry1, PixelAreaGeometry geometry2);
+    protected abstract void draw(Graphics2D g2d, PixelAreaGeometry geometry1, PixelAreaGeometry geometry2);
     
     
     @Override
@@ -20,9 +20,11 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
     
     
     @Override
-    public void reset() {
+    public void draw(Graphics2D g2d, TreeSet<PixelAreaGeometry> graphGeometry) {
         previous = null;
+        super.draw(g2d, graphGeometry);
     }
+
     
     public void setColor(Color color) {
         this.color = color;
