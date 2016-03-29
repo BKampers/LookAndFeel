@@ -34,16 +34,24 @@ public class Demarcations {
     protected void compute(Number min, Number max) {
         double low = min.doubleValue();
         double high = max.doubleValue();
-        double range = high - low;
-        bka.numeric.Scientific r = new bka.numeric.Scientific(range);
+        bka.numeric.Scientific range = new bka.numeric.Scientific(high - low);
         double step = 1.0;
         int digits = 0;
-        double coefficient = r.getCoefficient();
-        if      (coefficient < 1.5) { step = 0.10; }
-        else if (coefficient < 2.0) { step = 0.20; }
-        else if (coefficient < 3.0) { step = 0.25; digits++; }
-        else if (coefficient < 5.0) { step = 0.50; }
-        step *= r.factor();
+        double coefficient = range.getCoefficient();
+        if (coefficient < 1.5) {
+            step = 0.10;
+        }
+        else if (coefficient < 2.0) {
+            step = 0.20;
+        }
+        else if (coefficient < 3.0) {
+            step = 0.25;
+            digits++;
+        }
+        else if (coefficient < 5.0) {
+            step = 0.50;
+        }
+        step *= range.factor();
         double start = Math.floor(low / step) * step;
         double markerValue = start;
         values.add(markerValue);
@@ -59,7 +67,7 @@ public class Demarcations {
     }
 
     
-    protected ArrayList<Number> values = new ArrayList<Number>();
+    protected ArrayList<Number> values = new ArrayList<>();
     protected String format;
     
     protected Locale locale;

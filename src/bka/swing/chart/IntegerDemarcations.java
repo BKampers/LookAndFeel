@@ -25,7 +25,7 @@ public class IntegerDemarcations extends Demarcations {
             step = 5;
         }
         step = (long) (step * range.factor() / 10);
-        long start = (long) ((low / step) * step);
+        long start = (long) (low / step) * step;
         long markerValue = start;
         values.add(markerValue);
         boolean ready = false;
