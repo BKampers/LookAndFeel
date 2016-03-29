@@ -8,16 +8,32 @@ package bka.swing.chart;
 public class IntegerDemarcations extends Demarcations {
 
 
+    @Override
     protected void compute(Number min, Number max) {
-        super.compute(min, max);
-        java.util.ArrayList<Number> integerValues = new java.util.ArrayList<Number>();
-        for (Number value : values) {
-            double doubleValue = value.doubleValue();
-            if (Math.round(doubleValue * 10) % 10 == 0) {
-                integerValues.add(Math.round(doubleValue));
-            }
+        double low = min.doubleValue();
+        double high = max.doubleValue();
+        bka.numeric.Scientific range = new bka.numeric.Scientific(high - low);
+        long step = 10;
+        double coefficient = range.getCoefficient() * 10;
+        if (coefficient < 15) {
+            step = 1;
         }
-        values = integerValues;
+        else if (coefficient < 20) {
+            step = 2;
+        }
+        else if (coefficient < 50) {
+            step = 5;
+        }
+        step = (long) (step * range.factor() / 10);
+        long start = (long) ((low / step) * step);
+        long markerValue = start;
+        values.add(markerValue);
+        boolean ready = false;
+        while (! ready) {
+            markerValue += step;
+            values.add(markerValue);
+            ready = markerValue > high;
+        }
         format = "%d";
     }
 
