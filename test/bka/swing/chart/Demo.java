@@ -19,7 +19,7 @@ public class Demo extends javax.swing.JFrame {
         styleComboBox.addItem(new RectangleDotRenderer());
         styleComboBox.addItem(new DishDotRenderer(30, 10));
         styleComboBox.addItem(new BarRenderer());
-//        styleCoxmboBox.setSelectedIndex(3);
+        styleComboBox.setSelectedIndex(4);
     }
     
 
@@ -158,12 +158,20 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setGraphs(graphs);
                 chartPanel.setRenderer("G1", b1);
                 chartPanel.setRenderer("G2", b2);
+                chartPanel.setXWindowMinimum(0);
+                chartPanel.setXWindowMaximum(21);
+                chartPanel.setYWindowMinimum(0);
+                chartPanel.setXDemarcations(new IntegerDemarcations());
+//                chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
             }
             else if (pointRenderer instanceof RectangleDotRenderer) {
                 Map graphs = new HashMap<>();
                 graphs.put("G3", g3);
                 chartPanel.setGraphs(graphs);
                 chartPanel.setRenderer("G3", pointRenderer);
+                chartPanel.setXWindowMinimum(null);
+                chartPanel.setXWindowMaximum(null);
+                chartPanel.setYWindowMinimum(null);
             }
             else {
                 Map graphs = new HashMap<>();
