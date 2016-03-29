@@ -74,7 +74,7 @@ class ChartGeometry {
     }
 
     
-    Map<Object, TreeSet<DataAreaGeometry>> getGraphs() {
+    Map<Object, TreeSet<PointAreaGeometry>> getGraphs() {
         return graphs;
     }
 
@@ -193,7 +193,7 @@ class ChartGeometry {
         for (Map.Entry<Object, Map<Number, Number>> map : window.points.entrySet()) {
             AbstractDataAreaRenderer renderer = renderers.get(map.getKey());
             if (renderer != null) {
-                TreeSet<DataAreaGeometry> points = renderer.createDataGeomerty(map.getValue());
+                TreeSet<PointAreaGeometry> points = renderer.createDataGeomerty(map.getValue());
                 graphs.put(map.getKey(), points);
             }
         }
@@ -244,7 +244,7 @@ class ChartGeometry {
     private Map<Object, Map<Number, Number>> dataMap;
     private Map<Object, AbstractDataAreaRenderer> renderers;
 
-    private final Map<Object, TreeSet<DataAreaGeometry>> graphs = new LinkedHashMap<>();
+    private final Map<Object, TreeSet<PointAreaGeometry>> graphs = new LinkedHashMap<>();
 
     private Number xMin = null;
     private Number xMax = null;

@@ -8,21 +8,21 @@ import java.awt.*;
 import java.util.*;
 
 
-public abstract class PointRenderer<S extends Shape> extends AbstractDataAreaRenderer<PixelAreaGeometry<S>> {
+public abstract class PointRenderer<S extends Shape> extends AbstractDataAreaRenderer<PointAreaGeometry<S>> {
 
 
     protected abstract S createArea(int x, int y);
 
 
     @Override
-    protected void draw(Graphics2D g2d, PixelAreaGeometry<S> geometry) {
+    protected void draw(Graphics2D g2d, PointAreaGeometry<S> geometry) {
         g2d.setColor(color);
         g2d.fill(geometry.getArea());
     }
     
     
     @Override
-    public void draw(Graphics2D g2d, PixelAreaGeometry<S> geometry, java.awt.Point location) {
+    public void draw(Graphics2D g2d, PointAreaGeometry<S> geometry, java.awt.Point location) {
         draw(g2d, geometry);
     }
 
@@ -45,16 +45,15 @@ public abstract class PointRenderer<S extends Shape> extends AbstractDataAreaRen
 
 
     @Override
-    TreeSet<PixelAreaGeometry<S>> createDataGeomerty(Map<Number, Number> graph) {
-        TreeSet<PixelAreaGeometry<S>> geometry = new TreeSet<>();
+    TreeSet<PointAreaGeometry<S>> createDataGeomerty(Map<Number, Number> graph) {
+        TreeSet<PointAreaGeometry<S>> geometry = new TreeSet<>();
         for (Map.Entry<Number, Number> entry : graph.entrySet()) {
             Number x = entry.getKey();
             Number y = entry.getValue();
             int pixelX = chartGeometry.xPixel(x);
             int pixelY = chartGeometry.yPixel(y);
             S area = createArea(pixelX, pixelY);
-            Point pixel = new Point(pixelX, pixelY);
-            geometry.add(new PixelAreaGeometry(x, y, area, pixel));
+            geometry.add(new PointAreaGeometry(x, y, area));
         }
         return geometry;
     }

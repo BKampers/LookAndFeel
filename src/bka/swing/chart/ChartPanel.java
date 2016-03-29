@@ -382,9 +382,9 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
 
     private void drawData(Graphics2D g2d) {
-        for (Map.Entry<Object, TreeSet<DataAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
+        for (Map.Entry<Object, TreeSet<PointAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
             Object key = entry.getKey();
-            TreeSet<DataAreaGeometry> graphGeometry = entry.getValue();
+            TreeSet<PointAreaGeometry> graphGeometry = entry.getValue();
             AbstractDataAreaRenderer renderer = getRenderer(key);
             renderer.draw(g2d, graphGeometry);
         }
@@ -643,17 +643,17 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         }
         
         private void highlight() {
-            DataAreaGeometry nearest = findContainingDataArea();
+            PointAreaGeometry nearest = findContainingArea();
             if (nearestToMouse != nearest) {
                 nearestToMouse = nearest;
                 repaint();
             }
         }
 
-        private DataAreaGeometry findContainingDataArea() {
+        private PointAreaGeometry findContainingArea() {
             synchronized (geometry) {
-                for (Map.Entry<Object, TreeSet<DataAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
-                    for (DataAreaGeometry dataAreaGeometry : entry.getValue()) {
+                for (Map.Entry<Object, TreeSet<PointAreaGeometry>> entry : geometry.getGraphs().entrySet()) {
+                    for (PointAreaGeometry dataAreaGeometry : entry.getValue()) {
                         if (dataAreaGeometry.getArea().contains(mousePoint)) {
                             highlightRenderer = pointHighlightRenderers.get(entry.getKey());
                             return dataAreaGeometry;
@@ -730,7 +730,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private Point dragEndPoint;
 
     private DefaultPointHighlightRenderer highlightRenderer;
-    private DataAreaGeometry nearestToMouse;
+    private PointAreaGeometry nearestToMouse;
     private Point mousePoint;
     
     private Rectangle page;

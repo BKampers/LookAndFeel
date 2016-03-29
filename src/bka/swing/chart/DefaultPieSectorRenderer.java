@@ -37,7 +37,7 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
     }
 
 
-    private void drawArc(Graphics2D g2d, DataAreaGeometry geometry) {
+    private void drawArc(Graphics2D g2d, PointAreaGeometry geometry) {
         Color color = palette.next();
         g2d.setPaint(getGradientPaint(color, Color.BLACK));
         g2d.fill(geometry.getArea());

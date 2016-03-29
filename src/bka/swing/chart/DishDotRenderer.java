@@ -18,7 +18,7 @@ public class DishDotRenderer extends OvalDotRenderer {
 
 
     @Override
-    public void draw(Graphics2D g2d, PixelAreaGeometry<Ellipse2D.Float> geometry) {
+    public void draw(Graphics2D g2d, PointAreaGeometry<Ellipse2D.Float> geometry) {
         draw(g2d, geometry.getArea());
     }
 
