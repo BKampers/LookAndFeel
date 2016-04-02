@@ -50,7 +50,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         LOGGER.log(Level.FINE, "setGraphs {0}", graphs);
         Map<Object, Map<Number, Number>> data = new LinkedHashMap<>();
         for (Map.Entry<Object, Map<Number, Number>> graph : graphs.entrySet()) {
-            data.put(graph.getKey(), new HashMap<>(graph.getValue()));
+            data.put(graph.getKey(), new LinkedHashMap<>(graph.getValue()));
         }
         setData(data);
     }

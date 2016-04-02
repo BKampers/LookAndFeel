@@ -148,7 +148,7 @@ class ChartGeometry {
     private Window computeWindow(Number xWindowMin, Number xWindowMax, Number yWindowMin, Number yWindowMax) {
         Window window = new Window();
         for (Map.Entry<Object, Map<Number, Number>> dataGraph : dataMap.entrySet()) {
-            Map<Number, Number> graphPointsInWindow = new HashMap<>();
+            Map<Number, Number> graphPointsInWindow = new LinkedHashMap<>();
             window.points.put(dataGraph.getKey(), graphPointsInWindow);
             for (Map.Entry<Number, Number> entry : dataGraph.getValue().entrySet()) {
                 Number x = entry.getKey();
