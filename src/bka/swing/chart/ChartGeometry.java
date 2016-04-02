@@ -118,34 +118,29 @@ class ChartGeometry {
     
     
     int xPixel(Number x) {
-        if (x == null) {
-            LOGGER.log(Level.SEVERE, "Cannot compute pixel: x = null");
-            throw new java.lang.IllegalArgumentException();
-        }
-        double ratio = area.width / xRange();
-        long pixel = Math.round((value(x) - value(xMin)) * ratio);
-        if (pixel < Integer.MIN_VALUE || pixel > Integer.MAX_VALUE) {
-            LOGGER.log(Level.WARNING, "x pixel {0} out of range [{1}, {2}]", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
-        }
-        return area.x + (int) pixel;
+        return area.x + pixel(x, xMin, xRange(), area.width);
     }
 
     
     int yPixel(Number y) {
-        if (y == null) {
-            LOGGER.log(Level.SEVERE, "Cannot compute pixel: y = null");
-            throw new java.lang.IllegalArgumentException();
-        }
-        int height = area.height;
-        double ratio = height / yRange();
-        long pixel = Math.round((value(y) - value(yMin)) * ratio);
-        if (pixel < Integer.MIN_VALUE || pixel > Integer.MAX_VALUE) {
-            LOGGER.log(Level.WARNING, "y pixel {0} out of range [{1}, {2}]", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
-        }
-        return area.height + area.y - (int) pixel;
+        return area.height + area.y - pixel(y, yMin, yRange(), area.height);
     }
 
-    
+
+    private static int pixel(Number number, Number min, double range, int size) {
+        if (number == null) {
+            LOGGER.log(Level.SEVERE, "Cannot compute null pixel");
+            throw new java.lang.IllegalArgumentException();
+        }
+        double ratio = size / range;
+        long pixel = Math.round((value(number) - value(min)) * ratio);
+        if (pixel < Integer.MIN_VALUE || Integer.MAX_VALUE < pixel) {
+            LOGGER.log(Level.WARNING, "Pixel {0} out of range [{1}, {2}]", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
+        }
+        return (int) pixel;
+    }
+
+
     /**
      * Collect all points in x,y range and determine their min and max values for x and y.
      * return everything in a Dataset.Window object 
@@ -224,7 +219,7 @@ class ChartGeometry {
     }
 
     
-    private double value(Number number) {
+    private static double value(Number number) {
         return number.doubleValue();
     }
     

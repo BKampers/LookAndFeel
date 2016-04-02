@@ -18,12 +18,6 @@ public class DefaultLineRenderer extends LineRenderer {
     }
 
     
-    @Override
-    public void drawSymbol(Graphics2D g2d, int x, int y) {
-        draw(g2d, x - 3, y, x + 3, y);
-    }
-
-    
     public void setStroke(Stroke stroke) {
         this.stroke = stroke;
     }
@@ -38,6 +32,12 @@ public class DefaultLineRenderer extends LineRenderer {
             draw(g2d, pixel1.x, pixel1.y, pixel2.x, pixel2.y);
         }
         previous = current;
+    }
+
+
+    @Override
+    protected void drawSymbol(Graphics2D g2d, int x, int y) {
+        draw(g2d, x - 3, y, x + 3, y);
     }
 
 

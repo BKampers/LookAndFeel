@@ -375,7 +375,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         drawData(g2d);
         drawAxises(g2d);
         if (showLegend) {
-            drawLegend(g2d);
+            DefaultLegendRenderer legendRenderer = new DefaultLegendRenderer(this, topMargin);
+            legendRenderer.drawLegend(g2d, geometry, renderers);
         }
         drawTitle(g2d);
     }
@@ -398,24 +399,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         }
     }
 
-    
-    private void drawLegend(Graphics2D g2d) {
-        FontMetrics fontMetrics = g2d.getFontMetrics();
-        int x = areaRight() + 15;
-        int y = topMargin;
-        ArrayList<Object> keys = new ArrayList<>(geometry.getGraphs().keySet());
-        for (int i = keys.size() - 1; i >= 0; --i) {
-            Object key = keys.get(i);
-            AbstractDataAreaRenderer renderer = renderers.get(key);
-            if (renderer != null) {
-                renderer.drawSymbol(g2d, x, y);
-            }
-            g2d.setColor(Color.BLACK);
-            g2d.drawString(key.toString(), x + 15, y + fontMetrics.getDescent());
-            y += fontMetrics.getHeight() + 5;
-        }
-    }
-    
     
     private void drawTitle(Graphics2D g2d) {
         FontMetrics fontMetrics = g2d.getFontMetrics();

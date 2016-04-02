@@ -7,6 +7,7 @@ package bka.swing.chart;
 
 import java.awt.*;
 import java.awt.geom.Arc2D;
+import java.util.*;
 
 
 public class DefaultPieSectorRenderer extends PieSectorRenderer {
@@ -17,10 +18,24 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
         draw(g2d, geometry);
     }
 
-    
+
     @Override
-    public void drawSymbol(Graphics2D g2d, int x, int y) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void drawLegend(Graphics2D g2d, Object key, LegendGeometry geometry) {
+        int x = geometry.getX();
+        int y = geometry.getY();
+        g2d.setFont(geometry.getFont());
+        FontMetrics fontMetrics = g2d.getFontMetrics();
+        for (TreeSet<PointAreaGeometry> graphGeometry : chartGeometry.getGraphs().values()) {
+            palette.reset();
+            for (PointAreaGeometry areaGeometry : graphGeometry) {
+                g2d.setColor(palette.next());
+                drawSymbol(g2d, x, y);
+                g2d.setColor(geometry.getColor());
+                g2d.drawString(areaGeometry.getX().toString(), x + geometry.getSpace(), y + fontMetrics.getDescent());
+                y += geometry.getFeed() + fontMetrics.getHeight();
+            }
+        }
+        geometry.setY(y);
     }
 
 
@@ -28,6 +43,12 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
     protected void draw(Graphics2D g2d, ArcAreaGeometry geometry) {
         drawArc(g2d, geometry);
         drawLabel(g2d, geometry);
+    }
+
+
+    @Override
+    protected void drawSymbol(Graphics2D g2d, int x, int y) {
+        g2d.fill(new Arc2D.Float(x - 10, y - 10, 20, 20, -40, 80, Arc2D.PIE));
     }
 
 
