@@ -6,11 +6,10 @@ package bka.swing.chart;
 
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.*;
 import java.util.logging.*;
 
 
-public abstract class PointRenderer<S extends Shape> extends AbstractDataAreaRenderer<PointAreaGeometry<S>> {
+public abstract class PointRenderer<S extends Shape> extends CoordinateAreaRenderer<S> {
 
 
     protected abstract S createArea(int x, int y);
@@ -49,12 +48,6 @@ public abstract class PointRenderer<S extends Shape> extends AbstractDataAreaRen
 
 
     @Override
-    public void draw(Graphics2D g2d, PointAreaGeometry<S> geometry, java.awt.Point location) {
-        draw(g2d, geometry);
-    }
-
-
-    @Override
     protected void draw(Graphics2D g2d, PointAreaGeometry<S> geometry) {
         S area = geometry.getArea();
         Paint paint = getPaint(geometry);
@@ -89,21 +82,6 @@ public abstract class PointRenderer<S extends Shape> extends AbstractDataAreaRen
             }
         }
         return fillColor;
-    }
-
-
-    @Override
-    TreeSet<PointAreaGeometry<S>> createDataGeomerty(Map<Number, Number> graph) {
-        TreeSet<PointAreaGeometry<S>> geometry = new TreeSet<>();
-        for (Map.Entry<Number, Number> entry : graph.entrySet()) {
-            Number x = entry.getKey();
-            Number y = entry.getValue();
-            int pixelX = chartGeometry.xPixel(x);
-            int pixelY = chartGeometry.yPixel(y);
-            S area = createArea(pixelX, pixelY);
-            geometry.add(new PointAreaGeometry(x, y, area));
-        }
-        return geometry;
     }
 
 

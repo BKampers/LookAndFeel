@@ -22,7 +22,7 @@ class ChartGeometry {
     void setRenderers(Map<Object, AbstractDataAreaRenderer> renderers) {
         this.renderers = renderers;
         for (AbstractDataAreaRenderer renderer : renderers.values()) {
-            renderer.setGeometry(this);
+            renderer.setChartGeometry(this);
         }
     }
     

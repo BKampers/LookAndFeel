@@ -14,12 +14,6 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
     @Override
-    public void draw(Graphics2D g2d, ArcAreaGeometry geometry, Point location) {
-        draw(g2d, geometry);
-    }
-
-
-    @Override
     public void drawLegend(Graphics2D g2d, Object key, LegendGeometry geometry) {
         int x = geometry.getX();
         int y = geometry.getY();

@@ -8,7 +8,7 @@ package bka.swing.chart;
 import java.awt.*;
 
 
-public class BarRenderer extends PointRenderer<Rectangle> {
+public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
 
     public BarRenderer(int width, Color color) {
@@ -47,7 +47,7 @@ public class BarRenderer extends PointRenderer<Rectangle> {
     
     
     @Override
-    public void draw(Graphics2D g2d, PointAreaGeometry<Rectangle> geometry) {
+    protected void draw(Graphics2D g2d, PointAreaGeometry<Rectangle> geometry) {
         Rectangle area = geometry.getArea();
         Paint paint = new GradientPaint(area.x, 0, color2, area.x, chartPanel.areaBottom(), color1);
         g2d.setPaint(paint);
@@ -88,6 +88,6 @@ public class BarRenderer extends PointRenderer<Rectangle> {
 
 
     private Color color1, color2, borderColor;
-    private int shift;
+    private int width, shift;
     
 }

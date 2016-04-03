@@ -13,9 +13,9 @@ import java.util.*;
 public abstract class AbstractDataAreaRenderer<G extends PointAreaGeometry> {
 
 
-    public abstract void draw(Graphics2D g2d, G geometry, Point location);
     protected abstract void draw(Graphics2D g2d, G geometry);
     protected abstract void drawSymbol(Graphics2D g2d, int x, int y);
+    abstract TreeSet<G> createDataGeomerty(Map<Number, Number> graph);
 
 
     public void draw(Graphics2D g2d, TreeSet<G> graphGeometry) {
@@ -35,23 +35,12 @@ public abstract class AbstractDataAreaRenderer<G extends PointAreaGeometry> {
     }
 
     
-    TreeSet<G> createDataGeomerty(Map<Number, Number> graph) {
-        TreeSet<PixelAreaGeometry> dataGeometry = new TreeSet<>();
-        for (Map.Entry<Number, Number> entry : graph.entrySet()) {
-            Number x = entry.getKey();
-            Number y = entry.getValue();
-            dataGeometry.add(new PixelAreaGeometry(x, y, new Point(chartGeometry.xPixel(x), chartGeometry.yPixel(y))));
-        }
-        return (TreeSet<G>) dataGeometry;
-    }
-
-
     void setChartPanel(ChartPanel chartPanel) {
         this.chartPanel = chartPanel;
     }
 
 
-    void setGeometry(ChartGeometry chartGeometry) {
+    void setChartGeometry(ChartGeometry chartGeometry) {
         this.chartGeometry = chartGeometry;
     }
 
