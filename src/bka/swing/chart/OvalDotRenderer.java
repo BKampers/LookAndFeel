@@ -31,8 +31,4 @@ public class OvalDotRenderer extends PointRenderer<Ellipse2D.Float> {
         return new Ellipse2D.Float(x - width / 2.0f, y - height / 2.0f, width, height);
     }
     
-
-    protected int width;
-    protected int height;
-
 }

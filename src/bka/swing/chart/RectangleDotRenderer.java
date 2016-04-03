@@ -32,8 +32,4 @@ public class RectangleDotRenderer extends PointRenderer<Rectangle> {
         return new Rectangle(x - width / 2, y - height / 2, width, height);
     }
     
-
-    protected int width;
-    protected int height;
-
 }

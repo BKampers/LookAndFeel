@@ -54,13 +54,13 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
     protected RadialGradientPaint getGradientPaint(Color color1, Color color2) {
         final float[] fractions = new float[] { 0.0f, 1.0f };
-        return new RadialGradientPaint(getCenter(), getDiameter(), fractions, new Color[] { color1, color2 });
+        return new RadialGradientPaint(getCenter(), getDiameter() / 2.0f, fractions, new Color[] { color1, color2 });
     }
 
 
     private void drawArc(Graphics2D g2d, PointAreaGeometry geometry) {
         Color color = palette.next();
-        g2d.setPaint(getGradientPaint(color, Color.BLACK));
+        g2d.setPaint(getGradientPaint(color, color.darker().darker()));
         g2d.fill(geometry.getArea());
         g2d.setColor(color.darker());
         g2d.draw(geometry.getArea());

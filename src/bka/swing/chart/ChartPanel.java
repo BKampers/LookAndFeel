@@ -207,13 +207,13 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setHighlightFormat(Object key, String xFormat, String yFormat) {
-        DefaultPointHighlightRenderer highlightRenderer = pointHighlightRenderers.get(key);
-        if (highlightRenderer == null) {
-            highlightRenderer = new DefaultPointHighlightRenderer();
-            setPointHighlightRenderer(key, highlightRenderer);
+        DefaultPointHighlightRenderer renderer = pointHighlightRenderers.get(key);
+        if (renderer == null) {
+            renderer = new DefaultPointHighlightRenderer();
+            setPointHighlightRenderer(key, renderer);
         }
-        highlightRenderer.setXFormat(xFormat);
-        highlightRenderer.setYFormat(yFormat);
+        renderer.setXFormat(xFormat);
+        renderer.setYFormat(yFormat);
     }
     
     

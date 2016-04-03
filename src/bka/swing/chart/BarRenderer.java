@@ -13,7 +13,7 @@ public class BarRenderer extends PointRenderer<Rectangle> {
 
     public BarRenderer(int width, Color color) {
         this.width = width;
-        this.color = color;
+        this.color1 = color;
     }
 
 
@@ -46,45 +46,48 @@ public class BarRenderer extends PointRenderer<Rectangle> {
     }
     
     
-    public void setSecondaryColor(Color color) {
-        secondaryColor = color;
-    }
-    
-    
     @Override
     public void draw(Graphics2D g2d, PointAreaGeometry<Rectangle> geometry) {
-        g2d.setPaint(getGradientPaint());
-        g2d.fill(geometry.getArea());
+        Rectangle area = geometry.getArea();
+        Paint paint = new GradientPaint(area.x, 0, color2, area.x, chartPanel.areaBottom(), color1);
+        g2d.setPaint(paint);
+        g2d.fill(area);
+        if (borderColor != null) {
+            g2d.setPaint(borderColor);
+            g2d.draw(area);
+        }
     }
 
     
     @Override
     public void drawSymbol(Graphics2D g2d, int x, int y) {
-        int height = g2d.getFontMetrics().getHeight();
-        g2d.setColor(color);
-        g2d.fillRect(x - width / 2, y - height / 2, width, height);
+        int fontHeight = g2d.getFontMetrics().getHeight();
+        int left = x - width / 2;
+        int top = y - fontHeight / 2;
+        Paint paint = new GradientPaint(left, top, color2, left, top + fontHeight, color1);
+        g2d.setPaint(paint);
+        g2d.fillRect(left, top, width, fontHeight);
     }
 
 
     @Override
     protected Rectangle createArea(int x, int y) {
         int left = Math.round(x - width / 2.0f + shift);
-        int height = chartPanel.areaBottom() - y;
-        return new Rectangle(left, y, width, height);
+        int barHeight = chartPanel.areaBottom() - y;
+        return new Rectangle(left, y, width, barHeight);
 
     }
     
-    
-    protected GradientPaint getGradientPaint() {
-        if (secondaryColor == null) {
-            secondaryColor = color;
-        }
-        return new GradientPaint(0, 0, secondaryColor, width, chartPanel.areaBottom(), color);
-    }
 
     
-    private int width;
+    public void setColors(Color color1, Color color2, Color borderColor) {
+        this.color1 = color1;
+        this.color2 = color2;
+        this.borderColor = borderColor;
+    }
+
+
+    private Color color1, color2, borderColor;
     private int shift;
-    private Color secondaryColor;
     
 }
