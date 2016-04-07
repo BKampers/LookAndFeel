@@ -11,27 +11,17 @@ import java.awt.*;
 public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
 
-    public BarRenderer(int width, Color color) {
+    public BarRenderer(int width, AreaLooks paintFactory) {
         this.width = width;
-        this.color1 = color;
+        this.paintFactory = paintFactory;
     }
 
 
-    public BarRenderer(Color color) {
-        this(7, color);
+    public BarRenderer(AreaLooks paintFactory) {
+        this(7, paintFactory);
     }
 
 
-    public BarRenderer(int width) {
-        this(width, null);
-    }
-
-
-    public BarRenderer() {
-        this(null);
-    }
-    
-    
     public void setWidth(int width) {
         this.width = width;
     }
@@ -49,8 +39,7 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
     @Override
     protected void draw(Graphics2D g2d, PointAreaGeometry<Rectangle> geometry) {
         Rectangle area = geometry.getArea();
-        Paint paint = new GradientPaint(area.x, 0, color2, area.x, chartPanel.areaBottom(), color1);
-        g2d.setPaint(paint);
+        g2d.setPaint(paintFactory.getPaint(geometry.getArea()));
         g2d.fill(area);
         if (borderColor != null) {
             g2d.setPaint(borderColor);
@@ -64,30 +53,28 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
         int fontHeight = g2d.getFontMetrics().getHeight();
         int left = x - width / 2;
         int top = y - fontHeight / 2;
-        Paint paint = new GradientPaint(left, top, color2, left, top + fontHeight, color1);
-        g2d.setPaint(paint);
+        Rectangle area = new Rectangle(left, top, width, fontHeight);
+        g2d.setPaint(paintFactory.getPaint(area));
         g2d.fillRect(left, top, width, fontHeight);
+        if (borderColor != null) {
+            g2d.setPaint(borderColor);
+            g2d.draw(area);
+        }
     }
 
 
     @Override
     protected Rectangle createArea(int x, int y) {
-        int left = Math.round(x - width / 2.0f + shift);
+        int left = x - width / 2 + shift;
         int barHeight = chartPanel.areaBottom() - y;
         return new Rectangle(left, y, width, barHeight);
 
     }
-    
 
     
-    public void setColors(Color color1, Color color2, Color borderColor) {
-        this.color1 = color1;
-        this.color2 = color2;
-        this.borderColor = borderColor;
-    }
+    private int width;
+    private int shift;
+    private AreaLooks paintFactory;
+    private Color borderColor;
 
-
-    private Color color1, color2, borderColor;
-    private int width, shift;
-    
 }

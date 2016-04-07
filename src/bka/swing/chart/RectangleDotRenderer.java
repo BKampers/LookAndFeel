@@ -11,19 +11,18 @@ import java.awt.Rectangle;
 public class RectangleDotRenderer extends PointRenderer<Rectangle> {
     
     
-    public RectangleDotRenderer(int width, int height) {
-        this.width = width;
-        this.height = height;
+    public RectangleDotRenderer(int width, int height, AreaLooks paintFactory) {
+        super(width, height, paintFactory);
     }
 
     
-    public RectangleDotRenderer(int size) {
-        this(size, size);
+    public RectangleDotRenderer(int size, AreaLooks paintFactory) {
+        super(size, size, paintFactory);
     }
 
     
-    public RectangleDotRenderer() {
-        this(7, 7);
+    public RectangleDotRenderer(AreaLooks paintFactory) {
+        super(7, 7, paintFactory);
     }
     
 

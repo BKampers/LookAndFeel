@@ -10,19 +10,18 @@ import java.awt.geom.*;
 public class OvalDotRenderer extends PointRenderer<Ellipse2D.Float> {
     
     
-    public OvalDotRenderer(int width, int height) {
-        this.width = width;
-        this.height = height;
+    public OvalDotRenderer(int width, int height, AreaLooks paintFactory) {
+        super(width, height, paintFactory);
     }
     
     
-    public OvalDotRenderer(int size) {
-        this(size, size);
+    public OvalDotRenderer(int size, AreaLooks paintFactory) {
+        super(size, size, paintFactory);
     }
     
     
-    public OvalDotRenderer() {
-        this(7, 7);
+    public OvalDotRenderer(AreaLooks paintFactory) {
+        super(7, 7, paintFactory);
     }
     
     

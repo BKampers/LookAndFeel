@@ -13,14 +13,23 @@ public class Demo extends javax.swing.JFrame {
 
     public Demo() {
         initComponents();
+        PointRenderer ovalRenderer = 
+                new RectangleDotRenderer(30, PointLooks.createLinear(new Color[] { Color.RED, Color.WHITE, Color.BLUE }));
+//        PointRenderer rectangleRenderer = new RectangleDotRenderer(2);
+//        ovalRenderer.setLinearGradient(
+//            new float[] { 0.0f, 0.5f, 1.0f },
+//            new Color[] { Color.RED, Color.WHITE, Color.BLUE },
+//            0.5f, 0.5f);
+        ovalRenderer.setBorder(Color.GREEN.darker());
+//        rectangleRenderer.setFillColor(Color.BLACK);
         chartPanel.setShowLegend(true);
         displayPanel.add(chartPanel);
         styleComboBox.addItem(new DefaultPieSectorRenderer());
         styleComboBox.addItem(new DefaultLineRenderer());
-        styleComboBox.addItem(new RectangleDotRenderer());
-        styleComboBox.addItem(new DishDotRenderer(30, 10));
-        styleComboBox.addItem(new BarRenderer());
-//        styleComboBox.setSelectedIndex(4);
+//        styleComboBox.addItem(rectangleRenderer);
+        styleComboBox.addItem(ovalRenderer);
+        styleComboBox.addItem(new BarRenderer(null));
+        styleComboBox.setSelectedIndex(2);
     }
     
 
@@ -139,6 +148,9 @@ public class Demo extends javax.swing.JFrame {
             ((PieSectorRenderer) pointRenderer).setPalette(new Palette(g4.size()));
             Map graphs = new HashMap<>();
             graphs.put("G4", g4);
+            chartPanel.setXWindowMinimum(null);
+            chartPanel.setXWindowMaximum(null);
+            chartPanel.setYWindowMinimum(null);
             chartPanel.setGraphs(graphs);
             chartPanel.setAxisRenderer(null);
             chartPanel.setAxisPositions(null, null);
@@ -153,9 +165,9 @@ public class Demo extends javax.swing.JFrame {
             chartPanel.setDemarcations(new DefaultDemarcationRenderer(), ChartPanel.DemarcationMode.X);
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_DEMARCATION);
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
-            BarRenderer b1 = new BarRenderer(Color.BLUE);
+            BarRenderer b1 = new BarRenderer(10, BarLooks.create(Color.BLUE, Color.CYAN));
             b1.setShift(-5);
-            BarRenderer b2 = new BarRenderer(Color.RED);
+            BarRenderer b2 = new BarRenderer(10, BarLooks.create(Color.RED, Color.ORANGE));
             b2.setShift(5);
             if (pointRenderer instanceof BarRenderer) {
                 Map graphs = new HashMap<>();
@@ -170,16 +182,16 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXDemarcations(new IntegerDemarcations());
 //                chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
             }
-            else if (pointRenderer instanceof RectangleDotRenderer) {
-                Map graphs = new HashMap<>();
-                graphs.put("G3", g3);
-                chartPanel.setGraphs(graphs);
-                chartPanel.setRenderer("G3", pointRenderer);
-                chartPanel.setXWindowMinimum(null);
-                chartPanel.setXWindowMaximum(null);
-                chartPanel.setYWindowMinimum(null);
-                //chartPanel.setXDemarcations(new Demarcations());
-            }
+//            else if (pointRenderer instanceof RectangleDotRenderer) {
+//                Map graphs = new HashMap<>();
+//                graphs.put("G3", g3);
+//                chartPanel.setGraphs(graphs);
+//                chartPanel.setRenderer("G3", pointRenderer);
+//                chartPanel.setXWindowMinimum(null);
+//                chartPanel.setXWindowMaximum(null);
+//                chartPanel.setYWindowMinimum(null);
+//                //chartPanel.setXDemarcations(new Demarcations());
+//            }
             else {
                 Map graphs = new HashMap<>();
                 graphs.put("G1", g1);
@@ -194,6 +206,7 @@ public class Demo extends javax.swing.JFrame {
         chartPanel.setHighlightFormat("G1", "x = %d", "y = %.2f");
         chartPanel.setHighlightFormat("G2", "x = %d", "y = %d");
         chartPanel.setHighlightFormat("G3", "x = %d", "y = %f");
+        chartPanel.setHighlightFormat("G4", "x = %d", "y = %f");
         chartPanel.revalidate();
     }//GEN-LAST:event_styleComboBox_actionPerformed
 
