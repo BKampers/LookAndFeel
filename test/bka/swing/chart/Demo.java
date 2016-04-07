@@ -16,7 +16,7 @@ public class Demo extends javax.swing.JFrame {
         PointLooks looks = PointLooks.createLinear(new Color[] { Color.RED, Color.WHITE, Color.BLUE });
         looks.setBorder(Color.GREEN.darker());
         PointRenderer ovalRenderer = new OvalDotRenderer(30, looks);
-        PointRenderer rectangleRenderer = new RectangleDotRenderer(2, DefaultLooks.create(Color.BLACK));
+        PointRenderer rectangleRenderer = new RectangleDotRenderer(2, DefaultLooks.createSolid(Color.BLACK));
         chartPanel.setShowLegend(true);
         displayPanel.add(chartPanel);
         styleComboBox.addItem(new DefaultPieSectorRenderer());
@@ -161,9 +161,8 @@ public class Demo extends javax.swing.JFrame {
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_DEMARCATION);
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
             BarLooks l1 = BarLooks.create(Color.BLUE, Color.CYAN);
-            l1.setBorder(Color.BLUE.darker(), new BasicStroke(1.5f));
-            BarLooks l2 = BarLooks.create(Color.RED, Color.ORANGE);
-            l2.setBorder(Color.RED.darker(), new BasicStroke(1.5f));
+            l1.setBorder(Color.BLUE.darker());
+            AreaLooks l2 = DefaultLooks.createBorder(Color.RED, new BasicStroke(2.0f));
             BarRenderer b1 = new BarRenderer(10, l1);
             b1.setShift(-5);
             BarRenderer b2 = new BarRenderer(10, l2);
