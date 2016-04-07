@@ -8,6 +8,7 @@ package bka.swing.chart;
 import java.awt.*;
 import java.util.*;
 
+
 public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDataAreaRenderer<PointAreaGeometry<S>> {
 
     @Override

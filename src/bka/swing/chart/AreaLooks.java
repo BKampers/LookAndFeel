@@ -11,5 +11,7 @@ import java.awt.*;
 public interface AreaLooks<S extends Shape> {
 
     public Paint getPaint(S area);
+    public Paint getBorderPaint(S area);
+    public Stroke getBorderStroke(S area);
     
 }

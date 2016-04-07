@@ -28,13 +28,39 @@ public class BarLooks implements AreaLooks<Rectangle> {
     }
 
 
+    public void setBorder(Paint borderPaint, Stroke borderStroke) {
+        this.borderPaint = borderPaint;
+        this.borderStroke = borderStroke;
+    }
+
+
+    public void setBorder(Paint borderPaint) {
+        setBorder(borderPaint, new BasicStroke(1.0f));
+    }
+
+
     @Override
     public Paint getPaint(Rectangle area) {
         return new LinearGradientPaint(area.x, area.y, area.x + area.width, area.y, pattern, colors);
     }
 
 
+    @Override
+    public Paint getBorderPaint(Rectangle area) {
+        return borderPaint;
+    }
+
+
+    @Override
+    public Stroke getBorderStroke(Rectangle area) {
+        return borderStroke;
+    }
+
+
     private final float[] pattern;
     private final Color[] colors;
+
+    private Paint borderPaint;
+    private Stroke borderStroke;
 
 }

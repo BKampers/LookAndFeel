@@ -27,6 +27,7 @@ public class DefaultAxisRenderer extends AxisRenderer {
     }
 
     
+    @Override
     public void drawXAxis(Graphics2D g2d) {
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int xMin = xMin();
@@ -39,6 +40,7 @@ public class DefaultAxisRenderer extends AxisRenderer {
         }
         int yLabel = y + fontMetrics.getHeight();
         g2d.setColor(xAxisColor);
+        g2d.setStroke(new BasicStroke());
         g2d.drawLine(xMin, y, xMax, y);
         java.util.List<Number> values = xDemarcationValues();
         int count = values.size();

@@ -13,7 +13,7 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
     public BarRenderer(int width, AreaLooks paintFactory) {
         this.width = width;
-        this.paintFactory = paintFactory;
+        this.looks = paintFactory;
     }
 
 
@@ -34,17 +34,11 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
     public void setShift(int shift) {
         this.shift = shift;
     }
-    
-    
+
+
     @Override
     protected void draw(Graphics2D g2d, PointAreaGeometry<Rectangle> geometry) {
-        Rectangle area = geometry.getArea();
-        g2d.setPaint(paintFactory.getPaint(geometry.getArea()));
-        g2d.fill(area);
-        if (borderColor != null) {
-            g2d.setPaint(borderColor);
-            g2d.draw(area);
-        }
+        draw(g2d, geometry.getArea());
     }
 
     
@@ -53,13 +47,7 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
         int fontHeight = g2d.getFontMetrics().getHeight();
         int left = x - width / 2;
         int top = y - fontHeight / 2;
-        Rectangle area = new Rectangle(left, top, width, fontHeight);
-        g2d.setPaint(paintFactory.getPaint(area));
-        g2d.fillRect(left, top, width, fontHeight);
-        if (borderColor != null) {
-            g2d.setPaint(borderColor);
-            g2d.draw(area);
-        }
+        draw(g2d, new Rectangle(left, top, width, fontHeight));
     }
 
 
@@ -71,10 +59,25 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
     }
 
-    
+
+    private void draw(Graphics2D g2d, Rectangle area) {
+        Paint paint = looks.getPaint(area);
+        if (paint != null) {
+            g2d.setPaint(paint);
+            g2d.fill(area);
+        }
+        Paint borderPaint = looks.getBorderPaint(area);
+        Stroke borderStroke = looks.getBorderStroke(area);
+        if (borderPaint != null && borderStroke != null) {
+            g2d.setPaint(borderPaint);
+            g2d.setStroke(borderStroke);
+            g2d.draw(area);
+        }
+    }
+
+   
     private int width;
     private int shift;
-    private AreaLooks paintFactory;
-    private Color borderColor;
+    private AreaLooks looks;
 
 }

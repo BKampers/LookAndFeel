@@ -13,20 +13,15 @@ public class Demo extends javax.swing.JFrame {
 
     public Demo() {
         initComponents();
-        PointRenderer ovalRenderer = 
-                new RectangleDotRenderer(30, PointLooks.createLinear(new Color[] { Color.RED, Color.WHITE, Color.BLUE }));
-//        PointRenderer rectangleRenderer = new RectangleDotRenderer(2);
-//        ovalRenderer.setLinearGradient(
-//            new float[] { 0.0f, 0.5f, 1.0f },
-//            new Color[] { Color.RED, Color.WHITE, Color.BLUE },
-//            0.5f, 0.5f);
-        ovalRenderer.setBorder(Color.GREEN.darker());
-//        rectangleRenderer.setFillColor(Color.BLACK);
+        PointLooks looks = PointLooks.createLinear(new Color[] { Color.RED, Color.WHITE, Color.BLUE });
+        looks.setBorder(Color.GREEN.darker());
+        PointRenderer ovalRenderer = new OvalDotRenderer(30, looks);
+        PointRenderer rectangleRenderer = new RectangleDotRenderer(2, DefaultLooks.create(Color.BLACK));
         chartPanel.setShowLegend(true);
         displayPanel.add(chartPanel);
         styleComboBox.addItem(new DefaultPieSectorRenderer());
         styleComboBox.addItem(new DefaultLineRenderer());
-//        styleComboBox.addItem(rectangleRenderer);
+        styleComboBox.addItem(rectangleRenderer);
         styleComboBox.addItem(ovalRenderer);
         styleComboBox.addItem(new BarRenderer(null));
         styleComboBox.setSelectedIndex(2);
@@ -165,9 +160,13 @@ public class Demo extends javax.swing.JFrame {
             chartPanel.setDemarcations(new DefaultDemarcationRenderer(), ChartPanel.DemarcationMode.X);
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_DEMARCATION);
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
-            BarRenderer b1 = new BarRenderer(10, BarLooks.create(Color.BLUE, Color.CYAN));
+            BarLooks l1 = BarLooks.create(Color.BLUE, Color.CYAN);
+            l1.setBorder(Color.BLUE.darker(), new BasicStroke(1.5f));
+            BarLooks l2 = BarLooks.create(Color.RED, Color.ORANGE);
+            l2.setBorder(Color.RED.darker(), new BasicStroke(1.5f));
+            BarRenderer b1 = new BarRenderer(10, l1);
             b1.setShift(-5);
-            BarRenderer b2 = new BarRenderer(10, BarLooks.create(Color.RED, Color.ORANGE));
+            BarRenderer b2 = new BarRenderer(10, l2);
             b2.setShift(5);
             if (pointRenderer instanceof BarRenderer) {
                 Map graphs = new HashMap<>();
@@ -182,16 +181,16 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXDemarcations(new IntegerDemarcations());
 //                chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
             }
-//            else if (pointRenderer instanceof RectangleDotRenderer) {
-//                Map graphs = new HashMap<>();
-//                graphs.put("G3", g3);
-//                chartPanel.setGraphs(graphs);
-//                chartPanel.setRenderer("G3", pointRenderer);
-//                chartPanel.setXWindowMinimum(null);
-//                chartPanel.setXWindowMaximum(null);
-//                chartPanel.setYWindowMinimum(null);
-//                //chartPanel.setXDemarcations(new Demarcations());
-//            }
+            else if (pointRenderer instanceof RectangleDotRenderer) {
+                Map graphs = new HashMap<>();
+                graphs.put("G3", g3);
+                chartPanel.setGraphs(graphs);
+                chartPanel.setRenderer("G3", pointRenderer);
+                chartPanel.setXWindowMinimum(null);
+                chartPanel.setXWindowMaximum(null);
+                chartPanel.setYWindowMinimum(null);
+                //chartPanel.setXDemarcations(new Demarcations());
+            }
             else {
                 Map graphs = new HashMap<>();
                 graphs.put("G1", g1);

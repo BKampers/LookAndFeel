@@ -58,6 +58,17 @@ public class PointLooks implements AreaLooks<RectangularShape> {
     }
 
 
+    public void setBorder(Paint borderPaint, Stroke borderStroke) {
+        this.borderPaint = borderPaint;
+        this.borderStroke = borderStroke;
+    }
+
+
+    public void setBorder(Paint borderPaint) {
+        setBorder(borderPaint, new BasicStroke());
+    }
+
+
     @Override
     public Paint getPaint(RectangularShape area) {
         try {
@@ -72,6 +83,18 @@ public class PointLooks implements AreaLooks<RectangularShape> {
             Logger.getLogger(PointLooks.class.getName()).log(Level.SEVERE, "Invalid gradient parameters", ex);
             return null;
         }
+    }
+
+
+    @Override
+    public Paint getBorderPaint(RectangularShape area) {
+        return borderPaint;
+    }
+
+
+    @Override
+    public Stroke getBorderStroke(RectangularShape area) {
+        return borderStroke;
     }
 
 
@@ -122,4 +145,7 @@ public class PointLooks implements AreaLooks<RectangularShape> {
     private final float[] distribution;
     private final Color[] colors;
 
-}
+    private Paint borderPaint;
+    private Stroke borderStroke;
+
+ }

@@ -10,10 +10,10 @@ import java.awt.*;
 public abstract class PointRenderer<S extends Shape> extends CoordinateAreaRenderer<S> {
 
 
-    public PointRenderer(int width, int height, AreaLooks paintFactory) {
+    public PointRenderer(int width, int height, AreaLooks looks) {
         this.width = width;
         this.height = height;
-        this.paintFactory = paintFactory;
+        this.looks = looks;
     }
 
 
@@ -21,39 +21,30 @@ public abstract class PointRenderer<S extends Shape> extends CoordinateAreaRende
     protected abstract S createArea(int x, int y);
 
 
-    public void setBorder(Color color, Stroke stroke) {
-        borderColor = color;
-        borderStroke = stroke;
-    }
-
-
-    public void setBorder(Color color) {
-        setBorder(color, new BasicStroke(1.0f));
-    }
-
-
     @Override
     protected void draw(Graphics2D g2d, PointAreaGeometry<S> geometry) {
-        S area = geometry.getArea();
-        Paint paint = paintFactory.getPaint(area);
-        draw(g2d, paint, area);
+        draw(g2d, geometry.getArea());
     }
 
 
    @Override
     protected void drawSymbol(Graphics2D g2d, int x, int y) {
         S area = createArea(x, y);
-        draw(g2d, paintFactory.getPaint(area), area);
+        draw(g2d, area);
     }
 
 
-    private void draw(Graphics2D g2d, Paint paint, S area) {
+    private void draw(Graphics2D g2d, S area) {
+        Paint paint = looks.getPaint(area);
         if (paint != null) {
             g2d.setPaint(paint);
             g2d.fill(area);
         }
-        if (borderColor != null) {
-            g2d.setPaint(borderColor);
+        Paint borderPaint = looks.getBorderPaint(area);
+        Stroke borderStroke = looks.getBorderStroke(area);
+        if (borderPaint != null && borderStroke != null) {
+            g2d.setPaint(borderPaint);
+            g2d.setStroke(borderStroke);
             g2d.draw(area);
         }
     }
@@ -62,9 +53,6 @@ public abstract class PointRenderer<S extends Shape> extends CoordinateAreaRende
     protected int width;
     protected int height;
 
-    private final AreaLooks paintFactory;
-
-    protected Color borderColor;
-    protected Stroke borderStroke;
+    private final AreaLooks looks;
 
 }
