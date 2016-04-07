@@ -24,7 +24,7 @@ public class BarLooks implements AreaLooks<Rectangle> {
     public static BarLooks create(Color centerColor, Color edgeColor) {
         return new BarLooks(
             new float[] { 0.0f, 0.5f, 1.0f },
-            new Color[] {edgeColor, centerColor, edgeColor});
+            new Color[] { edgeColor, centerColor, edgeColor });
     }
 
 
@@ -35,7 +35,7 @@ public class BarLooks implements AreaLooks<Rectangle> {
 
 
     public void setBorder(Paint borderPaint) {
-        setBorder(borderPaint, new BasicStroke(1.0f));
+        setBorder(borderPaint, new BasicStroke());
     }
 
 

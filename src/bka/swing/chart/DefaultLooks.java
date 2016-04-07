@@ -16,24 +16,34 @@ public class DefaultLooks implements AreaLooks<Shape> {
     }
 
 
-    public static DefaultLooks create(Color color) {
-        return new DefaultLooks(color, null, null);
-    }
-
-
-    public static DefaultLooks create(Color color, Color borderColor) {
-        return new DefaultLooks(color, borderColor, null);
-    }
-
-
     public static DefaultLooks create(Color color, Color borderColor, Stroke borderStroke) {
         return new DefaultLooks(color, borderColor, borderStroke);
     }
 
 
+    public static DefaultLooks create(Color color, Color borderColor) {
+        return new DefaultLooks(color, borderColor, new BasicStroke());
+    }
+
+
+    public static DefaultLooks createSolid(Color color) {
+        return new DefaultLooks(color, null, null);
+    }
+
+
+    public static DefaultLooks createBorder(Color borderColor, Stroke borderStroke) {
+        return new DefaultLooks(null, borderColor, borderStroke);
+    }
+
+
+    public static DefaultLooks createBorder(Color borderColor) {
+        return new DefaultLooks(null, borderColor, new BasicStroke());
+    }
+
+
     @Override
     public Paint getPaint(Shape area) {
-        return Color.BLACK;
+        return color;
     }
 
 
