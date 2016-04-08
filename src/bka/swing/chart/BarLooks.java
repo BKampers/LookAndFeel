@@ -7,7 +7,7 @@ package bka.swing.chart;
 import java.awt.*;
 
 
-public class BarLooks implements AreaLooks<Rectangle> {
+public class BarLooks implements AreaLooks<AreaGeometry<Rectangle>> {
 
 
     private BarLooks(float[] pattern, Color[] colors) {
@@ -40,19 +40,20 @@ public class BarLooks implements AreaLooks<Rectangle> {
 
 
     @Override
-    public Paint getPaint(Rectangle area) {
+    public Paint getPaint(AreaGeometry<Rectangle> geometry) {
+        Rectangle area = geometry.getArea();
         return new LinearGradientPaint(area.x, area.y, area.x + area.width, area.y, pattern, colors);
     }
 
 
     @Override
-    public Paint getBorderPaint(Rectangle area) {
+    public Paint getBorderPaint(AreaGeometry<Rectangle> geometry) {
         return borderPaint;
     }
 
 
     @Override
-    public Stroke getBorderStroke(Rectangle area) {
+    public Stroke getBorderStroke(AreaGeometry<Rectangle> geometry) {
         return borderStroke;
     }
 

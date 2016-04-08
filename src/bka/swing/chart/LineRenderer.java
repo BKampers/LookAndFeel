@@ -9,11 +9,15 @@ import java.util.*;
 
 public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeometry> {
 
-    LineRenderer(LineLooks lineLooks) {
+
+    LineRenderer(LineLooks lineLooks, int markerWidth, int markerHeight) {
         super(lineLooks.getAreaLooks());
         this.lineLooks = lineLooks;
+        this.markerWidth = markerWidth;
+        this.markerHeight = markerHeight;
     }
-    
+
+
     protected abstract void draw(Graphics2D g2d, PixelAreaGeometry geometry1, PixelAreaGeometry geometry2);
     
     
@@ -30,13 +34,23 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
         for (Map.Entry<Number, Number> entry : graph.entrySet()) {
             Number x = entry.getKey();
             Number y = entry.getValue();
-            dataGeometry.add(new PixelAreaGeometry(x, y, new Point(chartGeometry.xPixel(x), chartGeometry.yPixel(y))));
+            int xPixel = chartGeometry.xPixel(x);
+            int yPixel = chartGeometry.yPixel(y);
+            Rectangle area = createArea(xPixel, yPixel);
+            dataGeometry.add(new PixelAreaGeometry(x, y, area, new Point(xPixel, yPixel)));
         }
         return dataGeometry;
     }
 
 
+    protected Rectangle createArea(int x, int y) {
+        return new Rectangle(x - markerWidth / 2, y - markerHeight / 2, markerWidth, markerHeight);
+    }
+
+
     protected final LineLooks lineLooks;
+    protected final int markerWidth;
+    protected final int markerHeight;
 
     protected PixelAreaGeometry previous;
     

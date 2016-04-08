@@ -19,8 +19,8 @@ public class Demo extends javax.swing.JFrame {
         PointRenderer rectangleRenderer = new RectangleDotRenderer(2, DefaultLooks.createSolid(Color.BLACK));
         chartPanel.setShowLegend(true);
         displayPanel.add(chartPanel);
-        styleComboBox.addItem(new DefaultPieSectorRenderer(DefaultLooks.createSolid(Color.YELLOW)));
-        styleComboBox.addItem(new DefaultLineRenderer(LineLooks.create(Color.MAGENTA, DefaultLooks.createSolid(Color.BLACK))));
+        styleComboBox.addItem(new DefaultPieSectorRenderer(PieLooks.create(Palette.generateColors(7))));
+        styleComboBox.addItem(new DefaultLineRenderer(LineLooks.create(Color.MAGENTA, /*DefaultLooks.createSolid(Color.BLACK)*/ pointLooks), 9));
         styleComboBox.addItem(rectangleRenderer);
         styleComboBox.addItem(ovalRenderer);
         styleComboBox.addItem(new BarRenderer(null));

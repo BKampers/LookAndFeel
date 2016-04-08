@@ -8,10 +8,10 @@ package bka.swing.chart;
 import java.awt.*;
 
 
-public class LineLooks<S extends Shape> {//implements AreaLooks<S> {
+public class LineLooks<G extends AreaGeometry> {
 
 
-    LineLooks(Paint linePaint, Stroke lineStroke, AreaLooks areaLooks) {
+    LineLooks(Paint linePaint, Stroke lineStroke, AreaLooks<G> areaLooks) {
         this.linePaint = linePaint;
         this.lineStroke = lineStroke;
         this.areaLooks = areaLooks;
@@ -48,13 +48,13 @@ public class LineLooks<S extends Shape> {//implements AreaLooks<S> {
     }
 
 
-    public AreaLooks<S> getAreaLooks() {
+    public AreaLooks<G> getAreaLooks() {
         return areaLooks;
     }
 
 
     private final Paint linePaint;
     private final Stroke lineStroke;
-    private final AreaLooks areaLooks;
+    private final AreaLooks<G> areaLooks;
 
 }

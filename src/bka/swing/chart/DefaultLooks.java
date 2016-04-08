@@ -7,7 +7,7 @@ package bka.swing.chart;
 import java.awt.*;
 
 
-public class DefaultLooks implements AreaLooks<Shape> {
+public class DefaultLooks implements AreaLooks<AreaGeometry> {
 
 
     private DefaultLooks(Color color, Color borderColor, Stroke borderStroke) {
@@ -43,19 +43,19 @@ public class DefaultLooks implements AreaLooks<Shape> {
 
 
     @Override
-    public Paint getPaint(Shape area) {
+    public Paint getPaint(AreaGeometry geometry) {
         return color;
     }
 
 
     @Override
-    public Paint getBorderPaint(Shape area) {
+    public Paint getBorderPaint(AreaGeometry geometry) {
         return borderColor;
     }
 
 
     @Override
-    public Stroke getBorderStroke(Shape area) {
+    public Stroke getBorderStroke(AreaGeometry geometry) {
         return borderStroke;
     }
 

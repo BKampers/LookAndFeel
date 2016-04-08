@@ -10,11 +10,21 @@ import java.awt.*;
 public class DefaultLineRenderer extends LineRenderer {
 
 
-    public DefaultLineRenderer(LineLooks lineLooks) {
-        super(lineLooks);
+    public DefaultLineRenderer(LineLooks lineLooks, int markerWidth, int markerHeight) {
+        super(lineLooks, markerWidth, markerHeight);
     }
-    
-    
+
+
+    public DefaultLineRenderer(LineLooks lineLooks, int markerSize) {
+        this(lineLooks, markerSize, markerSize);
+    }
+
+
+    public DefaultLineRenderer(LineLooks lineLooks) {
+        this(lineLooks, 3, 3);
+    }
+
+
     @Override
     public void draw(Graphics2D g2d, PixelAreaGeometry geometry1, PixelAreaGeometry geometry2) {
         java.awt.Point pixel1 = geometry1.getPixel();
@@ -26,7 +36,7 @@ public class DefaultLineRenderer extends LineRenderer {
     @Override
     protected void draw(Graphics2D g2d, PixelAreaGeometry geometry) {
         if (lineLooks.getAreaLooks() != null) {
-            draw(g2d, geometry.getArea());
+            super.draw(g2d, geometry);
         }
         if (previous != null) {
             java.awt.Point pixel1 = previous.getPixel();
@@ -40,9 +50,10 @@ public class DefaultLineRenderer extends LineRenderer {
     @Override
     protected void drawSymbol(Graphics2D g2d, int x, int y) {
         if (lineLooks.getAreaLooks() != null) {
-            draw(g2d, new Rectangle(x - 3, y - 3, 7, 7));
+            Rectangle area = createArea(x, y);
+            super.draw(g2d, new PixelAreaGeometry<>(null, null, area, new Point(x, y)));
         }
-        draw(g2d, x - 5, y, x + 5, y);
+        draw(g2d, x - 7, y, x + 7, y);
     }
 
 

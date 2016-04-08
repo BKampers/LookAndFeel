@@ -25,7 +25,7 @@ public class Palette {
     
     public Palette(int count) {
         if (count > 0) {
-            generateColors(count);
+            colors = generateColors(count);
         }
         else {
             colors = new Color[] { Color.WHITE };
@@ -45,12 +45,13 @@ public class Palette {
     }
     
     
-    private void generateColors(int count) {
-        colors = new Color[count];
+    public static Color[] generateColors(int count) {
+        Color[] colors = new Color[count];
         float range = count;
         for (int i = 0; i < count; ++i) {
             colors[i] = new Color(Color.HSBtoRGB(i / range, 1.0f, 1.0f));
         }
+        return colors;
     }
     
     

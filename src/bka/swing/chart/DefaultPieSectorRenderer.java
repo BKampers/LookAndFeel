@@ -13,7 +13,7 @@ import java.util.*;
 public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
-    DefaultPieSectorRenderer(AreaLooks looks) {
+    DefaultPieSectorRenderer(PieLooks looks) {
         super(looks);
     }
 
@@ -24,11 +24,11 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
         int y = geometry.getY();
         g2d.setFont(geometry.getFont());
         FontMetrics fontMetrics = g2d.getFontMetrics();
-        for (TreeSet<PointAreaGeometry> graphGeometry : chartGeometry.getGraphs().values()) {
+        for (TreeSet<AreaGeometry> graphGeometry : chartGeometry.getGraphs().values()) {
             palette.reset();
-            for (PointAreaGeometry areaGeometry : graphGeometry) {
+            for (AreaGeometry areaGeometry : graphGeometry) {
                 g2d.setColor(palette.next());
-                drawSymbol(g2d, x, y);
+                drawSymbol(g2d, x, y, ((ArcAreaGeometry) areaGeometry).getIndex());
                 g2d.setColor(geometry.getColor());
                 g2d.drawString(areaGeometry.getX().toString(), x + geometry.getSpace(), y + fontMetrics.getDescent());
                 y += geometry.getFeed() + fontMetrics.getHeight();
@@ -40,29 +40,19 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
     @Override
     protected void draw(Graphics2D g2d, ArcAreaGeometry geometry) {
-        drawArc(g2d, geometry);
+        super.draw(g2d, geometry);
         drawLabel(g2d, geometry);
     }
 
 
     @Override
-    protected void drawSymbol(Graphics2D g2d, int x, int y) {
-        g2d.fill(new Arc2D.Float(x - 10, y - 10, 20, 20, -40, 80, Arc2D.PIE));
-    }
+    protected void drawSymbol(Graphics2D g2d, int x, int y) {}
 
-
-    protected RadialGradientPaint getGradientPaint(Color color1, Color color2) {
-        final float[] fractions = new float[] { 0.0f, 1.0f };
-        return new RadialGradientPaint(getCenter(), getDiameter() / 2.0f, fractions, new Color[] { color1, color2 });
-    }
-
-
-    private void drawArc(Graphics2D g2d, PointAreaGeometry geometry) {
-        Color color = palette.next();
-        g2d.setPaint(getGradientPaint(color, color.darker().darker()));
-        g2d.fill(geometry.getArea());
-        g2d.setColor(color.darker());
-        g2d.draw(geometry.getArea());
+    
+    protected void drawSymbol(Graphics2D g2d, int x, int y, int index) {
+        Arc2D.Float area = new Arc2D.Float(x - 10, y - 10, 20, 20, -40, 80, Arc2D.PIE);
+        ArcAreaGeometry geometry = new ArcAreaGeometry(null, null, area, index);
+        super.draw(g2d, geometry);
     }
 
 

@@ -10,7 +10,7 @@ import java.awt.geom.*;
 import java.util.logging.*;
 
 
-public class PointLooks implements AreaLooks<RectangularShape> {
+public class PointLooks implements AreaLooks<AreaGeometry<RectangularShape>> {
 
 
     PointLooks(boolean radial, float xShiftFactor, float yShiftFactor, float[] distribution, Color[] colors) {
@@ -70,7 +70,8 @@ public class PointLooks implements AreaLooks<RectangularShape> {
 
 
     @Override
-    public Paint getPaint(RectangularShape area) {
+    public Paint getPaint(AreaGeometry<RectangularShape> geometry) {
+        RectangularShape area = geometry.getArea();
         try {
             if (radial) {
                 return createRadialGradientPaint(area);
@@ -87,42 +88,13 @@ public class PointLooks implements AreaLooks<RectangularShape> {
 
 
     @Override
-    public Paint getBorderPaint(RectangularShape area) {
+    public Paint getBorderPaint(AreaGeometry<RectangularShape> area) {
         return borderPaint;
     }
 
 
     @Override
-    public Stroke getBorderStroke(RectangularShape area) {
-        return borderStroke;
-    }
-
-    public boolean isRadial() {
-        return radial;
-    }
-
-
-    public float getxShiftFactor() {
-        return xShiftFactor;
-    }
-
-    public float getyShiftFactor() {
-        return yShiftFactor;
-    }
-
-    public float[] getDistribution() {
-        return distribution;
-    }
-
-    public Color[] getColors() {
-        return colors;
-    }
-
-    public Paint getBorderPaint() {
-        return borderPaint;
-    }
-
-    public Stroke getBorderStroke() {
+    public Stroke getBorderStroke(AreaGeometry<RectangularShape> area) {
         return borderStroke;
     }
 

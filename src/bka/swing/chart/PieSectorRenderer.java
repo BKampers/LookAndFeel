@@ -14,7 +14,8 @@ import java.util.*;
 
 public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcAreaGeometry> {
 
-    PieSectorRenderer(AreaLooks looks) {
+
+    PieSectorRenderer(PieLooks looks) {
         super(looks);
     }
     
@@ -28,14 +29,16 @@ public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcArea
         center = new Point(Math.round(pieLeft + radius), Math.round(pieTop + radius));
         double previous = 0.0;
         double total = total(graph.values());
+        int index = 0;
         for (Map.Entry<Number, Number> entry : graph.entrySet()) {
             double value = entry.getValue().doubleValue();
             double startAngle = previous / total * 360;
             double angularExtent = value / total * 360;
             Arc2D.Float arc = new Arc2D.Float(pieLeft, pieTop, diameter, diameter, (float) startAngle, (float) angularExtent, Arc2D.PIE);
-            ArcAreaGeometry arcGeometry = new ArcAreaGeometry(entry.getKey(), entry.getValue(), arc);
+            ArcAreaGeometry arcGeometry = new ArcAreaGeometry(entry.getKey(), entry.getValue(), arc, index);
             geometry.add(arcGeometry);
             previous += value;
+            index++;
         }
         return geometry;
     }
@@ -52,7 +55,7 @@ public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcArea
 
 
     @Override
-    public void draw(Graphics2D g2d, TreeSet<ArcAreaGeometry> graphGeometry) {
+    public synchronized void draw(Graphics2D g2d, TreeSet<ArcAreaGeometry> graphGeometry) {
         if (palette == null) {
             palette = new Palette("chart.piePalette");
         }
