@@ -13,6 +13,11 @@ import java.util.*;
 public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
+    DefaultPieSectorRenderer(AreaLooks looks) {
+        super(looks);
+    }
+
+
     @Override
     public void drawLegend(Graphics2D g2d, Object key, LegendGeometry geometry) {
         int x = geometry.getX();

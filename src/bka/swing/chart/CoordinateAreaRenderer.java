@@ -11,8 +11,11 @@ import java.util.*;
 
 public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDataAreaRenderer<PointAreaGeometry<S>> {
 
-    @Override
-    protected abstract void draw(Graphics2D g2d, PointAreaGeometry<S> geometry);
+
+    CoordinateAreaRenderer(AreaLooks looks) {
+        super(looks);
+    }
+
 
     protected abstract S createArea(int x, int y);
 

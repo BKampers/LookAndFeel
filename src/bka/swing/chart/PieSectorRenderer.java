@@ -13,7 +13,10 @@ import java.util.*;
 
 
 public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcAreaGeometry> {
-        
+
+    PieSectorRenderer(AreaLooks looks) {
+        super(looks);
+    }
     
     @Override
     TreeSet<ArcAreaGeometry> createDataGeomerty(Map<Number, Number> graph) {

@@ -8,7 +8,11 @@ import java.awt.*;
 import java.util.*;
 
 public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeometry> {
-    
+
+    LineRenderer(LineLooks lineLooks) {
+        super(lineLooks.getAreaLooks());
+        this.lineLooks = lineLooks;
+    }
     
     protected abstract void draw(Graphics2D g2d, PixelAreaGeometry geometry1, PixelAreaGeometry geometry2);
     
@@ -17,16 +21,6 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
     public void draw(Graphics2D g2d, TreeSet<PixelAreaGeometry> graphGeometry) {
         previous = null;
         super.draw(g2d, graphGeometry);
-    }
-
-    
-    public void setColor(Color color) {
-        this.color = color;
-    }
-    
-    
-    public Color getColor() {
-        return color;
     }
 
 
@@ -41,8 +35,9 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
         return dataGeometry;
     }
 
-    
-    protected Color color = Color.BLACK;
+
+    protected final LineLooks lineLooks;
+
     protected PixelAreaGeometry previous;
     
 }

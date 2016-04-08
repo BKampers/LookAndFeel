@@ -9,6 +9,7 @@ import java.awt.*;
 
 public class DefaultLooks implements AreaLooks<Shape> {
 
+
     private DefaultLooks(Color color, Color borderColor, Stroke borderStroke) {
         this.color = color;
         this.borderColor = borderColor;

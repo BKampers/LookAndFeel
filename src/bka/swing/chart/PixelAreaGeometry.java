@@ -32,7 +32,7 @@ public class PixelAreaGeometry<S extends Shape> extends PointAreaGeometry<S> {
 
 
     private static Rectangle defaultArea(Point pixel) {
-        return new Rectangle(pixel.x - 1, pixel.y - 1, 3, 3);
+        return new Rectangle(pixel.x - 5, pixel.y - 5, 11, 11);
     }
 
 

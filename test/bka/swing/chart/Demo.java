@@ -13,18 +13,18 @@ public class Demo extends javax.swing.JFrame {
 
     public Demo() {
         initComponents();
-        PointLooks looks = PointLooks.createLinear(new Color[] { Color.RED, Color.WHITE, Color.BLUE });
-        looks.setBorder(Color.GREEN.darker());
-        PointRenderer ovalRenderer = new OvalDotRenderer(30, looks);
+        PointLooks pointLooks = PointLooks.createLinear(new Color[] { Color.RED, Color.WHITE, Color.BLUE });
+        pointLooks.setBorder(Color.GREEN.darker());
+        PointRenderer ovalRenderer = new OvalDotRenderer(30, pointLooks);
         PointRenderer rectangleRenderer = new RectangleDotRenderer(2, DefaultLooks.createSolid(Color.BLACK));
         chartPanel.setShowLegend(true);
         displayPanel.add(chartPanel);
-        styleComboBox.addItem(new DefaultPieSectorRenderer());
-        styleComboBox.addItem(new DefaultLineRenderer());
+        styleComboBox.addItem(new DefaultPieSectorRenderer(DefaultLooks.createSolid(Color.YELLOW)));
+        styleComboBox.addItem(new DefaultLineRenderer(LineLooks.create(Color.MAGENTA, DefaultLooks.createSolid(Color.BLACK))));
         styleComboBox.addItem(rectangleRenderer);
         styleComboBox.addItem(ovalRenderer);
         styleComboBox.addItem(new BarRenderer(null));
-        styleComboBox.setSelectedIndex(2);
+        styleComboBox.setSelectedIndex(1);
     }
     
 

@@ -11,9 +11,9 @@ import java.awt.*;
 public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
 
-    public BarRenderer(int width, AreaLooks paintFactory) {
+    public BarRenderer(int width, AreaLooks looks) {
+        super(looks);
         this.width = width;
-        this.looks = paintFactory;
     }
 
 
@@ -37,12 +37,6 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
 
     @Override
-    protected void draw(Graphics2D g2d, PointAreaGeometry<Rectangle> geometry) {
-        draw(g2d, geometry.getArea());
-    }
-
-    
-    @Override
     public void drawSymbol(Graphics2D g2d, int x, int y) {
         int fontHeight = g2d.getFontMetrics().getHeight();
         int left = x - width / 2;
@@ -60,24 +54,7 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
     }
 
 
-    private void draw(Graphics2D g2d, Rectangle area) {
-        Paint paint = looks.getPaint(area);
-        if (paint != null) {
-            g2d.setPaint(paint);
-            g2d.fill(area);
-        }
-        Paint borderPaint = looks.getBorderPaint(area);
-        Stroke borderStroke = looks.getBorderStroke(area);
-        if (borderPaint != null && borderStroke != null) {
-            g2d.setPaint(borderPaint);
-            g2d.setStroke(borderStroke);
-            g2d.draw(area);
-        }
-    }
-
-   
     private int width;
     private int shift;
-    private AreaLooks looks;
 
 }

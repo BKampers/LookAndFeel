@@ -13,7 +13,7 @@ import java.util.logging.*;
 public class PointLooks implements AreaLooks<RectangularShape> {
 
 
-    private PointLooks(boolean radial, float xShiftFactor, float yShiftFactor, float[] distribution, Color[] colors) {
+    PointLooks(boolean radial, float xShiftFactor, float yShiftFactor, float[] distribution, Color[] colors) {
         this.radial = radial;
         this.xShiftFactor = xShiftFactor;
         this.yShiftFactor = yShiftFactor;
@@ -94,6 +94,35 @@ public class PointLooks implements AreaLooks<RectangularShape> {
 
     @Override
     public Stroke getBorderStroke(RectangularShape area) {
+        return borderStroke;
+    }
+
+    public boolean isRadial() {
+        return radial;
+    }
+
+
+    public float getxShiftFactor() {
+        return xShiftFactor;
+    }
+
+    public float getyShiftFactor() {
+        return yShiftFactor;
+    }
+
+    public float[] getDistribution() {
+        return distribution;
+    }
+
+    public Color[] getColors() {
+        return colors;
+    }
+
+    public Paint getBorderPaint() {
+        return borderPaint;
+    }
+
+    public Stroke getBorderStroke() {
         return borderStroke;
     }
 
