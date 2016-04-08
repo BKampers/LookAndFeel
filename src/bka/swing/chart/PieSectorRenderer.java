@@ -12,7 +12,7 @@ import java.util.*;
 
 
 
-public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcAreaGeometry> {
+public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcAreaGeometry, Arc2D.Float> {
 
 
     PieSectorRenderer(PieLooks looks) {
@@ -20,7 +20,7 @@ public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcArea
     }
     
     @Override
-    TreeSet<ArcAreaGeometry> createDataGeomerty(Map<Number, Number> graph) {
+    TreeSet<ArcAreaGeometry> createGraphGeomerty(Map<Number, Number> graph) {
         TreeSet<ArcAreaGeometry> geometry = new TreeSet<>();
         diameter = Math.min(chartPanel.areaWidth(), chartPanel.areaHeight()) - DIAMETER_MARGIN;
         float pieLeft = chartPanel.areaLeft() + (chartPanel.areaWidth() - diameter) / 2.0f;

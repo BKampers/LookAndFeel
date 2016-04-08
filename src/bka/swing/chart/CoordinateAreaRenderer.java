@@ -9,7 +9,7 @@ import java.awt.*;
 import java.util.*;
 
 
-public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDataAreaRenderer<AreaGeometry<S>> {
+public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDataAreaRenderer<AreaGeometry<S>, S> {
 
 
     CoordinateAreaRenderer(AreaLooks looks) {
@@ -21,8 +21,14 @@ public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDa
 
 
     @Override
-    protected void drawSymbol(Graphics2D g2d, int x, int y) {
-        draw(g2d, createAreaGeometry(x, y));
+    protected S createSymbolArea(int x, int y) {
+        return createArea(x, y);
+    }
+
+
+    @Override
+    protected AreaGeometry<S> createSymbolGeometry(S area) {
+        return new AreaGeometry<>(null, null, area);
     }
 
 
@@ -33,13 +39,8 @@ public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDa
     }
 
 
-    AreaGeometry<S> createAreaGeometry(int pixelX, int pixelY) {
-        return new AreaGeometry<>(null, null, createArea(pixelX, pixelY));
-    }
-
-
     @Override
-    TreeSet<AreaGeometry<S>> createDataGeomerty(Map<Number, Number> graph) {
+    TreeSet<AreaGeometry<S>> createGraphGeomerty(Map<Number, Number> graph) {
         TreeSet<AreaGeometry<S>> geometry = new TreeSet<>();
         for (Map.Entry<Number, Number> entry : graph.entrySet()) {
             Number x = entry.getKey();

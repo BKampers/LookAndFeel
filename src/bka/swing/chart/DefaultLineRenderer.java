@@ -5,6 +5,7 @@
 package bka.swing.chart;
 
 import java.awt.*;
+import java.awt.geom.*;
 
 
 public class DefaultLineRenderer extends LineRenderer {
@@ -48,11 +49,22 @@ public class DefaultLineRenderer extends LineRenderer {
 
 
     @Override
+    protected RectangularShape createSymbolArea(int x, int y) {
+        return new Rectangle(x - markerWidth / 2, y - markerHeight / 2, markerWidth, markerHeight);
+    }
+
+
+    @Override
+    protected PixelAreaGeometry<RectangularShape> createSymbolGeometry(RectangularShape area) {
+        Point pixel = new Point((int) area.getCenterX(), (int) area.getCenterY());
+        return new PixelAreaGeometry<>(null, null, area, pixel);
+    }
+
+
+    @Override
     protected void drawSymbol(Graphics2D g2d, int x, int y) {
-        if (lineLooks.getAreaLooks() != null) {
-            Rectangle area = createArea(x, y);
-            super.draw(g2d, new PixelAreaGeometry<>(null, null, area, new Point(x, y)));
-        }
+        RectangularShape area = createSymbolArea(x, y);
+        super.draw(g2d, new PixelAreaGeometry<>(null, null, area, new Point(x, y)));
         draw(g2d, x - 7, y, x + 7, y);
     }
 
@@ -66,6 +78,5 @@ public class DefaultLineRenderer extends LineRenderer {
             g2d.drawLine(x1, y1, x2, y2);
         }
     }
-
 
 }

@@ -188,7 +188,7 @@ class ChartGeometry {
         for (Map.Entry<Object, Map<Number, Number>> map : window.points.entrySet()) {
             AbstractDataAreaRenderer renderer = renderers.get(map.getKey());
             if (renderer != null) {
-                TreeSet<AreaGeometry> points = renderer.createDataGeomerty(map.getValue());
+                TreeSet<AreaGeometry> points = renderer.createGraphGeomerty(map.getValue());
                 graphs.put(map.getKey(), points);
             }
         }

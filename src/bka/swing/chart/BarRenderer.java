@@ -37,12 +37,17 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
 
     @Override
-    public void drawSymbol(Graphics2D g2d, int x, int y) {
-        FontMetrics fontMetrics = g2d.getFontMetrics();
-        int height = fontMetrics.getHeight() - fontMetrics.getDescent();
+    protected Rectangle createSymbolArea(int x, int y) {
+        int height = width * 2;
         int left = x - width / 2;
         int top = y - height / 2;
-        draw(g2d, new AreaGeometry<>(null, null, new Rectangle(left, top, width, height)));
+        return new Rectangle(left, top, width, height);
+    }
+
+
+    @Override
+    protected AreaGeometry<Rectangle> createSymbolGeometry(Rectangle area) {
+        return new AreaGeometry<>(null, null, area);
     }
 
 

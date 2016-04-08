@@ -46,12 +46,20 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
     @Override
-    protected void drawSymbol(Graphics2D g2d, int x, int y) {}
+    protected Arc2D.Float createSymbolArea(int x, int y) {
+        return new Arc2D.Float(x - 10, y - 10, 20, 20, -40, 80, Arc2D.PIE);
+    }
 
-    
+
+    @Override
+    protected ArcAreaGeometry createSymbolGeometry(Arc2D.Float area) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
     protected void drawSymbol(Graphics2D g2d, int x, int y, int index) {
-        Arc2D.Float area = new Arc2D.Float(x - 10, y - 10, 20, 20, -40, 80, Arc2D.PIE);
-        ArcAreaGeometry geometry = new ArcAreaGeometry(null, null, area, index);
+        //Arc2D.Float area = new Arc2D.Float(x - 10, y - 10, 20, 20, -40, 80, Arc2D.PIE);
+        ArcAreaGeometry geometry = new ArcAreaGeometry(null, null, createSymbolArea(x, y), index);
         super.draw(g2d, geometry);
     }
 
@@ -80,6 +88,5 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
     private static final double LEFT_SIDE_MAX = 1.5 * Math.PI; // radians
 
     private static final int TEXT_RADIUS_EXTENT = 15; // pixels
-
 
 }

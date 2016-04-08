@@ -10,15 +10,16 @@ import java.util.*;
 
 
 
-public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
+public abstract class AbstractDataAreaRenderer<G extends AreaGeometry<S>, S extends Shape> {
 
     AbstractDataAreaRenderer(AreaLooks looks) {
         this.looks = looks;
     }
 
     
-    protected abstract void drawSymbol(Graphics2D g2d, int x, int y);
-    abstract TreeSet<G> createDataGeomerty(Map<Number, Number> graph);
+    protected abstract S createSymbolArea(int x, int y);
+    protected abstract G createSymbolGeometry(S area);
+    abstract TreeSet<G> createGraphGeomerty(Map<Number, Number> graph);
 
 
     public void draw(Graphics2D g2d, TreeSet<G> graphGeometry) {
@@ -52,6 +53,11 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
             g2d.setStroke(borderStroke);
             g2d.draw(area);
         }
+    }
+
+
+    protected void drawSymbol(Graphics2D g2d, int x, int y) {
+        draw(g2d, createSymbolGeometry(createSymbolArea(x, y)));
     }
 
 

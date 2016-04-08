@@ -5,9 +5,10 @@
 package bka.swing.chart;
 
 import java.awt.*;
+import java.awt.geom.*;
 import java.util.*;
 
-public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeometry> {
+public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeometry<RectangularShape>, RectangularShape> {
 
 
     LineRenderer(LineLooks lineLooks, int markerWidth, int markerHeight) {
@@ -22,29 +23,24 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
     
     
     @Override
-    public void draw(Graphics2D g2d, TreeSet<PixelAreaGeometry> graphGeometry) {
+    public void draw(Graphics2D g2d, TreeSet<PixelAreaGeometry<RectangularShape>> graphGeometry) {
         previous = null;
         super.draw(g2d, graphGeometry);
     }
 
 
     @Override
-    TreeSet<PixelAreaGeometry> createDataGeomerty(Map<Number, Number> graph) {
-        TreeSet<PixelAreaGeometry> dataGeometry = new TreeSet<>();
+    TreeSet<PixelAreaGeometry<RectangularShape>> createGraphGeomerty(Map<Number, Number> graph) {
+        TreeSet<PixelAreaGeometry<RectangularShape>> dataGeometry = new TreeSet<>();
         for (Map.Entry<Number, Number> entry : graph.entrySet()) {
             Number x = entry.getKey();
             Number y = entry.getValue();
             int xPixel = chartGeometry.xPixel(x);
             int yPixel = chartGeometry.yPixel(y);
-            Rectangle area = createArea(xPixel, yPixel);
+            RectangularShape area = createSymbolArea(xPixel, yPixel);
             dataGeometry.add(new PixelAreaGeometry(x, y, area, new Point(xPixel, yPixel)));
         }
         return dataGeometry;
-    }
-
-
-    protected Rectangle createArea(int x, int y) {
-        return new Rectangle(x - markerWidth / 2, y - markerHeight / 2, markerWidth, markerHeight);
     }
 
 
