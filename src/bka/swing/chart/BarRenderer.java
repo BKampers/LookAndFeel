@@ -37,17 +37,8 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
 
     @Override
-    protected Rectangle createSymbolArea(int x, int y) {
-        int height = width * 2;
-        int left = x - width / 2;
-        int top = y - height / 2;
-        return new Rectangle(left, top, width, height);
-    }
-
-
-    @Override
-    protected AreaGeometry<Rectangle> createSymbolGeometry(Rectangle area) {
-        return new AreaGeometry<>(null, null, area);
+    protected AreaGeometry<Rectangle> createSymbolGeometry(int x, int y, AreaGeometry<Rectangle> geometry) {
+        return new AreaGeometry<>(null, null, createSymbolArea(x, y));
     }
 
 
@@ -57,6 +48,14 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
         int barHeight = chartPanel.areaBottom() - y;
         return new Rectangle(left, y, width, barHeight);
 
+    }
+
+
+    private Rectangle createSymbolArea(int x, int y) {
+        int height = (int) (width * 1.5f);
+        int left = x - width / 2;
+        int top = y - height / 2;
+        return new Rectangle(left, top, width, height);
     }
 
 

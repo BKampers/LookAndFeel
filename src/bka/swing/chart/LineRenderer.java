@@ -28,6 +28,11 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
         super.draw(g2d, graphGeometry);
     }
 
+    
+    protected RectangularShape createSymbolArea(int x, int y) {
+        return new Rectangle(x - markerWidth / 2, y - markerHeight / 2, markerWidth, markerHeight);
+    }
+
 
     @Override
     TreeSet<PixelAreaGeometry<RectangularShape>> createGraphGeomerty(Map<Number, Number> graph) {

@@ -18,10 +18,11 @@ public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcArea
     PieSectorRenderer(PieLooks looks) {
         super(looks);
     }
-    
+
+
     @Override
     TreeSet<ArcAreaGeometry> createGraphGeomerty(Map<Number, Number> graph) {
-        TreeSet<ArcAreaGeometry> geometry = new TreeSet<>();
+        graphGeometry = new TreeSet<>();
         diameter = Math.min(chartPanel.areaWidth(), chartPanel.areaHeight()) - DIAMETER_MARGIN;
         float pieLeft = chartPanel.areaLeft() + (chartPanel.areaWidth() - diameter) / 2.0f;
         float pieTop = chartPanel.areaTop() + (chartPanel.areaHeight() - diameter) / 2.0f;
@@ -36,31 +37,11 @@ public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcArea
             double angularExtent = value / total * 360;
             Arc2D.Float arc = new Arc2D.Float(pieLeft, pieTop, diameter, diameter, (float) startAngle, (float) angularExtent, Arc2D.PIE);
             ArcAreaGeometry arcGeometry = new ArcAreaGeometry(entry.getKey(), entry.getValue(), arc, index);
-            geometry.add(arcGeometry);
+            graphGeometry.add(arcGeometry);
             previous += value;
             index++;
         }
-        return geometry;
-    }
-
-
-    public Palette getPalette() {
-        return palette;
-    }
-    
-    
-    public void setPalette(Palette palette) {
-        this.palette = palette;
-    }
-
-
-    @Override
-    public synchronized void draw(Graphics2D g2d, TreeSet<ArcAreaGeometry> graphGeometry) {
-        if (palette == null) {
-            palette = new Palette("chart.piePalette");
-        }
-        palette.reset();
-        super.draw(g2d, graphGeometry);
+        return graphGeometry;
     }
 
 
@@ -83,7 +64,8 @@ public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcArea
     }
 
 
-    protected Palette palette;
+    protected TreeSet<ArcAreaGeometry> graphGeometry;
+
 
     private Point center;
     private int diameter;

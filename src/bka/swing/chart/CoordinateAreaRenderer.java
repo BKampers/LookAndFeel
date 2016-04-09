@@ -21,14 +21,8 @@ public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDa
 
 
     @Override
-    protected S createSymbolArea(int x, int y) {
-        return createArea(x, y);
-    }
-
-
-    @Override
-    protected AreaGeometry<S> createSymbolGeometry(S area) {
-        return new AreaGeometry<>(null, null, area);
+    protected AreaGeometry<S> createSymbolGeometry(int x, int y, AreaGeometry<S> geometry) {
+        return new AreaGeometry<>(null, null, createArea(x, y));
     }
 
 

@@ -7,7 +7,6 @@ package bka.swing.chart;
 
 import java.awt.*;
 import java.awt.geom.Arc2D;
-import java.util.*;
 
 
 public class DefaultPieSectorRenderer extends PieSectorRenderer {
@@ -24,15 +23,11 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
         int y = geometry.getY();
         g2d.setFont(geometry.getFont());
         FontMetrics fontMetrics = g2d.getFontMetrics();
-        for (TreeSet<AreaGeometry> graphGeometry : chartGeometry.getGraphs().values()) {
-            palette.reset();
-            for (AreaGeometry areaGeometry : graphGeometry) {
-                g2d.setColor(palette.next());
-                drawSymbol(g2d, x, y, ((ArcAreaGeometry) areaGeometry).getIndex());
-                g2d.setColor(geometry.getColor());
-                g2d.drawString(areaGeometry.getX().toString(), x + geometry.getSpace(), y + fontMetrics.getDescent());
-                y += geometry.getFeed() + fontMetrics.getHeight();
-            }
+        for (AreaGeometry areaGeometry : graphGeometry) {
+            drawSymbol(g2d, x, y, (ArcAreaGeometry) areaGeometry);
+            g2d.setColor(geometry.getColor());
+            g2d.drawString(areaGeometry.getX().toString(), x + geometry.getSpace(), y + fontMetrics.getDescent());
+            y += geometry.getFeed() + fontMetrics.getHeight();
         }
         geometry.setY(y);
     }
@@ -46,21 +41,14 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
     @Override
-    protected Arc2D.Float createSymbolArea(int x, int y) {
-        return new Arc2D.Float(x - 10, y - 10, 20, 20, -40, 80, Arc2D.PIE);
+    protected ArcAreaGeometry createSymbolGeometry(int x, int y, ArcAreaGeometry geometry) {
+        Arc2D.Float area = createSymbolArea(x, y);
+        return new ArcAreaGeometry(null, null, area, geometry.getIndex());
     }
 
 
-    @Override
-    protected ArcAreaGeometry createSymbolGeometry(Arc2D.Float area) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-
-    protected void drawSymbol(Graphics2D g2d, int x, int y, int index) {
-        //Arc2D.Float area = new Arc2D.Float(x - 10, y - 10, 20, 20, -40, 80, Arc2D.PIE);
-        ArcAreaGeometry geometry = new ArcAreaGeometry(null, null, createSymbolArea(x, y), index);
-        super.draw(g2d, geometry);
+    private void drawSymbol(Graphics2D g2d, int x, int y, ArcAreaGeometry geometry) {
+        super.draw(g2d, createSymbolGeometry(x, y, geometry));
     }
 
 
@@ -81,6 +69,11 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
         else {
             g2d.drawString(label, labelX, labelY);
         }
+    }
+
+
+    private Arc2D.Float createSymbolArea(int x, int y) {
+        return new Arc2D.Float(x - 10, y - 10, 20, 20, -40, 80, Arc2D.PIE);
     }
 
 

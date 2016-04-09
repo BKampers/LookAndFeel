@@ -5,46 +5,11 @@
 package bka.swing.chart;
 
 import java.awt.Color;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class Palette {
 
-    
-    public Palette(String uiManagerKey) {
-        try {
-            colors = (Color[]) javax.swing.UIManager.get(uiManagerKey);
-        }
-        catch (Exception ex) {
-            Logger.getLogger(Palette.class.getName()).log(Level.WARNING, uiManagerKey, ex);
-            colors = new Color[] { Color.WHITE };
-        }
-    }
-    
-    
-    public Palette(int count) {
-        if (count > 0) {
-            colors = generateColors(count);
-        }
-        else {
-            colors = new Color[] { Color.WHITE };
-        } 
-    }
-
-    
-    Color next() {
-        Color color = colors[index];
-        index = (index + 1) % colors.length;
-        return color;
-    }
-    
-    
-    void reset() {
-        index = 0;
-    }
-    
-    
+        
     public static Color[] generateColors(int count) {
         Color[] colors = new Color[count];
         float range = count;
@@ -54,8 +19,5 @@ public class Palette {
         return colors;
     }
     
-    
-    private Color[] colors;
-    private int index;
 
 }

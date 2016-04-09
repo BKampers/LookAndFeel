@@ -49,13 +49,8 @@ public class DefaultLineRenderer extends LineRenderer {
 
 
     @Override
-    protected RectangularShape createSymbolArea(int x, int y) {
-        return new Rectangle(x - markerWidth / 2, y - markerHeight / 2, markerWidth, markerHeight);
-    }
-
-
-    @Override
-    protected PixelAreaGeometry<RectangularShape> createSymbolGeometry(RectangularShape area) {
+    protected PixelAreaGeometry<RectangularShape> createSymbolGeometry(int x, int y, PixelAreaGeometry<RectangularShape> geometry) {
+        RectangularShape area = createSymbolArea(x, y);
         Point pixel = new Point((int) area.getCenterX(), (int) area.getCenterY());
         return new PixelAreaGeometry<>(null, null, area, pixel);
     }

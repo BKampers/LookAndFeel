@@ -17,25 +17,14 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry<S>, S exte
     }
 
     
-    protected abstract S createSymbolArea(int x, int y);
-    protected abstract G createSymbolGeometry(S area);
     abstract TreeSet<G> createGraphGeomerty(Map<Number, Number> graph);
+    protected abstract G createSymbolGeometry(int x, int y, G geometry);
 
 
     public void draw(Graphics2D g2d, TreeSet<G> graphGeometry) {
         for (G dataAreaGeometry : graphGeometry) {
             draw(g2d, dataAreaGeometry);
         }
-    }
-
-
-    public void drawLegend(Graphics2D g2d, Object key, LegendGeometry geometry) {
-        drawSymbol(g2d, geometry.getX(), geometry.getY());
-        g2d.setColor(geometry.getColor());
-        g2d.setFont(geometry.getFont());
-        FontMetrics fontMetrics = g2d.getFontMetrics();
-        g2d.drawString(key.toString(), geometry.getX() + geometry.getSpace(), geometry.getY() + fontMetrics.getDescent());
-        geometry.setY(geometry.getY() + geometry.getFeed() + fontMetrics.getHeight());
     }
 
 
@@ -56,8 +45,18 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry<S>, S exte
     }
 
 
+    public void drawLegend(Graphics2D g2d, Object key, LegendGeometry geometry) {
+        drawSymbol(g2d, geometry.getX(), geometry.getY());
+        g2d.setColor(geometry.getColor());
+        g2d.setFont(geometry.getFont());
+        FontMetrics fontMetrics = g2d.getFontMetrics();
+        g2d.drawString(key.toString(), geometry.getX() + geometry.getSpace(), geometry.getY() + fontMetrics.getDescent());
+        geometry.setY(geometry.getY() + geometry.getFeed() + fontMetrics.getHeight());
+    }
+
+
     protected void drawSymbol(Graphics2D g2d, int x, int y) {
-        draw(g2d, createSymbolGeometry(createSymbolArea(x, y)));
+        draw(g2d, createSymbolGeometry(x, y, null));
     }
 
 
