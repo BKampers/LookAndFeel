@@ -140,7 +140,6 @@ public class Demo extends javax.swing.JFrame {
         }
         AbstractDataAreaRenderer pointRenderer = (AbstractDataAreaRenderer) styleComboBox.getSelectedItem();
         if (pointRenderer instanceof PieSectorRenderer) {
-            ((PieSectorRenderer) pointRenderer).setPalette(new Palette(g4.size()));
             Map graphs = new HashMap<>();
             graphs.put("G4", g4);
             chartPanel.setXWindowMinimum(null);
