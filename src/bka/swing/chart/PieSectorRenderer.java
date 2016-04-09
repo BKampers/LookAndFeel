@@ -12,7 +12,7 @@ import java.util.*;
 
 
 
-public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcAreaGeometry, Arc2D.Float> {
+public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcAreaGeometry> {
 
 
     PieSectorRenderer(PieLooks looks) {

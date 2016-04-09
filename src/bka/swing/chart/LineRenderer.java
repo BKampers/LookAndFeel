@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
 
-public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeometry<RectangularShape>, RectangularShape> {
+public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeometry<RectangularShape>> {
 
 
     LineRenderer(LineLooks lineLooks, int markerWidth, int markerHeight) {

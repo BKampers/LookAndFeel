@@ -10,7 +10,7 @@ import java.util.*;
 
 
 
-public abstract class AbstractDataAreaRenderer<G extends AreaGeometry<S>, S extends Shape> {
+public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
 
     AbstractDataAreaRenderer(AreaLooks looks) {
         this.looks = looks;

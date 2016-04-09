@@ -9,7 +9,7 @@ import java.awt.*;
 import java.util.*;
 
 
-public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDataAreaRenderer<AreaGeometry<S>, S> {
+public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDataAreaRenderer<AreaGeometry<S>> {
 
 
     CoordinateAreaRenderer(AreaLooks looks) {
