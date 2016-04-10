@@ -3,6 +3,11 @@
 */
 package bka.swing.chart;
 
+
+import bka.swing.chart.render.*;
+import bka.swing.chart.grid.*;
+import bka.swing.chart.custom.*;
+
 import java.awt.*;
 import java.util.*;
 import java.util.logging.*;
@@ -24,7 +29,6 @@ public class Demo extends javax.swing.JFrame {
         styleComboBox.addItem(rectangleRenderer);
         styleComboBox.addItem(ovalRenderer);
         styleComboBox.addItem(new BarRenderer(null));
-        styleComboBox.setSelectedIndex(1);
     }
     
 
@@ -55,8 +59,10 @@ public class Demo extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        Demo demo = new Demo();
+        demo.populate();
         java.awt.EventQueue.invokeLater(() -> {
-            new Demo().setVisible(true);
+            demo.setVisible(true);
         });
     }
 
@@ -123,21 +129,6 @@ public class Demo extends javax.swing.JFrame {
 
 
     private void styleComboBox_actionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_styleComboBox_actionPerformed
-        Map<Number, Number> g1 = new HashMap<>();
-        Map<Number, Number> g2 = new HashMap<>();
-        Map<Number, Number> g3 = new HashMap<>();
-        Map<Number, Number> g4 = new TreeMap<>();
-        for (int x = 1; x <= 20; ++x) {
-            g1.put(x, 1.0 / x * 25.0);
-            g2.put(x, x);
-        }
-        for (int x = 1; x <= 1000000; ++x) {
-            g3.put(x, x);
-        }
-        for (int x = 1950; x <= 2010; x += 10) {
-            Random random = new Random();
-            g4.put(x, random.nextFloat());
-        }
         AbstractDataAreaRenderer pointRenderer = (AbstractDataAreaRenderer) styleComboBox.getSelectedItem();
         if (pointRenderer instanceof PieSectorRenderer) {
             Map graphs = new HashMap<>();
@@ -156,7 +147,6 @@ public class Demo extends javax.swing.JFrame {
         else {
             chartPanel.setAxisRenderer(new DefaultAxisRenderer());
             chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
-            chartPanel.setDemarcations(new DefaultDemarcationRenderer(), ChartPanel.DemarcationMode.X);
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_DEMARCATION);
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
             BarLooks l1 = BarLooks.create(Color.BLUE, Color.CYAN);
@@ -177,6 +167,7 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXWindowMaximum(21);
                 chartPanel.setYWindowMinimum(0);
                 chartPanel.setXDemarcations(new IntegerDemarcations());
+                chartPanel.setDemarcations(new DefaultDemarcationRenderer(), ChartPanel.DemarcationMode.Y);
 //                chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
             }
             else if (pointRenderer instanceof RectangleDotRenderer) {
@@ -187,7 +178,8 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXWindowMinimum(null);
                 chartPanel.setXWindowMaximum(null);
                 chartPanel.setYWindowMinimum(null);
-                //chartPanel.setXDemarcations(new Demarcations());
+                chartPanel.setXDemarcations(new Demarcations());
+                chartPanel.setDemarcations(new DefaultDemarcationRenderer(), ChartPanel.DemarcationMode.X);
             }
             else {
                 Map graphs = new HashMap<>();
@@ -198,7 +190,8 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXWindowMaximum(null);
                 chartPanel.setYWindowMinimum(null);
                 chartPanel.setXDemarcations(new Demarcations());
-            }
+                chartPanel.setDemarcations(new DefaultDemarcationRenderer(), ChartPanel.DemarcationMode.X);
+        }
         }
         chartPanel.setHighlightFormat("G1", "x = %d", "y = %.2f");
         chartPanel.setHighlightFormat("G2", "x = %d", "y = %d");
@@ -206,6 +199,22 @@ public class Demo extends javax.swing.JFrame {
         chartPanel.setHighlightFormat("G4", "x = %d", "y = %f");
         chartPanel.revalidate();
     }//GEN-LAST:event_styleComboBox_actionPerformed
+
+    
+    private void populate() {
+        for (int x = 1; x <= 20; ++x) {
+            g1.put(x, 1.0 / x * 25.0);
+            g2.put(x, x);
+        }
+        for (int x = 1; x <= 1000000; ++x) {
+            g3.put(x, x);
+        }
+        for (int x = 1950; x <= 2010; x += 10) {
+            Random random = new Random();
+            g4.put(x, random.nextFloat());
+        }
+        styleComboBox.setSelectedIndex(1);
+    }
 
 
     private final ChartPanel chartPanel = new ChartPanel();
@@ -215,5 +224,10 @@ public class Demo extends javax.swing.JFrame {
     private javax.swing.JPanel displayPanel;
     private javax.swing.JComboBox styleComboBox;
     // End of variables declaration//GEN-END:variables
+
+    private final Map<Number, Number> g1 = new HashMap<>();
+    private final Map<Number, Number> g2 = new HashMap<>();
+    private final Map<Number, Number> g3 = new HashMap<>();
+    private final Map<Number, Number> g4 = new TreeMap<>();
 
 }

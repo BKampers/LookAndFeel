@@ -5,9 +5,14 @@
 package bka.swing.chart;
 
 
+import bka.swing.chart.custom.DefaultLooks;
+import bka.swing.chart.grid.Demarcations;
+
+import bka.swing.chart.geometry.*;
+import bka.swing.chart.render.*;
+
 import java.awt.*;
-import java.awt.print.PageFormat;
-import java.awt.print.PrinterException;
+import java.awt.print.*;
 import java.util.*;
 import java.util.logging.*;
 import javax.swing.UIManager;
@@ -173,12 +178,12 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setXDemarcations(Demarcations xDemarcations) {
-        geometry.xDemarcations = xDemarcations;
+        geometry.setXDemarcations(xDemarcations);
     }
     
     
     public void setYDemarcations(Demarcations yDemarcations) {
-        geometry.yDemarcations = yDemarcations;
+        geometry.setYDemarcations(yDemarcations);
     }
 
 
@@ -318,52 +323,52 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
 
-    int areaLeft() {
+    public int areaLeft() {
         return chartArea().x;
     }
     
     
-    int areaRight() {
+    public int areaRight() {
         return chartArea().x + chartArea().width;
     }
     
     
-    int areaWidth() {
+    public int areaWidth() {
         return chartArea().width;
     }
     
     
-    int areaTop() {
+    public int areaTop() {
         return chartArea().y;
     }
     
     
-    int areaBottom() {
+    public int areaBottom() {
         return chartArea().height + chartArea().y;
     }
     
     
-    int areaHeight() {
+    public int areaHeight() {
         return chartArea().height;
     }
     
     
-    ChartGeometry getChartGeometry() {
+    public ChartGeometry getChartGeometry() {
         return geometry;
     }
     
     
-    AxisPosition getXAxisPosition() {
+    public AxisPosition getXAxisPosition() {
         return xAxisPosition;
     }
     
     
-    AxisPosition getYAxisPosition() {
+    public AxisPosition getYAxisPosition() {
         return yAxisPosition;
     }
     
     
-    DemarcationMode getDemarcationMode() {
+    public DemarcationMode getDemarcationMode() {
         return demarcationMode;
     }
 
@@ -650,7 +655,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
         private void zoom(Point point) {
             boolean xMode = demarcationMode == DemarcationMode.X;
-            java.util.List<Number> values = (xMode) ? geometry.xDemarcations.values : geometry.yDemarcations.values;
+            java.util.List<Number> values = (xMode) ? geometry.getXDemarcations().getValues() : geometry.getYDemarcations().getValues();
             if (values.size() >= 2) {
                 Number min = values.get(0);
                 boolean zoomed = false;
