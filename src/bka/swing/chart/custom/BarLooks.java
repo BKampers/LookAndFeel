@@ -22,6 +22,10 @@ public class BarLooks implements AreaLooks<AreaGeometry<Rectangle>> {
         return new BarLooks(pattern, colors);
     }
 
+    public static BarLooks createAlternative(Color color1, Color color2) {
+        return new BarLooks(null, new Color[] { color1, color2 });
+    }
+
 
     public static BarLooks create(Color centerColor, Color edgeColor) {
         return new BarLooks(
@@ -43,8 +47,13 @@ public class BarLooks implements AreaLooks<AreaGeometry<Rectangle>> {
 
     @Override
     public Paint getPaint(AreaGeometry<Rectangle> geometry) {
-        Rectangle area = geometry.getArea();
-        return new LinearGradientPaint(area.x, area.y, area.x + area.width, area.y, pattern, colors);
+        if (pattern != null) {
+            Rectangle area = geometry.getArea();
+            return new LinearGradientPaint(area.x, area.y, area.x + area.width, area.y, pattern, colors);
+        }
+        else {
+            return getAlternativePaint(geometry);
+        }
     }
 
 
@@ -57,6 +66,11 @@ public class BarLooks implements AreaLooks<AreaGeometry<Rectangle>> {
     @Override
     public Stroke getBorderStroke(AreaGeometry<Rectangle> geometry) {
         return borderStroke;
+    }
+
+
+    private Paint getAlternativePaint(AreaGeometry<Rectangle> geometry) {
+        return new GradientPaint(0, 0, colors[0], geometry.getArea().width, geometry.getArea().y + geometry.getArea().height, colors[1]);
     }
 
 
