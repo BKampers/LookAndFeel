@@ -5,7 +5,7 @@
 package bka.swing.chart;
 
 
-import bka.swing.chart.custom.DefaultLooks;
+import bka.swing.chart.custom.*;
 import bka.swing.chart.grid.Demarcations;
 
 import bka.swing.chart.geometry.*;
@@ -247,7 +247,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
    
    public void setDemarcationMode(DemarcationMode demarcationMode) {
        if (demarcationRenderer == null && demarcationMode != DemarcationMode.NONE) {
-           setDemarcations(new DefaultDemarcationRenderer(), demarcationMode);
+           setDemarcations(new DefaultDemarcationRenderer(GridLooks.create(Color.WHITE)), demarcationMode);
        }
        else {
            this.demarcationMode = demarcationMode;

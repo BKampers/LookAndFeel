@@ -4,6 +4,7 @@
 
 package bka.swing.chart.render;
 
+import bka.swing.chart.custom.*;
 import bka.swing.chart.geometry.ChartGeometry;
 import java.awt.*;
 
@@ -11,36 +12,68 @@ import java.awt.*;
 public class DefaultDemarcationRenderer extends DemarcationRenderer {
 
     
-    public DefaultDemarcationRenderer() {
-        setDefaultPalette();
+    public DefaultDemarcationRenderer(GridLooks looks) {
+        this.looks = looks;
     }
     
     
-    public final void setPalette(Color[] palette) {
-        if (palette != null) {
-            this.palette = palette;
-        }
-        else {
-            setDefaultPalette();
-        }
-    }
-    
-  
     @Override
     public void draw(Graphics2D g2d) {
-        if (palette != null && palette.length > 0) {
-            switch (chartPanel.getDemarcationMode()) {
-                case X:
-                    drawVerticalDemarcations(g2d);
-                    break;
-                case Y:
-                    drawHorizontalDemarcations(g2d);
-                    break;
+        switch (chartPanel.getDemarcationMode()) {
+            case X:
+                drawVerticalDemarcations(g2d);
+                drawHorizontalLines(g2d);
+                drawVerticalLines(g2d);
+                break;
+            case Y:
+                drawHorizontalDemarcations(g2d);
+                drawHorizontalLines(g2d);
+                drawVerticalLines(g2d);
+                break;
+        }
+    }
+
+
+    private void drawVerticalLines(Graphics2D g2d) {
+        Stroke stroke = looks.getStroke();
+        Paint paint = looks.getGridPaint();
+        if (stroke != null && paint != null) {
+            g2d.setPaint(paint);
+            g2d.setStroke(stroke);
+            int areaTop = chartPanel.areaTop();
+            int areaHeight = chartPanel.areaHeight();
+            int areaLeft = chartPanel.areaLeft();
+            ChartGeometry chartGeometry = chartPanel.getChartGeometry();
+            java.util.List<Number> values = chartGeometry.getXDemarcations().getValues();
+            int count = values.size();
+            for (int i = 1; i < count; ++i) {
+                int x = Math.max(chartGeometry.xPixel(values.get(i-1)), areaLeft);
+                g2d.drawLine(x, areaTop, x, areaTop + areaHeight);
             }
         }
     }
 
-    
+
+    private void drawHorizontalLines(Graphics2D g2d) {
+        Stroke stroke = looks.getStroke();
+        Paint paint = looks.getGridPaint();
+        if (stroke != null && paint != null) {
+            g2d.setPaint(paint);
+            g2d.setStroke(stroke);
+            int areaTop = chartPanel.areaTop();
+            int areaLeft = chartPanel.areaLeft();
+            int areaRight = chartPanel.areaRight();
+            ChartGeometry chartGeometry = chartPanel.getChartGeometry();
+            java.util.List<Number> values = chartGeometry.getYDemarcations().getValues();
+            int count = values.size();
+            for (int i = 1; i < count; ++i) {
+                int y = Math.max(chartGeometry.yPixel(values.get(i)), areaTop);
+                g2d.drawLine(areaLeft, y, areaRight, y);
+            }
+        }
+    }
+
+
     private void drawVerticalDemarcations(Graphics2D g2d) {
         int areaTop = chartPanel.areaTop();
         int areaHeight = chartPanel.areaHeight();
@@ -49,13 +82,18 @@ public class DefaultDemarcationRenderer extends DemarcationRenderer {
         ChartGeometry chartGeometry = chartPanel.getChartGeometry();
         java.util.List<Number> values = chartGeometry.getXDemarcations().getValues();
         int count = values.size();
-        int colorIndex = 0;
         for (int i = 1; i < count; ++i) {
-            int left = Math.max(chartGeometry.xPixel(values.get(i-1)), areaLeft);
-            int right = Math.min(chartGeometry.xPixel(values.get(i)), areaRight);
-            g2d.setColor(palette[colorIndex]);
-            g2d.fillRect(left, areaTop, right - left, areaHeight);
-            colorIndex = (colorIndex + 1) % palette.length;
+            int paintLeft = chartGeometry.xPixel(values.get(i-1));
+            int paintRight = chartGeometry.xPixel(values.get(i));
+            int left = Math.max(paintLeft, areaLeft);
+            int right = Math.min(paintRight, areaRight);
+            int width = right - left;
+            if (width > 0) {
+                Rectangle area = new Rectangle(paintLeft, areaTop, paintRight - paintLeft, areaHeight);
+                g2d.setPaint(looks.getVerticalPaint(area, i));
+                area = new Rectangle(left, areaTop, right - left, areaHeight);
+                g2d.fill(area);
+            }
         }
     }
     
@@ -64,34 +102,26 @@ public class DefaultDemarcationRenderer extends DemarcationRenderer {
         int areaTop = chartPanel.areaTop();
         int areaBottom = chartPanel.areaBottom();
         int areaLeft = chartPanel.areaLeft();
-        int width = chartPanel.areaWidth();
+        int areaWidth = chartPanel.areaWidth();
         ChartGeometry chartGeometry = chartPanel.getChartGeometry();
         java.util.List<Number> values = chartGeometry.getYDemarcations().getValues();
         int count = values.size();
-        int colorIndex = 0;
         for (int i = 1; i < count; ++i) {
-            int bottom = Math.min(chartGeometry.yPixel(values.get(i-1)), areaBottom);
-            int top = Math.max(chartGeometry.yPixel(values.get(i)), areaTop);
-            g2d.setColor(palette[colorIndex]);
-            g2d.fillRect(areaLeft, top, width, bottom - top);
-            colorIndex = (colorIndex + 1) % palette.length;
+            int paintBottom = chartGeometry.yPixel(values.get(i-1));
+            int paintTop = chartGeometry.yPixel(values.get(i));
+            int bottom = Math.min(paintBottom, areaBottom);
+            int top = Math.max(paintTop, areaTop);
+            int height = bottom - top;
+            if (height > 0) {
+                Rectangle area = new Rectangle(areaLeft, paintTop, areaWidth, paintBottom - paintTop);
+                g2d.setPaint(looks.getHorizontalPaint(area, i));
+                area = new Rectangle(areaLeft, top, areaWidth, height);
+                g2d.fill(area);
+            }
         }
     }
 
 
-    private void setDefaultPalette() {
-        try {
-            palette = (Color[]) javax.swing.UIManager.get("Chart.demarcationPalette");
-        }
-        catch (Exception ex) {
-            palette = null;
-        }
-        if (palette == null) {
-            palette = new Color[] { Color.WHITE, Color.LIGHT_GRAY };
-        }
-    }
-
-
-    private Color[] palette;
+    private final GridLooks looks;
     
 }
