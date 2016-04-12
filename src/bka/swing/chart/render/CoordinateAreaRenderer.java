@@ -24,27 +24,28 @@ public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDa
 
 
     @Override
-    protected AreaGeometry<S> createSymbolGeometry(int x, int y, AreaGeometry<S> geometry) {
-        return new AreaGeometry<>(null, null, createArea(x, y));
-    }
-
-
-    S createArea(Number x, Number y) {
-        int pixelX = chartGeometry.xPixel(x);
-        int pixelY = chartGeometry.yPixel(y);
-        return createArea(pixelX, pixelY);
-    }
-
-
-    @Override
     public TreeSet<AreaGeometry<S>> createGraphGeomerty(Map<Number, Number> graph) {
         TreeSet<AreaGeometry<S>> geometry = new TreeSet<>();
         for (Map.Entry<Number, Number> entry : graph.entrySet()) {
             Number x = entry.getKey();
             Number y = entry.getValue();
-            geometry.add(new AreaGeometry<>(x, y, createArea(x,y)));
+            geometry.add(new AreaGeometry<>(x, y, createArea(x, y)));
         }
         return geometry;
     }
+
+
+    @Override
+    protected AreaGeometry<S> createSymbolGeometry(int x, int y, AreaGeometry<S> geometry) {
+        return new AreaGeometry<>(null, null, createArea(x, y));
+    }
+
+
+    private S createArea(Number x, Number y) {
+        int pixelX = chartGeometry.xPixel(x);
+        int pixelY = chartGeometry.yPixel(y);
+        return createArea(pixelX, pixelY);
+    }
+
 
 }
