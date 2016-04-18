@@ -25,10 +25,11 @@ public class Demo extends javax.swing.JFrame {
         chartPanel.setShowLegend(true);
         displayPanel.add(chartPanel);
         styleComboBox.addItem(new DefaultPieSectorRenderer(PieLooks.create(Palette.generateColors(7))));
-        styleComboBox.addItem(new DefaultLineRenderer(LineLooks.create(Color.MAGENTA, /*DefaultLooks.createSolid(Color.BLACK)*/ pointLooks), 9));
+        styleComboBox.addItem(new DefaultLineRenderer(LineLooks.create(Color.MAGENTA, pointLooks), 9));
         styleComboBox.addItem(rectangleRenderer);
         styleComboBox.addItem(ovalRenderer);
         styleComboBox.addItem(new BarRenderer(null));
+        gridLooks = GridLooks.create(new Color[] { Color.WHITE });
     }
     
 
@@ -166,8 +167,9 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXWindowMinimum(0);
                 chartPanel.setXWindowMaximum(21);
                 chartPanel.setYWindowMinimum(0);
+//                chartPanel.setYWindowMaximum(27);
                 chartPanel.setXDemarcations(new IntegerDemarcations());
-                chartPanel.setDemarcations(new DefaultDemarcationRenderer(), ChartPanel.DemarcationMode.Y);
+                chartPanel.setDemarcations(new DefaultDemarcationRenderer(gridLooks), ChartPanel.DemarcationMode.Y);
 //                chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
             }
             else if (pointRenderer instanceof RectangleDotRenderer) {
@@ -179,7 +181,7 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXWindowMaximum(null);
                 chartPanel.setYWindowMinimum(null);
                 chartPanel.setXDemarcations(new Demarcations());
-                chartPanel.setDemarcations(new DefaultDemarcationRenderer(), ChartPanel.DemarcationMode.X);
+                chartPanel.setDemarcations(new DefaultDemarcationRenderer(gridLooks), ChartPanel.DemarcationMode.X);
             }
             else {
                 Map graphs = new HashMap<>();
@@ -190,12 +192,12 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXWindowMaximum(null);
                 chartPanel.setYWindowMinimum(null);
                 chartPanel.setXDemarcations(new Demarcations());
-                chartPanel.setDemarcations(new DefaultDemarcationRenderer(), ChartPanel.DemarcationMode.X);
-        }
+                chartPanel.setDemarcations(new DefaultDemarcationRenderer(gridLooks), ChartPanel.DemarcationMode.X);
+            }
         }
         chartPanel.setHighlightFormat("G1", "x = %d", "y = %.2f");
         chartPanel.setHighlightFormat("G2", "x = %d", "y = %d");
-        chartPanel.setHighlightFormat("G3", "x = %d", "y = %f");
+        chartPanel.setHighlightFormat("G3", "x = %d", "y = %d");
         chartPanel.setHighlightFormat("G4", "x = %d", "y = %f");
         chartPanel.revalidate();
     }//GEN-LAST:event_styleComboBox_actionPerformed
@@ -218,6 +220,7 @@ public class Demo extends javax.swing.JFrame {
 
 
     private final ChartPanel chartPanel = new ChartPanel();
+    private final GridLooks gridLooks;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel controlPanel;
