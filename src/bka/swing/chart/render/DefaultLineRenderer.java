@@ -39,10 +39,8 @@ public class DefaultLineRenderer extends LineRenderer {
         if (lineLooks.getTopAreaPaint() != null) {
             fillTopArea(g2d, polyline);
         }
-        if (looks != null) {
-            for (PixelAreaGeometry<RectangularShape> dataAreaGeometry : graphGeometry) {
-                draw(g2d, dataAreaGeometry);
-            }
+        if (lineLooks.getAreaLooks() != null) {
+            super.draw(g2d, graphGeometry);
         }
         if (lineLooks.getLinePaint() != null && lineLooks.getLineStroke() != null) {
             g2d.setPaint(lineLooks.getLinePaint());
