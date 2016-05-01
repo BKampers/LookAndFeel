@@ -22,9 +22,6 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
         this.markerHeight = markerHeight;
     }
 
-
-    protected abstract void draw(Graphics2D g2d, PixelAreaGeometry geometry1, PixelAreaGeometry geometry2);
-    
     
     @Override
     public TreeSet<PixelAreaGeometry<RectangularShape>> createGraphGeomerty(Map<Number, Number> graph) {
@@ -40,13 +37,6 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
         return dataGeometry;
     }
 
-
-    @Override
-    public void draw(Graphics2D g2d, TreeSet<PixelAreaGeometry<RectangularShape>> graphGeometry) {
-        previous = null;
-        super.draw(g2d, graphGeometry);
-    }
-
     
     protected RectangularShape createSymbolArea(int x, int y) {
         return new Rectangle(x - markerWidth / 2, y - markerHeight / 2, markerWidth, markerHeight);
@@ -56,7 +46,5 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
     protected final LineLooks lineLooks;
     protected final int markerWidth;
     protected final int markerHeight;
-
-    protected PixelAreaGeometry previous;
     
 }

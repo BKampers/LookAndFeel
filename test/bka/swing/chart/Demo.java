@@ -22,13 +22,18 @@ public class Demo extends javax.swing.JFrame {
         pointLooks.setBorder(Color.GREEN.darker());
         PointRenderer ovalRenderer = new OvalDotRenderer(30, pointLooks);
         PointRenderer rectangleRenderer = new RectangleDotRenderer(2, DefaultLooks.createSolid(Color.BLACK));
+        LineLooks lineLooks = LineLooks.create(Color.MAGENTA, pointLooks);
+        Color areaColor = new Color(0x80FFFF00, true);
+        lineLooks.setTopAreaPaint(areaColor);
+        lineLooks.setBottomAreaPaint(areaColor.darker());
         chartPanel.setShowLegend(true);
         displayPanel.add(chartPanel);
         styleComboBox.addItem(new DefaultPieSectorRenderer(PieLooks.create(Palette.generateColors(7))));
-        styleComboBox.addItem(new DefaultLineRenderer(LineLooks.create(Color.MAGENTA, pointLooks), 9));
+        styleComboBox.addItem(new DefaultLineRenderer(lineLooks, 9));
         styleComboBox.addItem(rectangleRenderer);
         styleComboBox.addItem(ovalRenderer);
         styleComboBox.addItem(new BarRenderer(null));
+//        styleComboBox.addItem(new ScatterRenderer<>(DefaultLooks.createSolid(Color.BLACK)));
         gridLooks = GridLooks.create(new Color[] { Color.WHITE });
     }
     
@@ -183,6 +188,14 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXDemarcations(new Demarcations());
                 chartPanel.setDemarcations(new DefaultDemarcationRenderer(gridLooks), ChartPanel.DemarcationMode.X);
             }
+//            else if (pointRenderer instanceof ScatterRenderer) {
+//                chartPanel.setGraph("S1", s1);
+//                chartPanel.setRenderer("S1", pointRenderer);
+//                chartPanel.setXWindowMinimum(null);
+//                chartPanel.setXWindowMaximum(null);
+//                chartPanel.setYWindowMinimum(0);
+//                chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
+//            }
             else {
                 Map graphs = new HashMap<>();
                 graphs.put("G1", g1);
@@ -215,6 +228,11 @@ public class Demo extends javax.swing.JFrame {
             Random random = new Random();
             g4.put(x, random.nextFloat());
         }
+        s1.put(1, 1);
+        s1.put(3, 2);
+        s1.put(2, 2);
+        s1.put(-1, 5);
+        s1.put(4, 2);
         styleComboBox.setSelectedIndex(1);
     }
 
@@ -232,5 +250,6 @@ public class Demo extends javax.swing.JFrame {
     private final Map<Number, Number> g2 = new HashMap<>();
     private final Map<Number, Number> g3 = new HashMap<>();
     private final Map<Number, Number> g4 = new TreeMap<>();
+    private final Map<Number, Number> s1 = new HashMap<>();
 
 }

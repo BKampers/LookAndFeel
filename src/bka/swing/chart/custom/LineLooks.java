@@ -12,7 +12,7 @@ import java.awt.*;
 public class LineLooks<G extends AreaGeometry> {
 
 
-    LineLooks(Paint linePaint, Stroke lineStroke, AreaLooks<G> areaLooks) {
+    private LineLooks(Paint linePaint, Stroke lineStroke, AreaLooks<G> areaLooks) {
         this.linePaint = linePaint;
         this.lineStroke = lineStroke;
         this.areaLooks = areaLooks;
@@ -54,8 +54,30 @@ public class LineLooks<G extends AreaGeometry> {
     }
 
 
+    public Paint getBottomAreaPaint() {
+        return bottomAreaPaint;
+    }
+
+
+    public void setBottomAreaPaint(Paint bottomAreaPaint) {
+        this.bottomAreaPaint = bottomAreaPaint;
+    }
+
+
+    public Paint getTopAreaPaint() {
+        return topAreaPaint;
+    }
+
+
+    public void setTopAreaPaint(Paint topAreaPaint) {
+        this.topAreaPaint = topAreaPaint;
+    }
+
+
     private final Paint linePaint;
     private final Stroke lineStroke;
     private final AreaLooks<G> areaLooks;
+    private Paint bottomAreaPaint;
+    private Paint topAreaPaint;
 
 }

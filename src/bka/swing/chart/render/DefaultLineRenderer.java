@@ -9,6 +9,7 @@ import bka.swing.chart.custom.LineLooks;
 import bka.swing.chart.geometry.PixelAreaGeometry;
 import java.awt.*;
 import java.awt.geom.*;
+import java.util.*;
 
 
 public class DefaultLineRenderer extends LineRenderer {
@@ -30,24 +31,24 @@ public class DefaultLineRenderer extends LineRenderer {
 
 
     @Override
-    public void draw(Graphics2D g2d, PixelAreaGeometry geometry1, PixelAreaGeometry geometry2) {
-        java.awt.Point pixel1 = geometry1.getPixel();
-        java.awt.Point pixel2 = geometry2.getPixel();
-        draw(g2d, pixel1.x, pixel1.y, pixel2.x, pixel2.y);
-    }
-    
-    
-    @Override
-    protected void draw(Graphics2D g2d, PixelAreaGeometry geometry) {
-        if (lineLooks.getAreaLooks() != null) {
-            super.draw(g2d, geometry);
+    public void draw(Graphics2D g2d, TreeSet<PixelAreaGeometry<RectangularShape>> graphGeometry) {
+        Polygon polyline = createPolyline(graphGeometry);
+        if (lineLooks.getBottomAreaPaint() != null) {
+            fillBottomArea(g2d, polyline);
         }
-        if (previous != null) {
-            java.awt.Point pixel1 = previous.getPixel();
-            java.awt.Point pixel2 = geometry.getPixel();
-            draw(g2d, pixel1.x, pixel1.y, pixel2.x, pixel2.y);
+        if (lineLooks.getTopAreaPaint() != null) {
+            fillTopArea(g2d, polyline);
         }
-        previous = geometry;
+        if (looks != null) {
+            for (PixelAreaGeometry<RectangularShape> dataAreaGeometry : graphGeometry) {
+                draw(g2d, dataAreaGeometry);
+            }
+        }
+        if (lineLooks.getLinePaint() != null && lineLooks.getLineStroke() != null) {
+            g2d.setPaint(lineLooks.getLinePaint());
+            g2d.setStroke(lineLooks.getLineStroke());
+            g2d.drawPolyline(polyline.xpoints, polyline.ypoints, polyline.npoints);
+        }
     }
 
 
@@ -63,11 +64,42 @@ public class DefaultLineRenderer extends LineRenderer {
     protected void drawSymbol(Graphics2D g2d, int x, int y) {
         RectangularShape area = createSymbolArea(x, y);
         super.draw(g2d, new PixelAreaGeometry<>(null, null, area, new Point(x, y)));
-        draw(g2d, x - 7, y, x + 7, y);
+        drawLine(g2d, x - 7, y, x + 7, y);
     }
 
 
-    private void draw(Graphics2D g2d, int x1, int y1, int x2, int y2) {
+    private Polygon createPolyline(TreeSet<PixelAreaGeometry<RectangularShape>> graphGeometry) {
+        Polygon polyline = new Polygon();
+        for (PixelAreaGeometry<RectangularShape> dataAreaGeometry : graphGeometry) {
+            Point pixel = dataAreaGeometry.getPixel();
+            polyline.addPoint(pixel.x, pixel.y);
+        }
+        return polyline;
+    }
+
+
+    private void fillBottomArea(Graphics2D g2d, Polygon polyline) {
+        int bottom = chartGeometry.yPixel(chartGeometry.getYMin());
+        fillArea(g2d, lineLooks.getBottomAreaPaint(), polyline, bottom);
+    }
+
+
+    private void fillTopArea(Graphics2D g2d, Polygon polyline) {
+        int top = chartGeometry.yPixel(chartGeometry.getYMax());
+        fillArea(g2d, lineLooks.getTopAreaPaint(), polyline, top);
+    }
+
+
+    private void fillArea(Graphics2D g2d, Paint paint, Polygon polyline, int base) {
+        Polygon area = new Polygon(polyline.xpoints, polyline.ypoints, polyline.npoints);
+        area.addPoint(polyline.xpoints[polyline.npoints - 1], base);
+        area.addPoint(polyline.xpoints[0], base);
+        g2d.setPaint(paint);
+        g2d.fillPolygon(area);
+    }
+
+
+    private void drawLine(Graphics2D g2d, int x1, int y1, int x2, int y2) {
         Paint paint = lineLooks.getLinePaint();
         Stroke stroke = lineLooks.getLineStroke();
         if (paint != null && stroke != null) {
