@@ -6,12 +6,11 @@
 package bka.swing.chart.render;
 
 
-import bka.swing.chart.ChartPanel;
+import bka.swing.chart.*;
 import bka.swing.chart.geometry.LegendGeometry;
 import bka.swing.chart.custom.AreaLooks;
 import bka.swing.chart.geometry.*;
 import java.awt.*;
-import java.util.*;
 
 
 public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
@@ -22,11 +21,11 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     }
 
     
-    public abstract TreeSet<G> createGraphGeomerty(Map<Number, Number> graph);
+    public abstract java.util.List<G> createGraphGeomerty(ChartData<Number, Number> chart);
     protected abstract G createSymbolGeometry(int x, int y, G geometry);
 
 
-    public void draw(Graphics2D g2d, TreeSet<G> graphGeometry) {
+    public void draw(Graphics2D g2d, java.util.List<G> graphGeometry) {
         for (G dataAreaGeometry : graphGeometry) {
             draw(g2d, dataAreaGeometry);
         }

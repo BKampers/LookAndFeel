@@ -42,22 +42,32 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         this.topMargin = topMargin;
         this.bottomMargin = bottomMargin;
     }
-    
+
 
     public void setGraph(Object key, Map<Number, Number> graph) {
-        Map<Object, Map<Number, Number>> graphs = new HashMap<>();
-        graphs.put(key, graph);
-        setGraphs(graphs);
+        setChart(key, new ChartData(graph));
+    }
+
+
+    public void setChart(Object key, ChartData<Number, Number> chart) {
+        Map<Object, ChartData<Number, Number>> charts = new HashMap<>();
+        charts.put(key, chart);
+        setCharts(charts);
     }
     
-    
+
     public void setGraphs(Map<Object, Map<Number, Number>> graphs) {
-        LOGGER.log(Level.FINE, "setGraphs {0}", graphs);
-        Map<Object, Map<Number, Number>> data = new LinkedHashMap<>();
+        Map<Object, ChartData<Number, Number>> charts = new HashMap<>();
         for (Map.Entry<Object, Map<Number, Number>> graph : graphs.entrySet()) {
-            data.put(graph.getKey(), new LinkedHashMap<>(graph.getValue()));
+            charts.put(graph.getKey(), new ChartData<>(graph.getValue()));
         }
-        setData(data);
+        setCharts(charts);
+    }
+
+    
+    public void setCharts(Map<Object, ChartData<Number, Number>> charts) {
+        LOGGER.log(Level.FINE, "setGraphs {0}", charts);
+        setData(charts);
     }
     
     
@@ -388,9 +398,9 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
 
     private void drawData(Graphics2D g2d) {
-        for (Map.Entry<Object, TreeSet<AreaGeometry>> entry : geometry.getGraphs().entrySet()) {
+        for (Map.Entry<Object, java.util.List<AreaGeometry>> entry : geometry.getGraphs().entrySet()) {
             Object key = entry.getKey();
-            TreeSet<AreaGeometry> graphGeometry = entry.getValue();
+            java.util.List<AreaGeometry> graphGeometry = entry.getValue();
             AbstractDataAreaRenderer renderer = getRenderer(key);
             renderer.draw(g2d, graphGeometry);
         }
@@ -445,7 +455,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
 
     
-    private synchronized void setData(Map<Object, Map<Number, Number>> data) {
+    private synchronized void setData(Map<Object, ChartData<Number, Number>> data) {
         synchronized (geometry) {
             geometry.setData(data, renderers);
             initializeGeometry();
@@ -640,7 +650,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
         private AreaGeometry findContainingArea() {
             synchronized (geometry) {
-                for (Map.Entry<Object, TreeSet<AreaGeometry>> entry : geometry.getGraphs().entrySet()) {
+                for (Map.Entry<Object, java.util.List<AreaGeometry>> entry : geometry.getGraphs().entrySet()) {
                     for (AreaGeometry dataAreaGeometry : entry.getValue()) {
                         if (dataAreaGeometry.getArea().contains(mousePoint)) {
                             highlightRenderer = pointHighlightRenderers.get(entry.getKey());

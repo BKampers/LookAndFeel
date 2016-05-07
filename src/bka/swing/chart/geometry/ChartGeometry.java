@@ -5,6 +5,7 @@
 package bka.swing.chart.geometry;
 
 
+import bka.swing.chart.*;
 import bka.swing.chart.render.AbstractDataAreaRenderer;
 import bka.swing.chart.grid.Demarcations;
 import java.awt.*;
@@ -15,7 +16,7 @@ import java.util.logging.*;
 public final class ChartGeometry {
     
     
-    public void setData(Map<Object, Map<Number, Number>> dataMap, Map<Object, AbstractDataAreaRenderer> renderers) {
+    public void setData(Map<Object, ChartData<Number, Number>> dataMap, Map<Object, AbstractDataAreaRenderer> renderers) {
         this.dataMap = dataMap;
         this.renderers = renderers;
     }
@@ -76,7 +77,7 @@ public final class ChartGeometry {
     }
 
     
-    public Map<Object, TreeSet<AreaGeometry>> getGraphs() {
+    public Map<Object, java.util.List<AreaGeometry>> getGraphs() {
         return graphs;
     }
 
@@ -169,16 +170,16 @@ public final class ChartGeometry {
      */
     private Window computeWindow(Number xWindowMin, Number xWindowMax, Number yWindowMin, Number yWindowMax) {
         Window window = new Window();
-        for (Map.Entry<Object, Map<Number, Number>> dataGraph : dataMap.entrySet()) {
-            Map<Number, Number> graphPointsInWindow = new LinkedHashMap<>();
+        for (Map.Entry<Object, ChartData<Number, Number>> dataGraph : dataMap.entrySet()) {
+            ChartData<Number, Number> graphPointsInWindow = new ChartData<>();
             window.points.put(dataGraph.getKey(), graphPointsInWindow);
-            for (Map.Entry<Number, Number> entry : dataGraph.getValue().entrySet()) {
-                Number x = entry.getKey();
-                Number y = entry.getValue();
+            for (ChartDataElement<Number, Number> element : dataGraph.getValue()) {
+                Number x = element.getKey();
+                Number y = element.getValue();
                 double valueX = value(x);
                 double valueY = value(y);
                 if (inRange(xWindowMin, xWindowMax, valueX) && inRange(yWindowMin, yWindowMax, valueY)) {
-                    graphPointsInWindow.put(x, y);
+                    graphPointsInWindow.add(x, y);
                     if (window.xMin == null || valueX < value(window.xMin)) { 
                         window.xMin = x;
                     }
@@ -207,10 +208,10 @@ public final class ChartGeometry {
      * Compute render data for points in window
      */
     private void computeDataPoints(Window window) {
-        for (Map.Entry<Object, Map<Number, Number>> map : window.points.entrySet()) {
+        for (Map.Entry<Object, ChartData<Number, Number>> map : window.points.entrySet()) {
             AbstractDataAreaRenderer renderer = renderers.get(map.getKey());
             if (renderer != null) {
-                TreeSet<AreaGeometry> points = renderer.createGraphGeomerty(map.getValue());
+                java.util.List<AreaGeometry> points = renderer.createGraphGeomerty(map.getValue());
                 graphs.put(map.getKey(), points);
             }
         }
@@ -247,7 +248,7 @@ public final class ChartGeometry {
     
     
     private class Window {
-        Map<Object, Map<Number, Number>> points = new LinkedHashMap<>();
+        Map<Object, ChartData<Number, Number>> points = new LinkedHashMap<>();
         Number xMin, xMax, yMin, yMax;
     }
 
@@ -258,10 +259,10 @@ public final class ChartGeometry {
     
     private Rectangle area = null;
     
-    private Map<Object, Map<Number, Number>> dataMap;
+    private Map<Object, ChartData<Number, Number>> dataMap;
     private Map<Object, AbstractDataAreaRenderer> renderers;
 
-    private final Map<Object, TreeSet<AreaGeometry>> graphs = new LinkedHashMap<>();
+    private final Map<Object, java.util.List<AreaGeometry>> graphs = new LinkedHashMap<>();
 
     private Number xMin = null;
     private Number xMax = null;

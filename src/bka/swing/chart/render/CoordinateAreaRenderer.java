@@ -5,6 +5,7 @@
 package bka.swing.chart.render;
 
 
+import bka.swing.chart.*;
 import bka.swing.chart.custom.AreaLooks;
 import bka.swing.chart.geometry.AreaGeometry;
 
@@ -24,11 +25,11 @@ public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDa
 
 
     @Override
-    public TreeSet<AreaGeometry<S>> createGraphGeomerty(Map<Number, Number> graph) {
-        TreeSet<AreaGeometry<S>> geometry = new TreeSet<>();
-        for (Map.Entry<Number, Number> entry : graph.entrySet()) {
-            Number x = entry.getKey();
-            Number y = entry.getValue();
+    public java.util.List<AreaGeometry<S>> createGraphGeomerty(ChartData<Number, Number> chart) {
+        ArrayList<AreaGeometry<S>> geometry = new ArrayList<>();
+        for (ChartDataElement<Number, Number> element : chart) {
+            Number x = element.getKey();
+            Number y = element.getValue();
             geometry.add(new AreaGeometry<>(x, y, createArea(x, y)));
         }
         return geometry;

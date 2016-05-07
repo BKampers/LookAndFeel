@@ -33,7 +33,7 @@ public class Demo extends javax.swing.JFrame {
         styleComboBox.addItem(rectangleRenderer);
         styleComboBox.addItem(ovalRenderer);
         styleComboBox.addItem(new BarRenderer(null));
-//        styleComboBox.addItem(new ScatterRenderer<>(DefaultLooks.createSolid(Color.BLACK)));
+        styleComboBox.addItem(new ScatterRenderer<>(DefaultLooks.createSolid(Color.BLACK)));
         gridLooks = GridLooks.create(new Color[] { Color.WHITE });
     }
     
@@ -155,14 +155,14 @@ public class Demo extends javax.swing.JFrame {
             chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_DEMARCATION);
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
-            BarLooks l1 = BarLooks.create(Color.BLUE, Color.CYAN);
-            l1.setBorder(Color.BLUE.darker());
-            AreaLooks l2 = DefaultLooks.createBorder(Color.RED, new BasicStroke(2.0f));
-            BarRenderer b1 = new BarRenderer(10, l1);
-            b1.setShift(-5);
-            BarRenderer b2 = new BarRenderer(10, l2);
-            b2.setShift(5);
             if (pointRenderer instanceof BarRenderer) {
+                BarLooks l1 = BarLooks.create(Color.BLUE, Color.CYAN);
+                l1.setBorder(Color.BLUE.darker());
+                AreaLooks l2 = DefaultLooks.createBorder(Color.RED, new BasicStroke(2.0f));
+                BarRenderer b1 = new BarRenderer(10, l1);
+                b1.setShift(-5);
+                BarRenderer b2 = new BarRenderer(10, l2);
+                b2.setShift(5);
                 Map graphs = new HashMap<>();
                 graphs.put("G1", g1);
                 graphs.put("G2", g2);
@@ -172,10 +172,10 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXWindowMinimum(0);
                 chartPanel.setXWindowMaximum(21);
                 chartPanel.setYWindowMinimum(0);
-//                chartPanel.setYWindowMaximum(27);
+                chartPanel.setYWindowMaximum(27);
                 chartPanel.setXDemarcations(new IntegerDemarcations());
                 chartPanel.setDemarcations(new DefaultDemarcationRenderer(gridLooks), ChartPanel.DemarcationMode.Y);
-//                chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
+                chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
             }
             else if (pointRenderer instanceof RectangleDotRenderer) {
                 Map graphs = new HashMap<>();
@@ -185,17 +185,18 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXWindowMinimum(null);
                 chartPanel.setXWindowMaximum(null);
                 chartPanel.setYWindowMinimum(null);
+                chartPanel.setYWindowMaximum(null);
                 chartPanel.setXDemarcations(new Demarcations());
                 chartPanel.setDemarcations(new DefaultDemarcationRenderer(gridLooks), ChartPanel.DemarcationMode.X);
             }
-//            else if (pointRenderer instanceof ScatterRenderer) {
-//                chartPanel.setGraph("S1", s1);
-//                chartPanel.setRenderer("S1", pointRenderer);
-//                chartPanel.setXWindowMinimum(null);
-//                chartPanel.setXWindowMaximum(null);
-//                chartPanel.setYWindowMinimum(0);
-//                chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
-//            }
+            else if (pointRenderer instanceof ScatterRenderer) {
+                chartPanel.setChart("S1", s1);
+                chartPanel.setRenderer("S1", pointRenderer);
+                chartPanel.setXWindowMinimum(null);
+                chartPanel.setXWindowMaximum(null);
+                chartPanel.setYWindowMinimum(0);
+                chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
+            }
             else {
                 Map graphs = new HashMap<>();
                 graphs.put("G1", g1);
@@ -228,11 +229,12 @@ public class Demo extends javax.swing.JFrame {
             Random random = new Random();
             g4.put(x, random.nextFloat());
         }
-        s1.put(1, 1);
-        s1.put(3, 2);
-        s1.put(2, 2);
-        s1.put(-1, 5);
-        s1.put(4, 2);
+        s1.add(1, 1);
+        s1.add(1, 2);
+        s1.add(3, 2);
+        s1.add(2, 2);
+        s1.add(-1, 5);
+        s1.add(4, 2);
         styleComboBox.setSelectedIndex(1);
     }
 
@@ -250,6 +252,6 @@ public class Demo extends javax.swing.JFrame {
     private final Map<Number, Number> g2 = new HashMap<>();
     private final Map<Number, Number> g3 = new HashMap<>();
     private final Map<Number, Number> g4 = new TreeMap<>();
-    private final Map<Number, Number> s1 = new HashMap<>();
+    private final ChartData<Number, Number> s1 = new ChartData<>();
 
 }

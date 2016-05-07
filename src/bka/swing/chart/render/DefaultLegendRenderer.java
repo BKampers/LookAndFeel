@@ -29,7 +29,7 @@ public class DefaultLegendRenderer {
         legendGeometry.setFeed(FEED);
         legendGeometry.setFont(g2d.getFont());
         legendGeometry.setLabelColor(LABEL_COLOR);
-        for (Map.Entry<Object, TreeSet<AreaGeometry>> entry : geometry.getGraphs().entrySet()) {
+        for (Map.Entry<Object, java.util.List<AreaGeometry>> entry : geometry.getGraphs().entrySet()) {
             Object key = entry.getKey();
             AbstractDataAreaRenderer renderer = renderers.get(key);
             if (renderer != null) {

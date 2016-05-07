@@ -9,7 +9,6 @@ import bka.swing.chart.custom.LineLooks;
 import bka.swing.chart.geometry.PixelAreaGeometry;
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.*;
 
 
 public class DefaultLineRenderer extends LineRenderer {
@@ -31,7 +30,7 @@ public class DefaultLineRenderer extends LineRenderer {
 
 
     @Override
-    public void draw(Graphics2D g2d, TreeSet<PixelAreaGeometry<RectangularShape>> graphGeometry) {
+    public void draw(Graphics2D g2d, java.util.List<PixelAreaGeometry<RectangularShape>> graphGeometry) {
         Polygon polyline = createPolyline(graphGeometry);
         if (lineLooks.getBottomAreaPaint() != null) {
             fillBottomArea(g2d, polyline);
@@ -66,7 +65,7 @@ public class DefaultLineRenderer extends LineRenderer {
     }
 
 
-    private Polygon createPolyline(TreeSet<PixelAreaGeometry<RectangularShape>> graphGeometry) {
+    private Polygon createPolyline(java.util.List<PixelAreaGeometry<RectangularShape>> graphGeometry) {
         Polygon polyline = new Polygon();
         for (PixelAreaGeometry<RectangularShape> dataAreaGeometry : graphGeometry) {
             Point pixel = dataAreaGeometry.getPixel();
