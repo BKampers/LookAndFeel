@@ -9,7 +9,7 @@ package bka.swing.chart.geometry;
  * Information needed for rendering and highlighting data in a graph.
  * @param <S> Area (Shape) this date ocupies on the chart canvas
  */
-public class AreaGeometry<S extends java.awt.Shape> {//implements Comparable<AreaGeometry> {
+public class AreaGeometry<S extends java.awt.Shape> {
 
     public AreaGeometry(Number x, Number y, S area) {
         this.x = x;
@@ -31,17 +31,6 @@ public class AreaGeometry<S extends java.awt.Shape> {//implements Comparable<Are
     public S getArea() {
         return area;
     }
-
-
-//    @Override
-//    public int compareTo(AreaGeometry other) {
-//        return
-//            (x.doubleValue() < other.getX().doubleValue()) ? -1 :
-//            (x.doubleValue() > other.getX().doubleValue()) ? 1 :
-//            (y.doubleValue() < other.getY().doubleValue()) ? -1 :
-//            (y.doubleValue() > other.getY().doubleValue()) ? 1 :
-//            0;
-//    }
 
 
     @Override
