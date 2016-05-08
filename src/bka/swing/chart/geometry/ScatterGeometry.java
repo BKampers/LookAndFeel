@@ -20,12 +20,6 @@ public class ScatterGeometry<S extends Shape> extends AreaGeometry<S> {
         this(x, y, area, 1);
     }
 
-//
-//    public void increaseCount(S area) {
-//        count++;
-//        this.area = area;
-//    }
-
 
     public int getCount() {
         return count;

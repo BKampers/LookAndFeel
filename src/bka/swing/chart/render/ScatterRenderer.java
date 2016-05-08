@@ -21,29 +21,17 @@ public class ScatterRenderer<S extends Shape> extends AbstractDataAreaRenderer<S
 
     @Override
     public java.util.List<ScatterGeometry<S>> createGraphGeomerty(ChartData<Number, Number> chart) {
-        ArrayList<ScatterGeometry<S>> graphGeometry = new ArrayList<>();
+        Map<ChartDataElement<Number, Number>, ScatterGeometry<S>> map = new HashMap<>();
         for (ChartDataElement<Number, Number> element : chart) {
             Number x = element.getKey();
             Number y = element.getValue();
-            ScatterGeometry<S> scatterGeometry = null;
-            for (ScatterGeometry<S> g : graphGeometry) {
-                if (x.equals(g.getX()) && y.equals(g.getY())) {
-                    scatterGeometry = g;
-                }
-            }
-            if (scatterGeometry == null) {
-                Shape area = createShape(chartGeometry.xPixel(x), chartGeometry.yPixel(y), 7.0f);
-                scatterGeometry = new ScatterGeometry(x, y, area);
-            }
-            else {
-                graphGeometry.remove(scatterGeometry);
-                int count = scatterGeometry.getCount() + 1;
-                Shape area = createShape(chartGeometry.xPixel(x), chartGeometry.yPixel(y), 1.0f + count * 2.0f);
-                scatterGeometry = new ScatterGeometry(x, y, area, count);
-            }
-            graphGeometry.add(scatterGeometry);
+            ScatterGeometry<S> geom = map.get(element);
+            int count = (geom == null) ? 1 : geom.getCount() + 1;
+            Shape area = createShape(chartGeometry.xPixel(x), chartGeometry.yPixel(y), count * 3.0f);
+            geom = new ScatterGeometry(x, y, area, count);
+            map.put(element, geom);
         }
-        return graphGeometry;
+        return new ArrayList(map.values());
     }
 
 
