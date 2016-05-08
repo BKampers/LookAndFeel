@@ -11,7 +11,7 @@ import java.awt.geom.*;
 import java.util.logging.*;
 
 
-public class PointLooks implements AreaLooks<AreaGeometry<RectangularShape>> {
+public class PointLooks implements AreaLooks<AreaGeometry> {
 
 
     PointLooks(boolean radial, float xShiftFactor, float yShiftFactor, float[] distribution, Color[] colors) {
@@ -71,8 +71,8 @@ public class PointLooks implements AreaLooks<AreaGeometry<RectangularShape>> {
 
 
     @Override
-    public Paint getPaint(AreaGeometry<RectangularShape> geometry) {
-        RectangularShape area = geometry.getArea();
+    public Paint getPaint(AreaGeometry geometry) {
+        Shape area = geometry.getArea();
         try {
             if (radial) {
                 return createRadialGradientPaint(area);
@@ -89,46 +89,48 @@ public class PointLooks implements AreaLooks<AreaGeometry<RectangularShape>> {
 
 
     @Override
-    public Paint getBorderPaint(AreaGeometry<RectangularShape> area) {
+    public Paint getBorderPaint(AreaGeometry area) {
         return borderPaint;
     }
 
 
     @Override
-    public Stroke getBorderStroke(AreaGeometry<RectangularShape> area) {
+    public Stroke getBorderStroke(AreaGeometry area) {
         return borderStroke;
     }
 
 
-    private Paint createRadialGradientPaint(RectangularShape area) {
-        float radius = (float) Math.min(area.getWidth(), area.getHeight()) / 2.0f;
+    private Paint createRadialGradientPaint(Shape area) {
+        Rectangle2D bounds = area.getBounds2D();
+        float radius = (float) Math.min(bounds.getWidth(), bounds.getHeight()) / 2.0f;
         Point2D.Float center = new Point2D.Float(
-            (float) area.getX() + xShift(area) + radius,
-            (float) area.getY() - yShift(area) + radius);
+            (float) bounds.getX() + xShift(bounds) + radius,
+            (float) bounds.getY() - yShift(bounds) + radius);
         return new RadialGradientPaint(center, radius, distribution, colors);
     }
 
 
-    private Paint createLinearGradientPaint(RectangularShape area) {
-        float xShift = xShift(area);
-        float yShift = yShift(area);
-        float x = (float) area.getX();
-        float y = (float) area.getY();
+    private Paint createLinearGradientPaint(Shape area) {
+        Rectangle2D bounds = area.getBounds2D();
+        float xShift = xShift(bounds);
+        float yShift = yShift(bounds);
+        float x = (float) bounds.getX();
+        float y = (float) bounds.getY();
         float xStart = x + xShift;
-        float xEnd = x + (float) area.getWidth() - xShift ;
+        float xEnd = x + (float) bounds.getWidth() - xShift ;
         float yStart = y + yShift;
-        float yEnd = y + (float) area.getHeight() - yShift;
+        float yEnd = y + (float) bounds.getHeight() - yShift;
         return new LinearGradientPaint(xStart, yStart, xEnd, yEnd, distribution, colors);
     }
 
 
-    private float xShift(RectangularShape area) {
-        return (float) area.getWidth() * xShiftFactor;
+    private float xShift(Rectangle2D bounds) {
+        return (float) bounds.getWidth() * xShiftFactor;
     }
 
 
-    private float yShift(RectangularShape area) {
-        return (float) area.getHeight() * yShiftFactor;
+    private float yShift(Rectangle2D bounds) {
+        return (float) bounds.getHeight() * yShiftFactor;
     }
 
 

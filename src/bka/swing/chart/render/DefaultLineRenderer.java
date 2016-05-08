@@ -30,7 +30,7 @@ public class DefaultLineRenderer extends LineRenderer {
 
 
     @Override
-    public void draw(Graphics2D g2d, java.util.List<PixelAreaGeometry<RectangularShape>> graphGeometry) {
+    public void draw(Graphics2D g2d, java.util.List<PixelAreaGeometry> graphGeometry) {
         Polygon polyline = createPolyline(graphGeometry);
         if (lineLooks.getBottomAreaPaint() != null) {
             fillBottomArea(g2d, polyline);
@@ -50,7 +50,7 @@ public class DefaultLineRenderer extends LineRenderer {
 
 
     @Override
-    protected PixelAreaGeometry<RectangularShape> createSymbolGeometry(int x, int y, PixelAreaGeometry<RectangularShape> geometry) {
+    protected PixelAreaGeometry createSymbolGeometry(int x, int y, PixelAreaGeometry geometry) {
         RectangularShape area = createSymbolArea(x, y);
         Point pixel = new Point((int) area.getCenterX(), (int) area.getCenterY());
         return new PixelAreaGeometry<>(null, null, area, pixel);
@@ -65,7 +65,7 @@ public class DefaultLineRenderer extends LineRenderer {
     }
 
 
-    private Polygon createPolyline(java.util.List<PixelAreaGeometry<RectangularShape>> graphGeometry) {
+    private Polygon createPolyline(java.util.List<PixelAreaGeometry> graphGeometry) {
         Polygon polyline = new Polygon();
         for (PixelAreaGeometry<RectangularShape> dataAreaGeometry : graphGeometry) {
             Point pixel = dataAreaGeometry.getPixel();

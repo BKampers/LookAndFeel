@@ -13,7 +13,7 @@ import java.awt.geom.*;
 import java.util.*;
 
 
-public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeometry<RectangularShape>> {
+public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeometry> {
 
 
     LineRenderer(LineLooks lineLooks, int markerWidth, int markerHeight) {
@@ -25,8 +25,8 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
 
     
     @Override
-    public java.util.List<PixelAreaGeometry<RectangularShape>> createGraphGeomerty(ChartData<Number, Number> chart) {
-        ArrayList<PixelAreaGeometry<RectangularShape>> dataGeometry = new ArrayList<>();
+    public java.util.List<PixelAreaGeometry> createGraphGeomerty(ChartData<Number, Number> chart) {
+        ArrayList<PixelAreaGeometry> dataGeometry = new ArrayList<>();
         for (ChartDataElement<Number, Number> element : chart) {
             Number x = element.getKey();
             Number y = element.getValue();
