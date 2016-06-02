@@ -23,6 +23,16 @@ public class PieLooks implements AreaLooks<ArcAreaGeometry> {
     }
 
 
+    public void setRotatedLabels(boolean rotatedLabels) {
+        this.rotatedLabels = rotatedLabels;
+    }
+
+
+    public boolean getRotatedLabels() {
+        return rotatedLabels;
+    }
+
+
     @Override
     public Paint getPaint(ArcAreaGeometry geometry) {
         Arc2D.Float area = geometry.getArea();
@@ -47,5 +57,6 @@ public class PieLooks implements AreaLooks<ArcAreaGeometry> {
 
     private float[] fractions = new float[] { 0.0f, 1.0f };
     private Color[] colors;
+    private boolean rotatedLabels;
 
 }

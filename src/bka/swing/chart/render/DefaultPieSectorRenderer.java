@@ -59,21 +59,47 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
     private void drawLabel(Graphics2D g2d, ArcAreaGeometry geometry) {
         String label = geometry.getX().toString();
-        FontMetrics fontMetrics = g2d.getFontMetrics();
-        int stringWidth = fontMetrics.stringWidth(label);
         Arc2D.Float arc = geometry.getArea();
         double angle = Math.toRadians(arc.start + arc.extent / 2.0);
         double labelRadius = getDiameter() / 2.0 + TEXT_RADIUS_EXTENT;
         Point center = getCenter();
-        int labelX = (int) Math.round(center.x + Math.cos(angle) * labelRadius);
-        int labelY = (int) Math.round(center.y - Math.sin(angle) * labelRadius + fontMetrics.getHeight() / 2.0);
+        double labelX = center.x + Math.cos(angle) * labelRadius;
+        double labelY = center.y - Math.sin(angle) * labelRadius;
         g2d.setColor(Color.BLACK);
-        if (LEFT_SIDE_MIN < angle && angle < LEFT_SIDE_MAX) {
-            g2d.drawString(label, labelX - stringWidth, labelY);
+        if (((PieLooks) looks).getRotatedLabels()) {
+            drawRotatedLabel(g2d, angle, labelX, labelY, label);
         }
         else {
-            g2d.drawString(label, labelX, labelY);
+            drawHorizontalLabel(g2d, angle, labelX, labelY, label);
         }
+    }
+    
+    
+    private void drawHorizontalLabel(Graphics2D g2d, double angle, double labelX, double labelY, String label) {
+        FontMetrics fontMetrics = g2d.getFontMetrics();
+        if (LEFT_SIDE_MIN < angle && angle < LEFT_SIDE_MAX) {
+            labelX -= fontMetrics.stringWidth(label);
+        }
+        labelY += fontMetrics.getHeight() / 2.0;
+        drawString(g2d, label, labelX, labelY);
+    }
+
+    
+    private void drawRotatedLabel(Graphics2D g2d, double angle, double labelX, double labelY, String label) {
+        FontMetrics fontMetrics = g2d.getFontMetrics();
+        double x = labelX;
+        if (LEFT_SIDE_MIN < angle && angle < LEFT_SIDE_MAX) {
+            angle -= Math.PI;
+            x -= fontMetrics.stringWidth(label);
+        }
+        g2d.rotate(-angle, labelX, labelY);
+        drawString(g2d, label, x, labelY);
+        g2d.rotate(angle, labelX, labelY);
+    }
+
+
+    private void drawString(Graphics2D g2d, String label, double labelX, double labelY) {
+        g2d.drawString(label, Math.round((float) labelX), Math.round((float) labelY));
     }
 
 
