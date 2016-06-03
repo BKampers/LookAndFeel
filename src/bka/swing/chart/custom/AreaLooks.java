@@ -16,5 +16,7 @@ public interface AreaLooks<G extends AreaGeometry> {
     public Paint getPaint(G geometry);
     public Paint getBorderPaint(G geometry);
     public Stroke getBorderStroke(G geometry);
+    public Paint getLabelPaint(G geometry);
+    public Font getLabelFont(G geometry);
     
 }

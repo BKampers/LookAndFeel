@@ -11,7 +11,7 @@ import bka.swing.chart.custom.PieLooks;
 import bka.swing.chart.geometry.*;
 
 import java.awt.*;
-import java.awt.geom.Arc2D;
+import java.awt.geom.*;
 
 
 public class DefaultPieSectorRenderer extends PieSectorRenderer {
@@ -52,49 +52,58 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
     }
 
 
+    private Arc2D.Float createSymbolArea(int x, int y) {
+        return new Arc2D.Float(x - 10, y - 10, 20, 20, -40, 80, Arc2D.PIE);
+    }
+
+
     private void drawSymbol(Graphics2D g2d, int x, int y, ArcAreaGeometry geometry) {
         super.draw(g2d, createSymbolGeometry(x, y, geometry));
     }
 
 
     private void drawLabel(Graphics2D g2d, ArcAreaGeometry geometry) {
-        String label = geometry.getX().toString();
-        Arc2D.Float arc = geometry.getArea();
-        double angle = Math.toRadians(arc.start + arc.extent / 2.0);
-        double labelRadius = getDiameter() / 2.0 + TEXT_RADIUS_EXTENT;
-        Point center = getCenter();
-        double labelX = center.x + Math.cos(angle) * labelRadius;
-        double labelY = center.y - Math.sin(angle) * labelRadius;
-        g2d.setColor(Color.BLACK);
+        if (((PieLooks) looks).getLabelPaint(geometry) != null) {
+            g2d.setPaint(((PieLooks) looks).getLabelPaint(geometry));
+        }
+        if (((PieLooks) looks).getLabelFont(geometry) != null) {
+            g2d.setFont(((PieLooks) looks).getLabelFont(geometry));
+        }
         if (((PieLooks) looks).getRotatedLabels()) {
-            drawRotatedLabel(g2d, angle, labelX, labelY, label);
+            drawRotatedLabel(g2d, geometry);
         }
         else {
-            drawHorizontalLabel(g2d, angle, labelX, labelY, label);
+            drawHorizontalLabel(g2d, geometry);
         }
     }
-    
-    
-    private void drawHorizontalLabel(Graphics2D g2d, double angle, double labelX, double labelY, String label) {
+
+
+    private void drawHorizontalLabel(Graphics2D g2d, ArcAreaGeometry geometry) {
+        String label = geometry.getX().toString();
         FontMetrics fontMetrics = g2d.getFontMetrics();
+        double angle = angle(geometry.getArea());
+        Point2D labelPoint = labelPoint(angle);
+        double x = labelPoint.getX();
+        double y = labelPoint.getY() + fontMetrics.getHeight() / 2.0;
         if (LEFT_SIDE_MIN < angle && angle < LEFT_SIDE_MAX) {
-            labelX -= fontMetrics.stringWidth(label);
+            x -= fontMetrics.stringWidth(label);
         }
-        labelY += fontMetrics.getHeight() / 2.0;
-        drawString(g2d, label, labelX, labelY);
+        drawString(g2d, label, x, y);
     }
 
     
-    private void drawRotatedLabel(Graphics2D g2d, double angle, double labelX, double labelY, String label) {
-        FontMetrics fontMetrics = g2d.getFontMetrics();
-        double x = labelX;
+    private void drawRotatedLabel(Graphics2D g2d, ArcAreaGeometry geometry) {
+        String label = geometry.getX().toString();
+        double angle = angle(geometry.getArea());
+        Point2D labelPoint = labelPoint(angle);
+        double x = labelPoint.getX();
         if (LEFT_SIDE_MIN < angle && angle < LEFT_SIDE_MAX) {
             angle -= Math.PI;
-            x -= fontMetrics.stringWidth(label);
+            x -= g2d.getFontMetrics().stringWidth(label);
         }
-        g2d.rotate(-angle, labelX, labelY);
-        drawString(g2d, label, x, labelY);
-        g2d.rotate(angle, labelX, labelY);
+        g2d.rotate(-angle, labelPoint.getX(), labelPoint.getY());
+        drawString(g2d, label, x, labelPoint.getY());
+        g2d.rotate(angle, labelPoint.getX(), labelPoint.getY());
     }
 
 
@@ -103,8 +112,22 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
     }
 
 
-    private Arc2D.Float createSymbolArea(int x, int y) {
-        return new Arc2D.Float(x - 10, y - 10, 20, 20, -40, 80, Arc2D.PIE);
+    private static double angle(Arc2D.Float arc) {
+        return Math.toRadians(arc.start + arc.extent / 2.0);
+    }
+
+
+    private double labelRadius() {
+        return getDiameter() / 2.0 + TEXT_RADIUS_EXTENT;
+    }
+
+
+    Point2D.Double labelPoint(double angle) {
+        Point center = getCenter();
+        double radius = labelRadius();
+        return new Point2D.Double(
+            center.x + Math.cos(angle) * radius,
+            center.y - Math.sin(angle) * radius);
     }
 
 

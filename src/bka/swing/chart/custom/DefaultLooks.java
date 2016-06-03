@@ -62,8 +62,22 @@ public class DefaultLooks implements AreaLooks<AreaGeometry> {
     }
 
 
+    @Override
+    public Paint getLabelPaint(AreaGeometry geometry) {
+        return labelColor;
+    }
+
+
+    @Override
+    public Font getLabelFont(AreaGeometry geometry) {
+        return labelFont;
+    }
+
+
     private final Color color;
     private final Color borderColor;
     private final Stroke borderStroke;
+    private Color labelColor = Color.BLACK;
+    private Font labelFont;
 
 }

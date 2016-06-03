@@ -100,6 +100,18 @@ public class PointLooks implements AreaLooks<AreaGeometry> {
     }
 
 
+    @Override
+    public Paint getLabelPaint(AreaGeometry geometry) {
+        return Color.BLACK;
+    }
+
+
+    @Override
+    public Font getLabelFont(AreaGeometry geometry) {
+        return null;
+    }
+
+
     private Paint createRadialGradientPaint(Shape area) {
         Rectangle2D bounds = area.getBounds2D();
         float radius = (float) Math.min(bounds.getWidth(), bounds.getHeight()) / 2.0f;

@@ -55,7 +55,19 @@ public class PieLooks implements AreaLooks<ArcAreaGeometry> {
     }
 
 
-    private float[] fractions = new float[] { 0.0f, 1.0f };
+     @Override
+    public Paint getLabelPaint(ArcAreaGeometry geometry) {
+        return Color.BLACK;
+    }
+
+
+    @Override
+    public Font getLabelFont(ArcAreaGeometry geometry) {
+        return null;
+    }
+
+
+   private float[] fractions = new float[] { 0.0f, 1.0f };
     private Color[] colors;
     private boolean rotatedLabels;
 

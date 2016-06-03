@@ -69,6 +69,18 @@ public class BarLooks implements AreaLooks<AreaGeometry<Rectangle>> {
     }
 
 
+    @Override
+    public Paint getLabelPaint(AreaGeometry<Rectangle> geometry) {
+        return Color.BLACK;
+    }
+
+
+    @Override
+    public Font getLabelFont(AreaGeometry<Rectangle> geometry) {
+        return null;
+    }
+
+
     private Paint getAlternativePaint(AreaGeometry<Rectangle> geometry) {
         return new GradientPaint(0, 0, colors[0], geometry.getArea().width, geometry.getArea().y + geometry.getArea().height, colors[1]);
     }
