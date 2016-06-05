@@ -2,7 +2,7 @@
 ** Copyright © Bart Kampers
 */
 
-package bka.swing.chart;
+package bka.awt;
 
 import java.awt.Color;
 

@@ -3,6 +3,8 @@
 */
 package bka.swing.chart;
 
+import bka.awt.Palette;
+import static bka.awt.PolygonFactory.*;
 
 import bka.swing.chart.render.*;
 import bka.swing.chart.grid.*;
@@ -20,7 +22,8 @@ public class Demo extends javax.swing.JFrame {
         initComponents();
         PointLooks pointLooks = PointLooks.createLinear(new Color[] { Color.RED, Color.WHITE, Color.BLUE });
         pointLooks.setBorder(Color.GREEN.darker());
-        PointRenderer ovalRenderer = new OvalDotRenderer(30, pointLooks);
+        Polygon polygon = createStar(4, 5, 15);
+        PolygonDotRenderer ovalRenderer = new PolygonDotRenderer(polygon, pointLooks);
         PointRenderer rectangleRenderer = new RectangleDotRenderer(2, DefaultLooks.createSolid(Color.BLACK));
         LineLooks lineLooks = LineLooks.create(Color.MAGENTA, pointLooks);
         Color areaColor = new Color(0x80FFFF00, true);
@@ -33,7 +36,7 @@ public class Demo extends javax.swing.JFrame {
         styleComboBox.addItem(rectangleRenderer);
         styleComboBox.addItem(ovalRenderer);
         styleComboBox.addItem(new BarRenderer(null));
-        styleComboBox.addItem(new ScatterRenderer<>(DefaultLooks.createSolid(Color.BLACK)));
+        styleComboBox.addItem(new ScatterRenderer<>(pointLooks));
         gridLooks = GridLooks.create(new Color[] { Color.WHITE });
     }
     
@@ -235,7 +238,8 @@ public class Demo extends javax.swing.JFrame {
         s1.add(2, 2);
         s1.add(-1, 5);
         s1.add(4, 2);
-        styleComboBox.setSelectedIndex(1);
+        s1.add(1, 2);
+        styleComboBox.setSelectedIndex(3);
     }
 
 
