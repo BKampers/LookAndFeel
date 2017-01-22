@@ -52,7 +52,9 @@ public class Demarcations {
         }
         else if (coefficient < 3.0) {
             step = 0.25;
-            digits++;
+            if (range.getExponent() <= 1) {
+                digits++;
+            }
         }
         else if (coefficient < 5.0) {
             step = 0.50;

@@ -49,13 +49,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
 
 
-    public void setChart(Object key, ChartData<Number, Number> chart) {
-        Map<Object, ChartData<Number, Number>> charts = new HashMap<>();
-        charts.put(key, chart);
-        setCharts(charts);
-    }
-    
-
     public void setGraphs(Map<Object, Map<Number, Number>> graphs) {
         Map<Object, ChartData<Number, Number>> charts = new HashMap<>();
         for (Map.Entry<Object, Map<Number, Number>> graph : graphs.entrySet()) {
@@ -65,6 +58,13 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
 
     
+    public void setChart(Object key, ChartData<Number, Number> chart) {
+        Map<Object, ChartData<Number, Number>> charts = new HashMap<>();
+        charts.put(key, chart);
+        setCharts(charts);
+    }
+
+
     public void setCharts(Map<Object, ChartData<Number, Number>> charts) {
         LOGGER.log(Level.FINE, "setGraphs {0}", charts);
         setData(charts);
@@ -693,11 +693,10 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     };
 
     
-    private Color selectionRectangleColor;
-
-    
     private final ChartGeometry geometry = new ChartGeometry();
-    
+
+
+    private Color selectionRectangleColor;
     
     private String title;
     

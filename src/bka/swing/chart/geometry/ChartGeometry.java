@@ -39,6 +39,7 @@ public final class ChartGeometry {
      * @param xWindowMax: end of the x-axis, null means maximum x-value of the data set
      * @param yWindowMin: start of the y-axis, null means minimum y-value of the data set
      * @param yWindowMax: end of the y-axis, null means maximum y-value of the data set
+     * @param yWindowBase: x location where the y-axis is drawn, null means origin
      * @param locale: to convert numbers and dates to strings
      */
     public void initialize(Rectangle area, Number xWindowMin, Number xWindowMax, Number yWindowMin, Number yWindowMax, Number yWindowBase, Locale locale) {
@@ -51,29 +52,34 @@ public final class ChartGeometry {
         yMax = yWindowMax;
         if (dataMap != null) {
             Window window = computeWindow(xWindowMin, xWindowMax, yWindowMin, yWindowMax);
-            if (xMin == null) {
-                xMin = window.xMin;
-            }
-            if (xMax == null) {
-                xMax = window.xMax;
-            }
-            if (yMin == null) {
-                yMin = window.yMin;
-            }
-            if (yMax == null) {
-                yMax = window.yMax;
-            }
-            if (yWindowBase != null) {
-                if (yMin != null && value(yMin) > value(yWindowBase)) {
-                    yMin = yWindowBase;
-                }
-                if (yMax != null && value(yMax) < value(yWindowBase)) {
-                    yMax = yWindowBase;
-                }
-            }
+            computeRanges(window, yWindowBase);
             computeDataPoints(window);
         }
         initializeDemarcations(locale);
+    }
+
+
+    private void computeRanges(Window window, Number yWindowBase) {
+        if (xMin == null) {
+            xMin = window.xMin;
+        }
+        if (xMax == null) {
+            xMax = window.xMax;
+        }
+        if (yMin == null) {
+            yMin = window.yMin;
+        }
+        if (yMax == null) {
+            yMax = window.yMax;
+        }
+        if (yWindowBase != null) {
+            if (yMin != null && value(yMin) > value(yWindowBase)) {
+                yMin = yWindowBase;
+            }
+            if (yMax != null && value(yMax) < value(yWindowBase)) {
+                yMax = yWindowBase;
+            }
+        }
     }
 
     
@@ -199,7 +205,7 @@ public final class ChartGeometry {
     }
     
     
-    private boolean inRange(Number min, Number max, double value) {
+    private static boolean inRange(Number min, Number max, double value) {
         return (min == null || value(min) <= value) && (max == null || value <= value(max));
     }
 

@@ -23,18 +23,18 @@ public class ChartData<K, V> implements Iterable<ChartDataElement<K, V>> {
     }
 
 
-    public void add(K key, V value) {
+    public final void add(K key, V value) {
         entries.add(new ChartDataElement<>(key, value));
     }
 
 
     @Override
-    public Iterator<ChartDataElement<K, V>> iterator() {
+    public final Iterator<ChartDataElement<K, V>> iterator() {
         return entries.iterator();
     }
 
 
-    public int size() {
+    public final int size() {
         return entries.size();
     }
 

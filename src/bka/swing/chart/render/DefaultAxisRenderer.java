@@ -82,6 +82,7 @@ public class DefaultAxisRenderer extends AxisRenderer {
     }
     
     
+    @Override
     public void drawYAxis(Graphics2D g2d) {
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int x;
