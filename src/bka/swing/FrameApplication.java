@@ -7,8 +7,11 @@ package bka.swing;
 
 import java.awt.*;
 import java.io.*;
+import java.security.*;
 import java.util.*;
+import java.util.logging.*;
 import javax.swing.*;
+import org.json.*;
 
 
 public abstract class FrameApplication extends JFrame {
@@ -16,9 +19,7 @@ public abstract class FrameApplication extends JFrame {
     
     public FrameApplication() {
         super();
-        SizeAndPositionListener sizeAndPositionListener = new SizeAndPositionListener();
-        addWindowListener(sizeAndPositionListener);
-        addComponentListener(sizeAndPositionListener);
+        initializeListeners();
     }
 
     
@@ -96,8 +97,29 @@ public abstract class FrameApplication extends JFrame {
     }
 
 
+    private JSONObject getConfigurationObject(String key) {
+        File file = configurationFile();
+        try {
+            FileInputStream stream = new FileInputStream(file);
+            int count = stream.available();
+            byte[] buffer = new byte[count];
+            stream.read(buffer);
+            String source = new String(buffer);
+            JSONObject configuration = new JSONObject(source);
+            return configuration.getJSONObject(key);
+        }
+        catch (FileNotFoundException ex) {
+            Logger.getLogger(FrameApplication.class.getName()).log(Level.FINEST, "Configuration not available", ex);
+        }
+        catch (IOException | JSONException ex) {
+            Logger.getLogger(FrameApplication.class.getName()).log(Level.WARNING, "Configuration read error", ex);
+        }
+        return null;
+    }
+
+
     public LinkedList<String> propertyList(String name, int max) {
-        LinkedList<String> list = new LinkedList<String>();
+        LinkedList<String> list = new LinkedList<>();
         if (name != null && max > 0) {
             for (int i = 1; i <= max; i++) {
                 String propertyName = name + Integer.toString(i);
@@ -286,11 +308,8 @@ public abstract class FrameApplication extends JFrame {
                 }
             }
         }
-        catch (ReflectiveOperationException ex) {
-            java.util.logging.Logger.getLogger(FrameApplication.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrameApplication.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(FrameApplication.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -313,8 +332,8 @@ public abstract class FrameApplication extends JFrame {
     protected File applicationFile(String name) {
         return new File(dataDirectory(), name);
     }
-    
-    
+
+
     protected byte[] key() {
         return fullName().getBytes();
     }
@@ -345,7 +364,7 @@ public abstract class FrameApplication extends JFrame {
                 // Ignore
             }
             catch (IOException ex) {
-                ex.printStackTrace(System.err);
+                Logger.getLogger(FrameApplication.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -356,7 +375,7 @@ public abstract class FrameApplication extends JFrame {
             properties.store(new FileOutputStream(propertiesFile()), null);
         }
         catch (IOException ex) {
-            ex.printStackTrace(System.err);
+            Logger.getLogger(FrameApplication.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -368,10 +387,10 @@ public abstract class FrameApplication extends JFrame {
             settings.putAll(readSettings);
         }
         catch (FileNotFoundException ex) {
-            // Ignore
+            Logger.getLogger(FrameApplication.class.getName()).log(Level.FINEST, "Settings file not available", ex);
         }        
-        catch (Exception ex) {
-            ex.printStackTrace(System.err);
+        catch (IOException | ClassNotFoundException | GeneralSecurityException ex) {
+            Logger.getLogger(FrameApplication.class.getName()).log(Level.SEVERE, "Error reading settings file", ex);
         }
     }
 
@@ -380,8 +399,8 @@ public abstract class FrameApplication extends JFrame {
         try {
             encrypt(settings, settingsFile());
         }
-        catch (Exception ex) {
-            ex.printStackTrace(System.err);
+        catch (IOException | ClassNotFoundException | GeneralSecurityException ex) {
+            Logger.getLogger(FrameApplication.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -447,7 +466,7 @@ public abstract class FrameApplication extends JFrame {
                     // Mac OS X
                     java.net.URL locationUrl = getClass().getProtectionDomain().getCodeSource().getLocation();
                     File locationFile = new File(locationUrl.getFile());
-                    String locationPath = locationFile.getParent().toString();
+                    String locationPath = locationFile.getParent();
                     if (locationPath.contains(".app")) {
                         dataDirectory = new File(locationPath);
                     }
@@ -476,6 +495,11 @@ public abstract class FrameApplication extends JFrame {
     }
 
 
+    private File configurationFile() {
+        return applicationFile("configuration.json");
+    }
+
+
     private boolean ensureDirectoryExists(File directory) {
         boolean success = true;
         File parent = directory.getParentFile();
@@ -488,14 +512,14 @@ public abstract class FrameApplication extends JFrame {
             }
         }
         catch (SecurityException ex) {
-            ex.printStackTrace(System.err);
+            Logger.getLogger(FrameApplication.class.getName()).log(Level.SEVERE, null, ex);
             success = false;
         }
         return success;
     }
     
     
-    private void encrypt(Object object, File file) throws Exception {
+    private void encrypt(Object object, File file) throws IOException, GeneralSecurityException, ClassNotFoundException {
         ByteArrayOutputStream aos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(aos);
         oos.writeObject(object);
@@ -514,7 +538,7 @@ public abstract class FrameApplication extends JFrame {
     }
 
 
-    private Object decrypt(File file) throws Exception  {
+    private Object decrypt(File file) throws IOException, GeneralSecurityException, ClassNotFoundException  {
         FileInputStream fis = new FileInputStream(file);
         ByteArrayOutputStream aos = new ByteArrayOutputStream();
 
@@ -532,7 +556,7 @@ public abstract class FrameApplication extends JFrame {
     }
 
     
-    private File generateKey() throws IOException, java.security.NoSuchAlgorithmException {
+    private File generateKey() throws IOException, NoSuchAlgorithmException {
         File keyFile = applicationFile("initialized");
         if (! keyFile.exists()) {
             javax.crypto.KeyGenerator generator = javax.crypto.KeyGenerator.getInstance("AES");
@@ -547,7 +571,7 @@ public abstract class FrameApplication extends JFrame {
     }
     
     
-    private void crypt(InputStream in, OutputStream out, javax.crypto.Cipher cipher) throws IOException, java.security.GeneralSecurityException {
+    private void crypt(InputStream in, OutputStream out, javax.crypto.Cipher cipher) throws IOException, GeneralSecurityException {
         int blockSize = cipher.getBlockSize();
         int outputSize = cipher.getOutputSize(blockSize);
         byte[] inBytes = new byte[blockSize];
@@ -575,9 +599,32 @@ public abstract class FrameApplication extends JFrame {
     }
     
     
+    private void initializeListeners() {
+        SizeAndPositionListener sizeAndPositionListener = new SizeAndPositionListener();
+        addWindowListener(sizeAndPositionListener);
+        addComponentListener(sizeAndPositionListener);
+    }
+
+
+    private void initializeLogging() {
+        System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT {%2$s}%n[%4$s] %5$s%6$s%n");
+        JSONObject loggerConfiguration = getConfigurationObject("Loggers");
+        if (loggerConfiguration != null) {
+            try {
+                LoggingUtil.setup(loggerConfiguration);
+            }
+            catch (JSONException | IOException ex) {
+                Logger.getLogger(FrameApplication.class.getName()).log(Level.WARNING, "Configuration error", ex);
+            }
+        }
+    }
+
+
     private class SizeAndPositionListener extends java.awt.event.WindowAdapter implements java.awt.event.ComponentListener {
 
+        @Override
         public void windowOpened(java.awt.event.WindowEvent evt) {
+            initializeLogging();
             loadProperties();
             Integer x = getIntProperty("x");
             Integer y = getIntProperty("y");
@@ -596,6 +643,7 @@ public abstract class FrameApplication extends JFrame {
             opened();
         }
         
+        @Override
         public void windowClosing(java.awt.event.WindowEvent evt) {
             closing();
             properties.put("extended", Integer.toString(getExtendedState()));
@@ -605,10 +653,11 @@ public abstract class FrameApplication extends JFrame {
             }
         }
         
+        @Override
         public void windowClosed(java.awt.event.WindowEvent evt) {
-            System.out.println("windowClosed(" + evt + ")");
         }
 
+        @Override
         public void componentResized(java.awt.event.ComponentEvent evt) {
             if (opened && getExtendedState() == java.awt.Frame.NORMAL) {
                 properties.put("x", Integer.toString(getX()));
@@ -618,6 +667,7 @@ public abstract class FrameApplication extends JFrame {
             }
         }
 
+        @Override
         public void componentMoved(java.awt.event.ComponentEvent evt) {
             if (opened) {
                 properties.put("x", Integer.toString(getX()));
@@ -625,9 +675,11 @@ public abstract class FrameApplication extends JFrame {
             }
         }
 
+        @Override
         public void componentShown(java.awt.event.ComponentEvent evt) {
         }
 
+        @Override
         public void componentHidden(java.awt.event.ComponentEvent evt) {
         }
         
@@ -645,7 +697,7 @@ public abstract class FrameApplication extends JFrame {
 
 
     private final Properties properties = new Properties();
-    protected final HashMap<String, Object> settings = new HashMap<String, Object>();
+    protected final HashMap<String, Object> settings = new HashMap<>();
 
     
     private File dataDirectory = null;
