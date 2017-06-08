@@ -52,8 +52,7 @@ public class DrawStyle {
 
 
     public Stroke getStroke(Object key) {
-        Stroke stroke = strokes.get(key);
-        return (stroke != null) ? stroke : new BasicStroke();
+        return strokes.get(key);
     }
 
 
