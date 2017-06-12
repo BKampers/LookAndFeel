@@ -16,18 +16,18 @@ public class DrawStyle {
 
 
     public DrawStyle(DrawStyle drawStyle) {
-        this.paints.putAll(drawStyle.paints);
+        this.colors.putAll(drawStyle.colors);
         this.strokes.putAll(drawStyle.strokes);
     }
 
 
-    public Map<Object, Paint> getPaints() {
-        return new HashMap<>(paints);
+    public Map<Object, Color> getColors() {
+        return new HashMap<>(colors);
     }
 
 
-    public void setPaints(Map<Object, Paint> paints) {
-        this.paints.putAll(paints);
+    public void setColors(Map<Object, Color> colors) {
+        this.colors.putAll(colors);
     }
 
 
@@ -41,13 +41,13 @@ public class DrawStyle {
     }
 
 
-    public Paint getPaint(Object key) {
-        return paints.get(key);
+    public Color getColor(Object key) {
+        return colors.get(key);
     }
 
 
-    public void setPaint(Object key, Paint paint) {
-        paints.put(key, paint);
+    public void setColor(Object key, Color color) {
+        colors.put(key, color);
     }
 
 
@@ -61,7 +61,7 @@ public class DrawStyle {
     }
 
 
-    private final Map<Object, Paint> paints = new HashMap<>();
+    private final Map<Object, Color> colors = new HashMap<>();
     private final Map<Object, Stroke> strokes = new HashMap<>();
 
 }
