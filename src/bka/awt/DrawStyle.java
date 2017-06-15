@@ -5,6 +5,7 @@
 package bka.awt;
 
 import java.awt.*;
+import java.awt.font.*;
 import java.util.*;
 
 
@@ -18,6 +19,7 @@ public class DrawStyle {
     public DrawStyle(DrawStyle drawStyle) {
         this.colors.putAll(drawStyle.colors);
         this.strokes.putAll(drawStyle.strokes);
+        this.fonts.putAll(drawStyle.fonts);
     }
 
 
@@ -41,6 +43,16 @@ public class DrawStyle {
     }
 
 
+    public Map<Object, Map<TextAttribute, Object>> getFonts() {
+        return new HashMap<>(fonts);
+    }
+
+
+    public void setFonts(Map<Object, Map<TextAttribute, Object>> fonts) {
+        this.fonts.putAll(fonts);
+    }
+
+
     public Color getColor(Object key) {
         return colors.get(key);
     }
@@ -61,7 +73,18 @@ public class DrawStyle {
     }
 
 
+    public Map<TextAttribute, Object> getFont(Object key) {
+        return fonts.get(key);
+    }
+
+
+    public void setFont(Object key, Map<TextAttribute, Object> font) {
+        fonts.put(key, font);
+    }
+
+
     private final Map<Object, Color> colors = new HashMap<>();
     private final Map<Object, Stroke> strokes = new HashMap<>();
+    private final Map<Object, Map<TextAttribute, Object>> fonts = new HashMap<>();
 
 }
