@@ -22,9 +22,9 @@ public abstract class AbstractDialog extends javax.swing.JDialog {
     @Override
     public void dispose() {
         if (isVisible()) {
-            String type = persistencyKey();
-            locations.put(type, getLocation());
-            sizes.put(type, getSize());
+            String key = persistencyKey();
+            locations.put(key, getLocation());
+            sizes.put(key, getSize());
             store();
         }
         super.dispose();
