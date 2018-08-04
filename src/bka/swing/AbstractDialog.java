@@ -2,30 +2,34 @@ package bka.swing;
 
 
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
 
 
 public abstract class AbstractDialog extends javax.swing.JDialog {
+    
+    
+    public interface PersistencyDelegate {
+        void onLoad();
+        void onStore();
+    }
 
     
     public AbstractDialog(FrameApplication parent, String title, boolean modal) {
         super(parent, title, modal);
         this.parent = parent;
-        if (locations == null || sizes == null) {
-            load();
-        }
+        addListener();
     }
 
-
+    
     @Override
     public void dispose() {
         if (isVisible()) {
             String key = persistencyKey();
             locations.put(key, getLocation());
             sizes.put(key, getSize());
-            store();
         }
         super.dispose();
     }
@@ -34,6 +38,9 @@ public abstract class AbstractDialog extends javax.swing.JDialog {
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
+            if (locations == null || sizes == null) {
+                load();
+            }
             String key = persistencyKey();
             Dimension size = determineSize(key);
             setLocation(determineLocation(key, size));
@@ -42,6 +49,11 @@ public abstract class AbstractDialog extends javax.swing.JDialog {
             }
         }
         super.setVisible(visible);
+    }
+    
+    
+    public void setPersistencyDelegate(PersistencyDelegate persistencyDelegate) {
+        this.persistencyDelegate = persistencyDelegate;
     }
     
 
@@ -89,6 +101,9 @@ public abstract class AbstractDialog extends javax.swing.JDialog {
         }
         catch (IOException ex) {
             Logger.getLogger(AbstractDialog.class.getName()).log(Level.WARNING, "Cannot store dialog properties", ex);
+        }
+        if (persistencyDelegate != null) {
+            persistencyDelegate.onStore();
         }
     }
 
@@ -140,9 +155,32 @@ public abstract class AbstractDialog extends javax.swing.JDialog {
         }
         return size;
     }
+    
+    
+    private void addListener() {
+        addWindowListener(new WindowPersistencyAdapter());
+    }
+
+
+    private class WindowPersistencyAdapter extends WindowAdapter {
+
+        @Override
+        public void windowOpened(WindowEvent evt) {
+            if (persistencyDelegate != null) {
+                persistencyDelegate.onLoad();
+            }
+        }
+
+        @Override
+        public void windowClosed(WindowEvent evt) {
+            store();
+        }
+
+    }
 
 
     private final FrameApplication parent;
+    private PersistencyDelegate persistencyDelegate;
 
     private static Map<String, Point> locations;
     private static Map<String, Dimension> sizes;
