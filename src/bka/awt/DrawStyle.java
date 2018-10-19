@@ -185,6 +185,16 @@ public class DrawStyle {
     public void setStroke(Object key, Stroke stroke) {
         strokes.put(key, stroke);
     }
+    
+    
+    public String getText(Object key) {
+        return texts.get(key);
+    }
+    
+    
+    public void setText(Object key, String text) {
+        texts.put(key, text);
+    }
 
 
     public Map<TextAttribute, Object> getFont(Object key) {
@@ -297,6 +307,7 @@ public class DrawStyle {
     private final Map<Object, Color> colors = new HashMap<>();
     private final Map<Object, Gradient> gradients = new HashMap<>();
     private final Map<Object, Stroke> strokes = new HashMap<>();
+    private final Map<Object, String> texts = new HashMap<>();
     private final Map<Object, Map<TextAttribute, Object>> fonts = new HashMap<>();
 
 }
