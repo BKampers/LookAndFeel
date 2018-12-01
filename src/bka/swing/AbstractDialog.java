@@ -37,7 +37,7 @@ public abstract class AbstractDialog extends javax.swing.JDialog {
 
     @Override
     public void setVisible(boolean visible) {
-        if (visible) {
+        if (visible && ! isVisible()) {
             if (locations == null || sizes == null) {
                 load();
             }
