@@ -2,7 +2,6 @@
 ** Copyright © Bart Kampers
 */
 
-
 package bka.swing;
 
 
@@ -27,12 +26,10 @@ public class PopupTextField {
     public PopupTextField(String text, Rectangle bounds, int minWidth) {
         this.bounds = bounds;
         Dimension minimumSize = textField.getPreferredSize();
-        textField.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                popup.setVisible(false);
-            }
+        textField.addActionListener((ActionEvent evt) -> {
+            popup.setVisible(false);
         });
-        popup.setOpaque(true);
+        popup.setBorder(BorderFactory.createEmptyBorder());
         popup.setPreferredSize(new Dimension(Math.max(minWidth, bounds.width), Math.max(minimumSize.height, bounds.height)));
         textField.setText(text);
         popup.add(textField);
@@ -51,16 +48,14 @@ public class PopupTextField {
 
 
     public void addListener(final Listener listener) {
-        textField.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                listener.textChanged(textField.getText());
-            }
+        textField.addActionListener((ActionEvent evt) -> {
+            listener.textChanged(textField.getText());
         });
     }
 
     
-    private JPopupMenu popup = new JPopupMenu();
-    private JTextField textField = new JTextField();
+    final private JPopupMenu popup = new JPopupMenu();
+    final private JTextField textField = new JTextField();
     private Rectangle bounds;
 
 
