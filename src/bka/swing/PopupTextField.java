@@ -23,14 +23,14 @@ public class PopupTextField {
     }
     
     
-    public PopupTextField(String text, Rectangle bounds, int minWidth) {
+    public PopupTextField(String text, Rectangle bounds, int minimumWidth) {
         this.bounds = bounds;
         Dimension minimumSize = textField.getPreferredSize();
         textField.addActionListener((ActionEvent evt) -> {
             popup.setVisible(false);
         });
         popup.setBorder(BorderFactory.createEmptyBorder());
-        popup.setPreferredSize(new Dimension(Math.max(minWidth, bounds.width), Math.max(minimumSize.height, bounds.height)));
+        popup.setPreferredSize(new Dimension(Math.max(minimumWidth, bounds.width), Math.max(minimumSize.height, bounds.height)));
         textField.setText(text);
         popup.add(textField);
     }
@@ -54,9 +54,9 @@ public class PopupTextField {
     }
 
     
-    final private JPopupMenu popup = new JPopupMenu();
-    final private JTextField textField = new JTextField();
-    private Rectangle bounds;
+    private final JPopupMenu popup = new JPopupMenu();
+    private final JTextField textField = new JTextField();
+    private final Rectangle bounds;
 
 
 }
