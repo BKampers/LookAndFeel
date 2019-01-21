@@ -8,7 +8,7 @@ import java.awt.*;
 import javax.swing.*;
 
 
-public class Popup {
+public final class Popup {
     
     public interface ModelListener {
         void apply();
@@ -17,29 +17,30 @@ public class Popup {
     public interface Model<T> {
         Component getComponent();
         Rectangle getBounds();
-        void setListener(ModelListener listener);
+        void bindListener(ModelListener listener);
         T getInitialValue();
         void applyNewValue();
     }
     
     
-    public Popup(Model model) {
+    public static void show(Component parent, Model model) {
+        Popup popup = new Popup(model);
+        popup.show(parent);
+    }
+    
+    
+    private Popup(Model model) {
         this.model = model;
         container.setBorder(BorderFactory.createEmptyBorder());
         container.setPreferredSize(model.getBounds().getSize());
         container.add(model.getComponent());
-        model.setListener(this::apply);
+        model.bindListener(this::apply);
     }
     
     
-    public void show(Component parent) {
+    private void show(Component parent) {
         container.show(parent, model.getBounds().x,model.getBounds().y);
         model.getComponent().requestFocus();
-    }
-    
-    
-    public void hide() {
-        container.setVisible(false);
     }
     
     

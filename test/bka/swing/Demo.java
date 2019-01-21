@@ -4,22 +4,19 @@
 package bka.swing;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
-/**
- *
- * @author bartkampers
- */
+
 public class Demo extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Demo
-     */
+ 
     public Demo() {
         initComponents();
-        label.setToolTipText("Click to alter text");
+        label.setToolTipText("<html>Click left to alter text<br>Click right to alter color</html>");
     }
 
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -48,7 +45,7 @@ public class Demo extends javax.swing.JFrame {
             popupDemoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(popupDemoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(label, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                .addComponent(label, javax.swing.GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE)
                 .addContainerGap())
         );
         popupDemoPanelLayout.setVerticalGroup(
@@ -56,7 +53,7 @@ public class Demo extends javax.swing.JFrame {
             .addGroup(popupDemoPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(label)
-                .addContainerGap(220, Short.MAX_VALUE))
+                .addContainerGap(308, Short.MAX_VALUE))
         );
 
         tabbedPane.addTab("Popup", popupDemoPanel);
@@ -74,7 +71,7 @@ public class Demo extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -83,8 +80,14 @@ public class Demo extends javax.swing.JFrame {
 
     
     private void labelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_labelMouseClicked
-        Popup popup = new Popup(new TextFieldPopupModel());
-        popup.show(popupDemoPanel);
+        switch (evt.getButton()) {
+            case MouseEvent.BUTTON1: 
+                Popup.show(popupDemoPanel, new LabelTextPopupModel());
+                break;
+            case MouseEvent.BUTTON3:
+                Popup.show(popupDemoPanel, new ColorPopupModel());
+                break;
+        }
     }//GEN-LAST:event_labelMouseClicked
 
     
@@ -119,44 +122,7 @@ public class Demo extends javax.swing.JFrame {
     }
     
     
-//    private class AbstractPopup {
-//        
-//        AbstractPopup(Popup.Model model) {
-//            this.model = model;
-//            model.setListener(this::actionPerformed);
-//            popup = new Popup(model);
-//        }
-//        
-//        void show(Component parent) {
-//            popup.show(parent);
-//        }
-//        
-//        private void actionPerformed() {
-//            model.applyNewValue(model.getNewValue());
-//            popup.hide();
-//        }
-//        
-//        private final Popup.Model model;
-//        private final Popup popup;
-//        
-//    }
-//
-//    
-    private class TextFieldPopupModel implements Popup.Model<String> {
-
-        TextFieldPopupModel() {
-            this.textField =  new JTextField();
-        }
-        
-        @Override
-        public void setListener(Popup.ModelListener listener) {
-            textField.addActionListener(evt -> listener.apply());
-        }
-        
-        @Override
-        public Component getComponent() {
-            return textField;
-        }
+    private class LabelTextPopupModel extends TextFieldPopupModel {
 
         @Override
         public Rectangle getBounds() {
@@ -172,10 +138,43 @@ public class Demo extends javax.swing.JFrame {
 
         @Override
         public void applyNewValue() {
-            label.setText(textField.getText());
+            label.setText(getText());
+        }
+        
+    }
+    
+    
+    private class ColorPopupModel implements Popup.Model<Color> {
+
+        @Override
+        public Component getComponent() {
+            colorChooser.setColor(getInitialValue());
+            return colorChooser;
         }
 
-        private final JTextField textField;
+        @Override
+        public Rectangle getBounds() {
+            Rectangle bounds = label.getBounds();
+            bounds.height = 400;
+            return bounds;
+        }
+
+        @Override
+        public void bindListener(Popup.ModelListener listener) {
+            colorChooser.getSelectionModel().addChangeListener(evt -> listener.apply());
+        }
+
+        @Override
+        public Color getInitialValue() {
+            return label.getForeground();
+        }
+
+        @Override
+        public void applyNewValue() {
+            label.setForeground(colorChooser.getColor());
+        }
+        
+        private final JColorChooser colorChooser = new JColorChooser();
         
     }
     
