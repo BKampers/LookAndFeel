@@ -16,7 +16,8 @@ public final class Popup {
     
     public interface Model<T> {
         Component getComponent();
-        Rectangle getBounds();
+        Point getLocation();
+        Dimension getSize();
         void bindListener(ModelListener listener);
         T getInitialValue();
         void applyNewValue();
@@ -32,14 +33,15 @@ public final class Popup {
     private Popup(Model model) {
         this.model = model;
         container.setBorder(BorderFactory.createEmptyBorder());
-        container.setPreferredSize(model.getBounds().getSize());
+        container.setPreferredSize(model.getSize());
         container.add(model.getComponent());
         model.bindListener(this::apply);
     }
     
     
     private void show(Component parent) {
-        container.show(parent, model.getBounds().x,model.getBounds().y);
+        Point location = model.getLocation();
+        container.show(parent, location.x, location.y);
         model.getComponent().requestFocus();
     }
     

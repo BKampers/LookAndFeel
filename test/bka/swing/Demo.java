@@ -5,7 +5,6 @@ package bka.swing;
 
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
 
 
 public class Demo extends javax.swing.JFrame {
@@ -13,7 +12,7 @@ public class Demo extends javax.swing.JFrame {
  
     public Demo() {
         initComponents();
-        label.setToolTipText("<html>Click left to alter text<br>Click right to alter color</html>");
+        label.setToolTipText("<html>Mouse button 1 to alter text<br>Mouse button 3 to alter color</html>");
     }
 
     
@@ -125,10 +124,13 @@ public class Demo extends javax.swing.JFrame {
     private class LabelTextPopupModel extends TextFieldPopupModel {
 
         @Override
-        public Rectangle getBounds() {
-            Rectangle bounds = label.getBounds();
-            bounds.height = 25;
-            return bounds;
+        public Point getLocation() {
+            return label.getLocation();
+        }
+        
+        @Override
+        public Dimension getSize() {
+            return new Dimension(label.getWidth(), 25);
         }
         
         @Override
@@ -144,24 +146,16 @@ public class Demo extends javax.swing.JFrame {
     }
     
     
-    private class ColorPopupModel implements Popup.Model<Color> {
+    private class ColorPopupModel extends ColorChooserPopupModel {
 
         @Override
-        public Component getComponent() {
-            colorChooser.setColor(getInitialValue());
-            return colorChooser;
+        public Point getLocation() {
+            return label.getLocation();
         }
-
+        
         @Override
-        public Rectangle getBounds() {
-            Rectangle bounds = label.getBounds();
-            bounds.height = 400;
-            return bounds;
-        }
-
-        @Override
-        public void bindListener(Popup.ModelListener listener) {
-            colorChooser.getSelectionModel().addChangeListener(evt -> listener.apply());
+        public Dimension getSize() {
+            return new Dimension(700, 250);
         }
 
         @Override
@@ -171,11 +165,9 @@ public class Demo extends javax.swing.JFrame {
 
         @Override
         public void applyNewValue() {
-            label.setForeground(colorChooser.getColor());
+            label.setForeground(getColor());
         }
-        
-        private final JColorChooser colorChooser = new JColorChooser();
-        
+       
     }
     
 
