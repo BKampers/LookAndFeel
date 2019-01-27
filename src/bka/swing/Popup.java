@@ -5,20 +5,18 @@
 package bka.swing;
 
 import java.awt.*;
+import java.util.function.*;
 import javax.swing.*;
 
 
 public final class Popup {
-    
-    public interface ModelListener {
-        void apply();
-    }
+
     
     public interface Model<T> {
         Component getComponent();
         Point getLocation();
         Dimension getSize();
-        void bindListener(ModelListener listener);
+        void bindListener(Runnable whenReady);
         T getInitialValue();
         void applyNewValue();
     }

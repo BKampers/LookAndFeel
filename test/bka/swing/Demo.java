@@ -34,7 +34,7 @@ public class Demo extends javax.swing.JFrame {
         label.setText("Click to alter text");
         label.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                labelMouseClicked(evt);
+                label_mouseClicked(evt);
             }
         });
 
@@ -70,7 +70,7 @@ public class Demo extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                .addComponent(tabbedPane)
                 .addContainerGap())
         );
 
@@ -78,16 +78,20 @@ public class Demo extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     
-    private void labelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_labelMouseClicked
+    private void label_mouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_label_mouseClicked
+        Rectangle bounds;
         switch (evt.getButton()) {
-            case MouseEvent.BUTTON1: 
-                Popup.show(popupDemoPanel, new LabelTextPopupModel());
+            case MouseEvent.BUTTON1:
+                bounds = label.getBounds();
+                bounds.height = 25;
+                Popup.show(popupDemoPanel, TextFieldPopupModel.create(bounds, label.getText(), label::setText));
                 break;
             case MouseEvent.BUTTON3:
-                Popup.show(popupDemoPanel, new ColorPopupModel());
+                bounds = new Rectangle(label.getLocation(), new Dimension(700, 250));
+                Popup.show(popupDemoPanel, ColorChooserPopupModel.create(bounds, label.getForeground(), label::setForeground));
                 break;
         }
-    }//GEN-LAST:event_labelMouseClicked
+    }//GEN-LAST:event_label_mouseClicked
 
     
     /**
@@ -118,56 +122,6 @@ public class Demo extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> {
             new Demo().setVisible(true);
         });
-    }
-    
-    
-    private class LabelTextPopupModel extends TextFieldPopupModel {
-
-        @Override
-        public Point getLocation() {
-            return label.getLocation();
-        }
-        
-        @Override
-        public Dimension getSize() {
-            return new Dimension(label.getWidth(), 25);
-        }
-        
-        @Override
-        public String getInitialValue() {
-            return label.getText();
-        }
-
-        @Override
-        public void applyNewValue() {
-            label.setText(getText());
-        }
-        
-    }
-    
-    
-    private class ColorPopupModel extends ColorChooserPopupModel {
-
-        @Override
-        public Point getLocation() {
-            return label.getLocation();
-        }
-        
-        @Override
-        public Dimension getSize() {
-            return new Dimension(700, 250);
-        }
-
-        @Override
-        public Color getInitialValue() {
-            return label.getForeground();
-        }
-
-        @Override
-        public void applyNewValue() {
-            label.setForeground(getColor());
-        }
-       
     }
     
 
