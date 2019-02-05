@@ -2,7 +2,7 @@
 ** © Bart Kampers
 */
 
-package bka.swing;
+package bka.swing.popup;
 
 import java.awt.*;
 import java.util.function.*;
@@ -10,28 +10,11 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 
-public abstract class ColorChooserPopupModel implements Popup.Model<Color> {
+public class ColorChooserPopupModel extends DefaultPopupModel<Color> {
  
     
-    public static ColorChooserPopupModel create(Rectangle bounds, Color initialValue, Consumer<Color> onApply) {
-        return new ColorChooserPopupModel() {
-            @Override
-            public Point getLocation() {
-                return bounds.getLocation();
-            }
-            @Override
-            public Dimension getSize() {
-                return bounds.getSize();
-            }
-            @Override
-            public Color getInitialValue() {
-                return initialValue;
-            }
-            @Override
-            public void applyNewValue() {
-                onApply.accept(getColor());
-            }
-        };
+    public ColorChooserPopupModel(Rectangle bounds, Color initialValue, Consumer<Color> onApply) {
+        super(bounds, initialValue, onApply);
     }
     
     
@@ -49,7 +32,8 @@ public abstract class ColorChooserPopupModel implements Popup.Model<Color> {
     }
 
 
-    protected Color getColor() {
+    @Override
+    protected Color getNewValue() {
         return colorChooser.getColor();
     }
 

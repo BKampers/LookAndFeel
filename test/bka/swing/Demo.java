@@ -3,6 +3,7 @@
  */
 package bka.swing;
 
+import bka.swing.popup.*;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -12,7 +13,13 @@ public class Demo extends javax.swing.JFrame {
  
     public Demo() {
         initComponents();
-        label.setToolTipText("<html>Mouse button 1 to alter text<br>Mouse button 3 to alter color</html>");
+        String osName = System.getProperty("os.name");
+        if (osName.contains("Mac")) {
+            label.setToolTipText("<html>One finger click to alter text<br>Two finger click to alter color</html>");
+        }
+        else {
+            label.setToolTipText("<html>Click left to alter text<br>Click right to alter color</html>");
+        }
     }
 
     
@@ -84,11 +91,11 @@ public class Demo extends javax.swing.JFrame {
             case MouseEvent.BUTTON1:
                 bounds = label.getBounds();
                 bounds.height = 25;
-                Popup.show(popupDemoPanel, TextFieldPopupModel.create(bounds, label.getText(), label::setText));
+                Popup.show(popupDemoPanel, new TextFieldPopupModel(bounds, label.getText(), label::setText));
                 break;
             case MouseEvent.BUTTON3:
                 bounds = new Rectangle(label.getLocation(), new Dimension(700, 250));
-                Popup.show(popupDemoPanel, ColorChooserPopupModel.create(bounds, label.getForeground(), label::setForeground));
+                Popup.show(popupDemoPanel, new ColorChooserPopupModel(bounds, label.getForeground(), label::setForeground));
                 break;
         }
     }//GEN-LAST:event_label_mouseClicked
