@@ -9,24 +9,14 @@ import javax.swing.*;
 
 public final class Popup {
 
-    
-    public interface Model<T> {
-        Component getComponent();
-        Point getLocation();
-        Dimension getSize();
-        void bindListener(Runnable whenReady);
-        T getInitialValue();
-        void applyNewValue();
-    }
-    
-    
-    public static void show(Component parent, Model model) {
+      
+    public static void show(Component parent, PopupModel model) {
         Popup popup = new Popup(model);
         popup.show(parent);
     }
     
     
-    private Popup(Model model) {
+    private Popup(PopupModel model) {
         this.model = model;
         container.setBorder(BorderFactory.createEmptyBorder());
         container.setPreferredSize(model.getSize());
@@ -49,6 +39,6 @@ public final class Popup {
     
     
     private final JPopupMenu container = new JPopupMenu();
-    private final Model model;
+    private final PopupModel model;
 
 }
