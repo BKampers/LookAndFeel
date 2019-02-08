@@ -91,11 +91,11 @@ public class Demo extends javax.swing.JFrame {
             case MouseEvent.BUTTON1:
                 bounds = label.getBounds();
                 bounds.height = 25;
-                Popup.show(popupDemoPanel, new TextFieldPopupModel(bounds, label.getText(), label::setText));
+                PopupControl.show(popupDemoPanel, new TextFieldPopupModel(bounds, label.getText(), label::setText));
                 break;
             case MouseEvent.BUTTON3:
                 bounds = new Rectangle(label.getLocation(), new Dimension(700, 250));
-                Popup.show(popupDemoPanel, new ColorChooserPopupModel(bounds, label.getForeground(), label::setForeground));
+                PopupControl.show(popupDemoPanel, new ColorChooserPopupModel(bounds, label.getForeground(), label::setForeground));
                 break;
         }
     }//GEN-LAST:event_label_mouseClicked

@@ -7,16 +7,16 @@ import java.awt.*;
 import javax.swing.*;
 
 
-public final class Popup {
+public final class PopupControl {
 
       
     public static void show(Component parent, PopupModel model) {
-        Popup popup = new Popup(model);
-        popup.show(parent);
+        PopupControl control = new PopupControl(model);
+        control.show(parent);
     }
     
     
-    private Popup(PopupModel model) {
+    private PopupControl(PopupModel model) {
         this.model = model;
         container.setBorder(BorderFactory.createEmptyBorder());
         container.setPreferredSize(model.getSize());
