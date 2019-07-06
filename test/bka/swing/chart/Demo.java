@@ -3,13 +3,11 @@
 */
 package bka.swing.chart;
 
-import bka.awt.Palette;
+import bka.awt.*;
 import static bka.awt.PolygonFactory.*;
-
-import bka.swing.chart.render.*;
-import bka.swing.chart.grid.*;
 import bka.swing.chart.custom.*;
-
+import bka.swing.chart.grid.*;
+import bka.swing.chart.render.*;
 import java.awt.*;
 import java.util.*;
 import java.util.logging.*;
@@ -148,7 +146,7 @@ public class Demo extends javax.swing.JFrame {
             chartPanel.setGraphs(graphs);
             chartPanel.setAxisRenderer(null);
             chartPanel.setAxisPositions(null, null);
-            chartPanel.setDemarcations(null, ChartPanel.DemarcationMode.NONE);
+            chartPanel.setGrid(null, ChartPanel.GridMode.NONE);
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.NONE);
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.NONE);
             chartPanel.setRenderer("G4", pointRenderer);
@@ -156,7 +154,7 @@ public class Demo extends javax.swing.JFrame {
         else {
             chartPanel.setAxisRenderer(new DefaultAxisRenderer());
             chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
-            chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_DEMARCATION);
+            chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_GRID_AREA);
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
             if (pointRenderer instanceof BarRenderer) {
                 BarLooks l1 = BarLooks.create(Color.BLUE, Color.CYAN);
@@ -176,8 +174,8 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXWindowMaximum(21);
                 chartPanel.setYWindowMinimum(0);
                 chartPanel.setYWindowMaximum(27);
-                chartPanel.setXDemarcations(new IntegerDemarcations());
-                chartPanel.setDemarcations(new DefaultDemarcationRenderer(gridLooks), ChartPanel.DemarcationMode.Y);
+                chartPanel.setXGrid(new IntegerGrid());
+                chartPanel.setGrid(new DefaultGridRenderer(gridLooks), ChartPanel.GridMode.Y);
                 chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
             }
             else if (pointRenderer instanceof RectangleDotRenderer) {
@@ -189,8 +187,8 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXWindowMaximum(null);
                 chartPanel.setYWindowMinimum(null);
                 chartPanel.setYWindowMaximum(null);
-                chartPanel.setXDemarcations(new Demarcations());
-                chartPanel.setDemarcations(new DefaultDemarcationRenderer(gridLooks), ChartPanel.DemarcationMode.X);
+                chartPanel.setXGrid(new Grid());
+                chartPanel.setGrid(new DefaultGridRenderer(gridLooks), ChartPanel.GridMode.X);
             }
             else if (pointRenderer instanceof ScatterRenderer) {
                 chartPanel.setChart("S1", s1);
@@ -208,8 +206,8 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXWindowMinimum(null);
                 chartPanel.setXWindowMaximum(null);
                 chartPanel.setYWindowMinimum(null);
-                chartPanel.setXDemarcations(new Demarcations());
-                chartPanel.setDemarcations(new DefaultDemarcationRenderer(gridLooks), ChartPanel.DemarcationMode.X);
+                chartPanel.setXGrid(new Grid());
+                chartPanel.setGrid(new DefaultGridRenderer(gridLooks), ChartPanel.GridMode.X);
             }
         }
         chartPanel.setHighlightFormat("G1", "x = %d", "y = %.2f");

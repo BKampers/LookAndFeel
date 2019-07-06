@@ -5,28 +5,28 @@
 package bka.swing.chart.render;
 
 import bka.swing.chart.custom.*;
-import bka.swing.chart.geometry.ChartGeometry;
+import bka.swing.chart.geometry.*;
 import java.awt.*;
 
 
-public class DefaultDemarcationRenderer extends DemarcationRenderer {
+public class DefaultGridRenderer extends GridRenderer {
 
     
-    public DefaultDemarcationRenderer(GridLooks looks) {
+    public DefaultGridRenderer(GridLooks looks) {
         this.looks = looks;
     }
     
     
     @Override
     public void draw(Graphics2D g2d) {
-        switch (chartPanel.getDemarcationMode()) {
+        switch (chartPanel.getGridMode()) {
             case X:
-                drawVerticalDemarcations(g2d);
+                drawVerticalGridAreas(g2d);
                 drawHorizontalLines(g2d);
                 drawVerticalLines(g2d);
                 break;
             case Y:
-                drawHorizontalDemarcations(g2d);
+                drawHorizontalGridAreas(g2d);
                 drawHorizontalLines(g2d);
                 drawVerticalLines(g2d);
                 break;
@@ -44,7 +44,7 @@ public class DefaultDemarcationRenderer extends DemarcationRenderer {
             int areaHeight = chartPanel.areaHeight();
             int areaLeft = chartPanel.areaLeft();
             ChartGeometry chartGeometry = chartPanel.getChartGeometry();
-            java.util.List<Number> values = chartGeometry.getXDemarcations().getValues();
+            java.util.List<Number> values = chartGeometry.getXGrid().getValues();
             int count = values.size();
             for (int i = 1; i < count; ++i) {
                 int x = Math.max(chartGeometry.xPixel(values.get(i-1)), areaLeft);
@@ -64,7 +64,7 @@ public class DefaultDemarcationRenderer extends DemarcationRenderer {
             int areaLeft = chartPanel.areaLeft();
             int areaRight = chartPanel.areaRight();
             ChartGeometry chartGeometry = chartPanel.getChartGeometry();
-            java.util.List<Number> values = chartGeometry.getYDemarcations().getValues();
+            java.util.List<Number> values = chartGeometry.getYGrid().getValues();
             int count = values.size();
             for (int i = 1; i < count; ++i) {
                 int y = Math.max(chartGeometry.yPixel(values.get(i)), areaTop);
@@ -74,13 +74,13 @@ public class DefaultDemarcationRenderer extends DemarcationRenderer {
     }
 
 
-    private void drawVerticalDemarcations(Graphics2D g2d) {
+    private void drawVerticalGridAreas(Graphics2D g2d) {
         int areaTop = chartPanel.areaTop();
         int areaHeight = chartPanel.areaHeight();
         int areaLeft = chartPanel.areaLeft();
         int areaRight = chartPanel.areaRight();
         ChartGeometry chartGeometry = chartPanel.getChartGeometry();
-        java.util.List<Number> values = chartGeometry.getXDemarcations().getValues();
+        java.util.List<Number> values = chartGeometry.getXGrid().getValues();
         int count = values.size();
         for (int i = 1; i < count; ++i) {
             int paintLeft = chartGeometry.xPixel(values.get(i-1));
@@ -98,13 +98,13 @@ public class DefaultDemarcationRenderer extends DemarcationRenderer {
     }
     
     
-    private void drawHorizontalDemarcations(Graphics2D g2d) {
+    private void drawHorizontalGridAreas(Graphics2D g2d) {
         int areaTop = chartPanel.areaTop();
         int areaBottom = chartPanel.areaBottom();
         int areaLeft = chartPanel.areaLeft();
         int areaWidth = chartPanel.areaWidth();
         ChartGeometry chartGeometry = chartPanel.getChartGeometry();
-        java.util.List<Number> values = chartGeometry.getYDemarcations().getValues();
+        java.util.List<Number> values = chartGeometry.getYGrid().getValues();
         int count = values.size();
         for (int i = 1; i < count; ++i) {
             int paintBottom = chartGeometry.yPixel(values.get(i-1));

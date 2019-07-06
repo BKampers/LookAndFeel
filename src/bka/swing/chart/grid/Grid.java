@@ -8,7 +8,7 @@ package bka.swing.chart.grid;
 import java.util.*;
 
 
-public class Demarcations {
+public class Grid {
 
     
     public void setLocale(Locale locale) {

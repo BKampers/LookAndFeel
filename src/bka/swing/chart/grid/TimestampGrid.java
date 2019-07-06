@@ -8,7 +8,7 @@ package bka.swing.chart.grid;
 import java.util.*;
 
 
-public class TimestampDemarcations extends Demarcations {
+public class TimestampGrid extends Grid {
     
 
     @Override
@@ -29,7 +29,7 @@ public class TimestampDemarcations extends Demarcations {
         Step step = steps[0];
         for (Step s : steps) {
             test.setTimeInMillis(low.getTimeInMillis());
-            test.add(s.field, s.amount * MAX_DEMARCATIONS);
+            test.add(s.field, s.amount * MAX_GRID_AREAS);
             if (test.after(high)) {
                 step = s;
             }
@@ -149,6 +149,6 @@ public class TimestampDemarcations extends Demarcations {
     }
     
     
-    private static final int MAX_DEMARCATIONS = 11;
+    private static final int MAX_GRID_AREAS = 11;
 
 }

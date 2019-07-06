@@ -8,15 +8,15 @@ package bka.swing.chart.grid;
 import java.util.*;
 
 
-public class MapDemarcations extends Demarcations{
+public class MapGrid extends Grid{
 
     
-    public MapDemarcations(Map<Number, String> map) {
+    public MapGrid(Map<Number, String> map) {
         this.map = map;
     }
     
     
-    public MapDemarcations(long minimum, long maximum, long step) {
+    public MapGrid(long minimum, long maximum, long step) {
         map = new TreeMap<>();
         for (long value = minimum; value <= maximum; value += step) {
             map.put(value, Long.toString(value));
@@ -24,7 +24,7 @@ public class MapDemarcations extends Demarcations{
     }
     
     
-    public MapDemarcations(long minimum, long maximum) {
+    public MapGrid(long minimum, long maximum) {
         this(minimum, maximum, 1);
     }
     

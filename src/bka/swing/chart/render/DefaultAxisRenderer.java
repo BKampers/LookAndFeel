@@ -42,14 +42,14 @@ public class DefaultAxisRenderer extends AxisRenderer {
         g2d.setColor(xAxisColor);
         g2d.setStroke(new BasicStroke());
         g2d.drawLine(xMin, y, xMax, y);
-        java.util.List<Number> values = xDemarcationValues();
+        java.util.List<Number> values = xGridValues();
         int count = values.size();
         for (int i = 0; i < count; i++) {
             Number value = values.get(i);
             int x = xPixel(value);
             if (xMin <= x && x <= xMax) {
                 g2d.drawLine(x, y - 2, x, y + 2);
-                String label = xDemarcationLabel(value);
+                String label = xGridLabel(value);
                 if (label.endsWith(">")) {
                     // draw label between two markers
                     if (i < count - 1) { 
@@ -94,11 +94,11 @@ public class DefaultAxisRenderer extends AxisRenderer {
         g2d.setColor(yAxisColor);
         g2d.drawLine(x, yMin(), x, yMax());
         int titlePosition = xMin();
-        for (Number value : yDemarcationValues()) {
+        for (Number value : yGridValues()) {
             int y = yPixel(value);
             if (yMax() <= y && y <= yMin()) {
                 g2d.drawLine(x - 2, y, x + 2, y);
-                String label = yDemarcationLabel(value);
+                String label = yGridLabel(value);
                 int width = fontMetrics.stringWidth(label);
                 int labelPosition = x - width - 4;
                 g2d.drawString(label, labelPosition, y + fontMetrics.getDescent());

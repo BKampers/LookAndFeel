@@ -6,8 +6,8 @@ package bka.swing.chart.geometry;
 
 
 import bka.swing.chart.*;
-import bka.swing.chart.render.AbstractDataAreaRenderer;
-import bka.swing.chart.grid.Demarcations;
+import bka.swing.chart.grid.*;
+import bka.swing.chart.render.*;
 import java.awt.*;
 import java.util.*;
 import java.util.logging.*;
@@ -55,7 +55,7 @@ public final class ChartGeometry {
             computeRanges(window, yWindowBase);
             computeDataPoints(window);
         }
-        initializeDemarcations(locale);
+        initializeGrids(locale);
     }
 
 
@@ -136,23 +136,23 @@ public final class ChartGeometry {
     }
 
 
-    public Demarcations getXDemarcations() {
-        return xDemarcations;
+    public Grid getXGrid() {
+        return xGrid;
     }
 
 
-    public void setXDemarcations(Demarcations xDemarcations) {
-        this.xDemarcations = xDemarcations;
+    public void setXGrid(Grid grid) {
+        this.xGrid = grid;
     }
 
 
-    public Demarcations getYDemarcations() {
-        return yDemarcations;
+    public Grid getYGrid() {
+        return yGrid;
     }
 
 
-    public void setYDemarcations(Demarcations yDemarcations) {
-        this.yDemarcations = yDemarcations;
+    public void setYGrid(Grid grid) {
+        this.yGrid = grid;
     }
 
 
@@ -224,17 +224,17 @@ public final class ChartGeometry {
     }
 
 
-    private void initializeDemarcations(Locale locale) {
-        if (xDemarcations == null) {
-            xDemarcations = new Demarcations();
+    private void initializeGrids(Locale locale) {
+        if (xGrid == null) {
+            xGrid = new Grid();
         }
-        xDemarcations.setLocale(locale);
-        xDemarcations.initialize(xMin, xMax);
-        if (yDemarcations == null) {
-            yDemarcations = new Demarcations();
+        xGrid.setLocale(locale);
+        xGrid.initialize(xMin, xMax);
+        if (yGrid == null) {
+            yGrid = new Grid();
         }
-        yDemarcations.setLocale(locale);
-        yDemarcations.initialize(yMin, yMax);
+        yGrid.setLocale(locale);
+        yGrid.initialize(yMin, yMax);
     }
 
     
@@ -259,8 +259,8 @@ public final class ChartGeometry {
     }
 
     
-    private Demarcations xDemarcations = null;
-    private Demarcations yDemarcations = null;
+    private Grid xGrid = null;
+    private Grid yGrid = null;
 
     
     private Rectangle area = null;

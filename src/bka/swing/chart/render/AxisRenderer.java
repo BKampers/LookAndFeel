@@ -5,9 +5,9 @@
 package bka.swing.chart.render;
 
 
-import bka.swing.chart.ChartPanel;
-import bka.swing.chart.grid.Demarcations;
-import bka.swing.chart.geometry.ChartGeometry;
+import bka.swing.chart.*;
+import bka.swing.chart.geometry.*;
+import bka.swing.chart.grid.*;
 
 
 public abstract class AxisRenderer {
@@ -53,31 +53,31 @@ public abstract class AxisRenderer {
     }
 
 
-    protected String xDemarcationLabel(Number value) {
-        return chartGeometry.getXDemarcations().label(value);
+    protected String xGridLabel(Number value) {
+        return chartGeometry.getXGrid().label(value);
     }
 
 
-    protected java.util.List<Number> xDemarcationValues() {
+    protected java.util.List<Number> xGridValues() {
         java.util.List<Number> values = new java.util.ArrayList<>();
-        Demarcations xDemarcations = chartGeometry.getXDemarcations();
-        if (xDemarcations != null) {
-            values.addAll(xDemarcations.getValues());
+        Grid xGrid = chartGeometry.getXGrid();
+        if (xGrid != null) {
+            values.addAll(xGrid.getValues());
         }
         return values;
     }
 
 
-    protected String yDemarcationLabel(Number value) {
-        return chartGeometry.getYDemarcations().label(value);
+    protected String yGridLabel(Number value) {
+        return chartGeometry.getYGrid().label(value);
     }
 
 
-    protected java.util.List<Number> yDemarcationValues() {
+    protected java.util.List<Number> yGridValues() {
         java.util.List<Number> values = new java.util.ArrayList<>();
-        Demarcations yDemarcations = chartGeometry.getYDemarcations();
-        if (yDemarcations != null) {
-            values.addAll(yDemarcations.getValues());
+        Grid yGrid = chartGeometry.getYGrid();
+        if (yGrid != null) {
+            values.addAll(yGrid.getValues());
         }
         return values;
     }

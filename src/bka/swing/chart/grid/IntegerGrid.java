@@ -5,7 +5,7 @@
 package bka.swing.chart.grid;
 
 
-public class IntegerDemarcations extends Demarcations {
+public class IntegerGrid extends Grid {
 
 
     @Override

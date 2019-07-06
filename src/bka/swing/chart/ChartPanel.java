@@ -6,24 +6,22 @@ package bka.swing.chart;
 
 
 import bka.swing.chart.custom.*;
-import bka.swing.chart.grid.Demarcations;
-
 import bka.swing.chart.geometry.*;
+import bka.swing.chart.grid.*;
 import bka.swing.chart.render.*;
-
 import java.awt.*;
 import java.awt.print.*;
 import java.util.*;
 import java.util.logging.*;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 
 public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Printable {
     
     public enum AxisPosition { ORIGIN, MINIMUM, MAXIMUM }
-    public enum DemarcationMode { NONE, X, Y }
+    public enum GridMode { NONE, X, Y }
     public enum DragZoomMode { NONE, X, Y, XY }
-    public enum ClickZoomMode { NONE, DOUBLE_CLICK_DEMARCATION }
+    public enum ClickZoomMode { NONE, DOUBLE_CLICK_GRID_AREA }
 
     
     public ChartPanel() {
@@ -187,13 +185,13 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
     
-    public void setXDemarcations(Demarcations xDemarcations) {
-        geometry.setXDemarcations(xDemarcations);
+    public void setXGrid(Grid grid) {
+        geometry.setXGrid(grid);
     }
     
     
-    public void setYDemarcations(Demarcations yDemarcations) {
-        geometry.setYDemarcations(yDemarcations);
+    public void setYGrid(Grid grid) {
+        geometry.setYGrid(grid);
     }
 
 
@@ -246,21 +244,21 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
    }
    
    
-   public void setDemarcations(DemarcationRenderer demarcationRenderer, DemarcationMode demarcationMode) {
-       this.demarcationRenderer = demarcationRenderer;
-       this.demarcationMode = demarcationMode;
-       if (demarcationRenderer != null) {
-           demarcationRenderer.setPanel(this);
+   public void setGrid(GridRenderer renderer, GridMode mode) {
+       this.gridRenderer = renderer;
+       this.gridMode = mode;
+       if (renderer != null) {
+           renderer.setPanel(this);
        }
    }
    
    
-   public void setDemarcationMode(DemarcationMode demarcationMode) {
-       if (demarcationRenderer == null && demarcationMode != DemarcationMode.NONE) {
-           setDemarcations(new DefaultDemarcationRenderer(GridLooks.create(Color.WHITE)), demarcationMode);
+   public void setGridMode(GridMode mode) {
+       if (gridRenderer == null && mode != GridMode.NONE) {
+           setGrid(new DefaultGridRenderer(GridLooks.create(Color.WHITE)), mode);
        }
        else {
-           this.demarcationMode = demarcationMode;
+           this.gridMode = mode;
        }
    }
    
@@ -322,8 +320,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                 (int) pageFormat.getImageableWidth(),
                 (int) pageFormat.getImageableHeight());
             initializeGeometry();
-            if (demarcationRenderer != null) {
-                demarcationRenderer.draw(g2d);
+            if (gridRenderer != null) {
+                gridRenderer.draw(g2d);
             }
             draw(g2d);
             page = null;
@@ -378,14 +376,14 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
     
     
-    public DemarcationMode getDemarcationMode() {
-        return demarcationMode;
+    public GridMode getGridMode() {
+        return gridMode;
     }
 
 
     private void draw(Graphics2D g2d) {
-        if (demarcationRenderer != null) {
-            demarcationRenderer.draw(g2d);
+        if (gridRenderer != null) {
+            gridRenderer.draw(g2d);
         }
         drawData(g2d);
         drawAxises(g2d);
@@ -631,9 +629,9 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         @Override
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             Point point = evt.getPoint();
-            if (clickZoomMode == ClickZoomMode.DOUBLE_CLICK_DEMARCATION && chartArea().contains(point)) {
+            if (clickZoomMode == ClickZoomMode.DOUBLE_CLICK_GRID_AREA && chartArea().contains(point)) {
                 if (evt.getButton() == java.awt.event.MouseEvent.BUTTON1 && evt.getClickCount() == 1) {
-                    if (demarcationMode == DemarcationMode.X || demarcationMode == DemarcationMode.Y) {
+                    if (gridMode == GridMode.X || gridMode == GridMode.Y) {
                         zoom(point);
                     }
                 }
@@ -664,8 +662,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         }
 
         private void zoom(Point point) {
-            boolean xMode = demarcationMode == DemarcationMode.X;
-            java.util.List<Number> values = (xMode) ? geometry.getXDemarcations().getValues() : geometry.getYDemarcations().getValues();
+            boolean xMode = gridMode == GridMode.X;
+            java.util.List<Number> values = (xMode) ? geometry.getXGrid().getValues() : geometry.getYGrid().getValues();
             if (values.size() >= 2) {
                 Number min = values.get(0);
                 boolean zoomed = false;
@@ -703,7 +701,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private AxisPosition xAxisPosition = AxisPosition.ORIGIN;
     private AxisPosition yAxisPosition = AxisPosition.ORIGIN;
 
-    private DemarcationMode demarcationMode = DemarcationMode.NONE;
+    private GridMode gridMode = GridMode.NONE;
     
     private boolean showLegend;
         
@@ -718,7 +716,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
     
     private AxisRenderer axisRenderer;
-    private DemarcationRenderer demarcationRenderer;
+    private GridRenderer gridRenderer;
     
     private final Map<Object, AbstractDataAreaRenderer> renderers = new HashMap<>();
     private final Map<Object, DefaultPointHighlightRenderer> pointHighlightRenderers = new HashMap<>();
