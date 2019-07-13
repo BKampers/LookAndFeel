@@ -244,7 +244,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
    }
    
    
-   public void setGrid(GridRenderer renderer, GridMode mode) {
+   public void setGridRenderer(GridRenderer renderer, GridMode mode) {
        this.gridRenderer = renderer;
        this.gridMode = mode;
        if (renderer != null) {
@@ -255,7 +255,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
    
    public void setGridMode(GridMode mode) {
        if (gridRenderer == null && mode != GridMode.NONE) {
-           setGrid(new DefaultGridRenderer(GridLooks.create(Color.WHITE)), mode);
+           setGridRenderer(new DefaultGridRenderer(GridStyle.create(Color.WHITE)), mode);
        }
        else {
            this.gridMode = mode;

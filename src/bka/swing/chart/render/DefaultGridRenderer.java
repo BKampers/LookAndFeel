@@ -12,8 +12,8 @@ import java.awt.*;
 public class DefaultGridRenderer extends GridRenderer {
 
     
-    public DefaultGridRenderer(GridLooks looks) {
-        this.looks = looks;
+    public DefaultGridRenderer(GridStyle gridStyle) {
+        this.gridStyle = gridStyle;
     }
     
     
@@ -35,8 +35,8 @@ public class DefaultGridRenderer extends GridRenderer {
 
 
     private void drawVerticalLines(Graphics2D g2d) {
-        Stroke stroke = looks.getStroke();
-        Paint paint = looks.getGridPaint();
+        Stroke stroke = gridStyle.getStroke();
+        Paint paint = gridStyle.getGridPaint();
         if (stroke != null && paint != null) {
             g2d.setPaint(paint);
             g2d.setStroke(stroke);
@@ -55,8 +55,8 @@ public class DefaultGridRenderer extends GridRenderer {
 
 
     private void drawHorizontalLines(Graphics2D g2d) {
-        Stroke stroke = looks.getStroke();
-        Paint paint = looks.getGridPaint();
+        Stroke stroke = gridStyle.getStroke();
+        Paint paint = gridStyle.getGridPaint();
         if (stroke != null && paint != null) {
             g2d.setPaint(paint);
             g2d.setStroke(stroke);
@@ -90,7 +90,7 @@ public class DefaultGridRenderer extends GridRenderer {
             int width = right - left;
             if (width > 0) {
                 Rectangle area = new Rectangle(paintLeft, areaTop, paintRight - paintLeft, areaHeight);
-                g2d.setPaint(looks.getVerticalPaint(area, i));
+                g2d.setPaint(gridStyle.getVerticalPaint(area, i));
                 area = new Rectangle(left, areaTop, right - left, areaHeight);
                 g2d.fill(area);
             }
@@ -114,7 +114,7 @@ public class DefaultGridRenderer extends GridRenderer {
             int height = bottom - top;
             if (height > 0) {
                 Rectangle area = new Rectangle(areaLeft, paintTop, areaWidth, paintBottom - paintTop);
-                g2d.setPaint(looks.getHorizontalPaint(area, i));
+                g2d.setPaint(gridStyle.getHorizontalPaint(area, i));
                 area = new Rectangle(areaLeft, top, areaWidth, height);
                 g2d.fill(area);
             }
@@ -122,6 +122,6 @@ public class DefaultGridRenderer extends GridRenderer {
     }
 
 
-    private final GridLooks looks;
+    private final GridStyle gridStyle;
     
 }

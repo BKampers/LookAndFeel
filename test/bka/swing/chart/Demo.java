@@ -35,7 +35,7 @@ public class Demo extends javax.swing.JFrame {
         styleComboBox.addItem(ovalRenderer);
         styleComboBox.addItem(new BarRenderer(null));
         styleComboBox.addItem(new ScatterRenderer<>(pointLooks));
-        gridLooks = GridLooks.create(new Color[] { Color.WHITE });
+        gridStyle = GridStyle.create(new Color[] { Color.WHITE }, true);
     }
     
 
@@ -146,7 +146,7 @@ public class Demo extends javax.swing.JFrame {
             chartPanel.setGraphs(graphs);
             chartPanel.setAxisRenderer(null);
             chartPanel.setAxisPositions(null, null);
-            chartPanel.setGrid(null, ChartPanel.GridMode.NONE);
+            chartPanel.setGridRenderer(null, ChartPanel.GridMode.NONE);
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.NONE);
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.NONE);
             chartPanel.setRenderer("G4", pointRenderer);
@@ -175,20 +175,20 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setYWindowMinimum(0);
                 chartPanel.setYWindowMaximum(27);
                 chartPanel.setXGrid(new IntegerGrid());
-                chartPanel.setGrid(new DefaultGridRenderer(gridLooks), ChartPanel.GridMode.Y);
+                chartPanel.setGridRenderer(new DefaultGridRenderer(gridStyle), ChartPanel.GridMode.Y);
                 chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
             }
             else if (pointRenderer instanceof RectangleDotRenderer) {
                 Map graphs = new HashMap<>();
-                graphs.put("G3", g3);
+                graphs.put("G5", g5);
                 chartPanel.setGraphs(graphs);
-                chartPanel.setRenderer("G3", pointRenderer);
+                chartPanel.setRenderer("G5", pointRenderer);
                 chartPanel.setXWindowMinimum(null);
                 chartPanel.setXWindowMaximum(null);
                 chartPanel.setYWindowMinimum(null);
                 chartPanel.setYWindowMaximum(null);
-                chartPanel.setXGrid(new Grid());
-                chartPanel.setGrid(new DefaultGridRenderer(gridLooks), ChartPanel.GridMode.X);
+                chartPanel.setXGrid(new TimestampGrid());
+                chartPanel.setGridRenderer(new DefaultGridRenderer(GridStyle.create(new Color[] { Color.WHITE, Color.LIGHT_GRAY })), ChartPanel.GridMode.X);
             }
             else if (pointRenderer instanceof ScatterRenderer) {
                 chartPanel.setChart("S1", s1);
@@ -207,13 +207,14 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXWindowMaximum(null);
                 chartPanel.setYWindowMinimum(null);
                 chartPanel.setXGrid(new Grid());
-                chartPanel.setGrid(new DefaultGridRenderer(gridLooks), ChartPanel.GridMode.X);
+                chartPanel.setGridRenderer(new DefaultGridRenderer(gridStyle), ChartPanel.GridMode.X);
             }
         }
         chartPanel.setHighlightFormat("G1", "x = %d", "y = %.2f");
         chartPanel.setHighlightFormat("G2", "x = %d", "y = %d");
         chartPanel.setHighlightFormat("G3", "x = %d", "y = %d");
         chartPanel.setHighlightFormat("G4", "x = %d", "y = %f");
+        chartPanel.setHighlightFormat("G5", "YYYY-MM-dd", "y = %d");
         chartPanel.revalidate();
     }//GEN-LAST:event_styleComboBox_actionPerformed
 
@@ -230,6 +231,12 @@ public class Demo extends javax.swing.JFrame {
             Random random = new Random();
             g4.put(x, random.nextFloat());
         }
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2019, Calendar.JANUARY, 1);
+        for (int x = 0; x < 24; ++x) {
+            g5.put(calendar.getTimeInMillis(), calendar.get(Calendar.MONTH));
+            calendar.add(Calendar.MONTH, 1);
+        }
         s1.add(1, 1);
         s1.add(1, 2);
         s1.add(3, 2);
@@ -242,7 +249,7 @@ public class Demo extends javax.swing.JFrame {
 
 
     private final ChartPanel chartPanel = new ChartPanel();
-    private final GridLooks gridLooks;
+    private final GridStyle gridStyle;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel controlPanel;
@@ -254,6 +261,7 @@ public class Demo extends javax.swing.JFrame {
     private final Map<Number, Number> g2 = new HashMap<>();
     private final Map<Number, Number> g3 = new HashMap<>();
     private final Map<Number, Number> g4 = new TreeMap<>();
+    private final Map<Number, Number> g5 = new TreeMap<>();
     private final ChartData<Number, Number> s1 = new ChartData<>();
 
 }
