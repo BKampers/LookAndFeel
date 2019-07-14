@@ -35,7 +35,6 @@ public class Demo extends javax.swing.JFrame {
         styleComboBox.addItem(ovalRenderer);
         styleComboBox.addItem(new BarRenderer(null));
         styleComboBox.addItem(new ScatterRenderer<>(pointLooks));
-        gridStyle = GridStyle.create(new Color[] { Color.WHITE }, true);
     }
     
 
@@ -175,7 +174,7 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setYWindowMinimum(0);
                 chartPanel.setYWindowMaximum(27);
                 chartPanel.setXGrid(new IntegerGrid());
-                chartPanel.setGridRenderer(new DefaultGridRenderer(gridStyle), ChartPanel.GridMode.Y);
+                chartPanel.setGridRenderer(new DefaultGridRenderer(WHITE_GRADIENT_GRID_STYLE), ChartPanel.GridMode.Y);
                 chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
             }
             else if (pointRenderer instanceof RectangleDotRenderer) {
@@ -188,15 +187,51 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setYWindowMinimum(null);
                 chartPanel.setYWindowMaximum(null);
                 chartPanel.setXGrid(new TimestampGrid());
-                chartPanel.setGridRenderer(new DefaultGridRenderer(GridStyle.create(new Color[] { Color.WHITE, Color.LIGHT_GRAY })), ChartPanel.GridMode.X);
+                chartPanel.setGridRenderer(new DefaultGridRenderer(ZEBRA_GRID_STYLE), ChartPanel.GridMode.X);
             }
             else if (pointRenderer instanceof ScatterRenderer) {
+                Number xWindowMinimum = null;
+                Number xWindowMaximum = null;
+                Number yWindowMaximum = null;
+                for (ChartDataElement<Number, Number> data : s1) {
+                    if (xWindowMinimum == null || data.getKey().doubleValue() < xWindowMinimum.doubleValue()) {
+                        xWindowMinimum = data.getKey();
+                    }
+                    if (xWindowMaximum == null || data.getKey().doubleValue() > xWindowMaximum.doubleValue()) {
+                        xWindowMaximum = data.getKey();
+                    }
+                    if (yWindowMaximum == null || data.getValue().doubleValue() > yWindowMaximum.doubleValue()) {
+                        yWindowMaximum = data.getValue();
+                    }
+                }
+                if (xWindowMinimum != null) {
+                    xWindowMinimum = Math.floor(xWindowMinimum.doubleValue() - 0.001);
+                }
+                if (xWindowMaximum != null) {
+                    xWindowMaximum = Math.ceil(xWindowMaximum.doubleValue() + 0.001);
+                }
+                if (yWindowMaximum != null) {
+                    yWindowMaximum = Math.ceil(yWindowMaximum.doubleValue() + 0.001);
+                }
                 chartPanel.setChart("S1", s1);
                 chartPanel.setRenderer("S1", pointRenderer);
+                chartPanel.setXWindowMinimum(xWindowMinimum);
+                chartPanel.setXWindowMaximum(xWindowMaximum);
+                chartPanel.setYWindowMinimum(0);
+                chartPanel.setYWindowMaximum(yWindowMaximum);
+                chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
+                chartPanel.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartPanel.GridMode.X);
+            }
+            else if (pointRenderer instanceof DefaultLineRenderer) {
+                Map graphs = new HashMap<>();
+                graphs.put("G1", g1);
+                chartPanel.setGraphs(graphs);
+                chartPanel.setRenderer("G1", pointRenderer);
                 chartPanel.setXWindowMinimum(null);
                 chartPanel.setXWindowMaximum(null);
-                chartPanel.setYWindowMinimum(0);
-                chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
+                chartPanel.setYWindowMinimum(null);
+                chartPanel.setXGrid(new Grid());
+                chartPanel.setGridRenderer(new DefaultGridRenderer(WHITE_GRADIENT_GRID_STYLE), ChartPanel.GridMode.X);
             }
             else {
                 Map graphs = new HashMap<>();
@@ -207,7 +242,7 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setXWindowMaximum(null);
                 chartPanel.setYWindowMinimum(null);
                 chartPanel.setXGrid(new Grid());
-                chartPanel.setGridRenderer(new DefaultGridRenderer(gridStyle), ChartPanel.GridMode.X);
+                chartPanel.setGridRenderer(new DefaultGridRenderer(DEFAULT_GRID_STYLE), ChartPanel.GridMode.X);
             }
         }
         chartPanel.setHighlightFormat("G1", "x = %d", "y = %.2f");
@@ -237,19 +272,37 @@ public class Demo extends javax.swing.JFrame {
             g5.put(calendar.getTimeInMillis(), calendar.get(Calendar.MONTH));
             calendar.add(Calendar.MONTH, 1);
         }
-        s1.add(1, 1);
-        s1.add(1, 2);
-        s1.add(3, 2);
-        s1.add(2, 2);
-        s1.add(-1, 5);
-        s1.add(4, 2);
-        s1.add(1, 2);
+        s1.add(1.5, 1.75);
+        s1.add(1.5, 1.75);
+        s1.add(2, 1);
+        s1.add(2, 1);
+        s1.add(2, 1);
+        s1.add(2, 0.75);
+        s1.add(2, 0.75);
+        s1.add(2, 0.75);
+        s1.add(-1.5, 1.5);
+        s1.add(-1.5, 1.5);
+        s1.add(-1.5, 1.5);
+        s1.add(-1.5, 1.5);
+        s1.add(-1.5, 1.5);
+        s1.add(-1.5, 1.5);
+        s1.add(4.3, 1.5);
+        s1.add(4.3, 1.5);
+        s1.add(4.3, 1.5);
+        s1.add(4.3, 1.5);
+        s1.add(1, 2.5);
+        s1.add(1, 2.5);
+        s1.add(1, 2.5);
+        s1.add(1, 2.5);
+        s1.add(1, 2.5);
+        s1.add(1, 2.5);
+        s1.add(1, 2.5);
+        s1.add(1, 2.5);
         styleComboBox.setSelectedIndex(3);
     }
 
 
     private final ChartPanel chartPanel = new ChartPanel();
-    private final GridStyle gridStyle;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel controlPanel;
@@ -263,5 +316,22 @@ public class Demo extends javax.swing.JFrame {
     private final Map<Number, Number> g4 = new TreeMap<>();
     private final Map<Number, Number> g5 = new TreeMap<>();
     private final ChartData<Number, Number> s1 = new ChartData<>();
+    
+    private static final GridStyle DEFAULT_GRID_STYLE = GridStyle.createGradient(
+        new BasicStroke(2.0f), 
+        Color.DARK_GRAY, 
+        new Color[] { new Color(0xc43e3e), new Color(0xea5454) }, 
+        new Color[] { new Color(0x09c1f9), new Color(0x51d6ff) });
+    
+    private static final GridStyle GRAY_GRID_STYLE = GridStyle.create(
+        new BasicStroke(2.0f), 
+        Color.LIGHT_GRAY, 
+        new Color[] { Color.WHITE });
+
+    private static final GridStyle ZEBRA_GRID_STYLE = GridStyle.create(
+        new Color[] { Color.WHITE, Color.LIGHT_GRAY });
+    
+    private static final GridStyle WHITE_GRADIENT_GRID_STYLE = GridStyle.createGradient(
+        new Color[] { Color.WHITE });
 
 }
