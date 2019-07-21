@@ -6,10 +6,8 @@
 package bka.swing.chart.render;
 
 
-import bka.swing.chart.geometry.LegendGeometry;
-import bka.swing.chart.custom.PieLooks;
+import bka.swing.chart.custom.*;
 import bka.swing.chart.geometry.*;
-
 import java.awt.*;
 import java.awt.geom.*;
 
@@ -17,8 +15,8 @@ import java.awt.geom.*;
 public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
-    public DefaultPieSectorRenderer(PieLooks looks) {
-        super(looks);
+    public DefaultPieSectorRenderer(PieDrawStyle drawStyle) {
+        super(drawStyle);
     }
 
 
@@ -63,13 +61,13 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
     private void drawLabel(Graphics2D g2d, ArcAreaGeometry geometry) {
-        if (((PieLooks) looks).getLabelPaint(geometry) != null) {
-            g2d.setPaint(((PieLooks) looks).getLabelPaint(geometry));
+        if (((PieDrawStyle) areaDrawStyle).getLabelPaint(geometry) != null) {
+            g2d.setPaint(((PieDrawStyle) areaDrawStyle).getLabelPaint(geometry));
         }
-        if (((PieLooks) looks).getLabelFont(geometry) != null) {
-            g2d.setFont(((PieLooks) looks).getLabelFont(geometry));
+        if (((PieDrawStyle) areaDrawStyle).getLabelFont(geometry) != null) {
+            g2d.setFont(((PieDrawStyle) areaDrawStyle).getLabelFont(geometry));
         }
-        if (((PieLooks) looks).getRotatedLabels()) {
+        if (((PieDrawStyle) areaDrawStyle).getRotatedLabels()) {
             drawRotatedLabel(g2d, geometry);
         }
         else {

@@ -5,25 +5,25 @@
 package bka.swing.chart.render;
 
 
-import bka.swing.chart.custom.AreaLooks;
+import bka.swing.chart.custom.*;
 import java.awt.geom.*;
 
 
 public class OvalDotRenderer extends PointRenderer<Ellipse2D.Float> {
     
     
-    public OvalDotRenderer(int width, int height, AreaLooks looks) {
-        super(width, height, looks);
+    public OvalDotRenderer(int width, int height, AreaDrawStyle drawStyle) {
+        super(width, height, drawStyle);
     }
     
     
-    public OvalDotRenderer(int size, AreaLooks looks) {
-        super(size, size, looks);
+    public OvalDotRenderer(int size, AreaDrawStyle drawStyle) {
+        super(size, size, drawStyle);
     }
     
     
-    public OvalDotRenderer(AreaLooks paintFactory) {
-        super(7, 7, paintFactory);
+    public OvalDotRenderer(AreaDrawStyle drawStyle) {
+        super(DEFAULT_SIZE, DEFAULT_SIZE, drawStyle);
     }
     
     
@@ -32,4 +32,7 @@ public class OvalDotRenderer extends PointRenderer<Ellipse2D.Float> {
         return new Ellipse2D.Float(x - width / 2.0f, y - height / 2.0f, width, height);
     }
     
+    
+    private static final int DEFAULT_SIZE = 7;
+
 }

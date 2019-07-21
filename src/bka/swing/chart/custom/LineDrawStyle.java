@@ -5,37 +5,37 @@
 package bka.swing.chart.custom;
 
 
-import bka.swing.chart.geometry.AreaGeometry;
+import bka.swing.chart.geometry.*;
 import java.awt.*;
 
 
-public class LineLooks<G extends AreaGeometry> {
+public class LineDrawStyle<G extends AreaGeometry> {
 
 
-    private LineLooks(Paint linePaint, Stroke lineStroke, AreaLooks<G> areaLooks) {
+    private LineDrawStyle(Paint linePaint, Stroke lineStroke, AreaDrawStyle<G> areaDrawStyle) {
         this.linePaint = linePaint;
         this.lineStroke = lineStroke;
-        this.areaLooks = areaLooks;
+        this.areaDrawStyle = areaDrawStyle;
     }
 
 
-    public static LineLooks create(Color linePaint, Stroke lineStroke, AreaLooks areaLooks) {
-        return new LineLooks(linePaint, lineStroke, areaLooks);
+    public static LineDrawStyle create(Color linePaint, Stroke lineStroke, AreaDrawStyle areaDrawStyle) {
+        return new LineDrawStyle(linePaint, lineStroke, areaDrawStyle);
     }
 
 
-    public static LineLooks create(Color linePaint, Stroke lineStroke) {
-        return new LineLooks(linePaint, lineStroke, null);
+    public static LineDrawStyle create(Color linePaint, Stroke lineStroke) {
+        return new LineDrawStyle(linePaint, lineStroke, null);
     }
 
 
-    public static LineLooks create(Color linePaint) {
+    public static LineDrawStyle create(Color linePaint) {
         return create(linePaint, new BasicStroke(2.0f));
     }
 
 
-    public static LineLooks create(Color linePaint, AreaLooks areaLooks) {
-        return create(linePaint, new BasicStroke(2.0f), areaLooks);
+    public static LineDrawStyle create(Color linePaint, AreaDrawStyle areaDrawStyle) {
+        return create(linePaint, new BasicStroke(2.0f), areaDrawStyle);
     }
 
 
@@ -49,8 +49,8 @@ public class LineLooks<G extends AreaGeometry> {
     }
 
 
-    public AreaLooks<G> getAreaLooks() {
-        return areaLooks;
+    public AreaDrawStyle<G> getAreaDrawStyle() {
+        return areaDrawStyle;
     }
 
 
@@ -76,7 +76,7 @@ public class LineLooks<G extends AreaGeometry> {
 
     private final Paint linePaint;
     private final Stroke lineStroke;
-    private final AreaLooks<G> areaLooks;
+    private final AreaDrawStyle<G> areaDrawStyle;
     private Paint bottomAreaPaint;
     private Paint topAreaPaint;
 

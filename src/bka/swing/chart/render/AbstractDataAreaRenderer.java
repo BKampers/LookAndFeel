@@ -7,8 +7,7 @@ package bka.swing.chart.render;
 
 
 import bka.swing.chart.*;
-import bka.swing.chart.geometry.LegendGeometry;
-import bka.swing.chart.custom.AreaLooks;
+import bka.swing.chart.custom.*;
 import bka.swing.chart.geometry.*;
 import java.awt.*;
 
@@ -16,8 +15,8 @@ import java.awt.*;
 public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
 
 
-    AbstractDataAreaRenderer(AreaLooks looks) {
-        this.looks = looks;
+    AbstractDataAreaRenderer(AreaDrawStyle drawStyle) {
+        this.areaDrawStyle = drawStyle;
     }
 
     
@@ -34,13 +33,13 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
 
     protected void draw(Graphics2D g2d, G geometry) {
         Shape area = geometry.getArea();
-        Paint paint = looks.getPaint(geometry);
+        Paint paint = areaDrawStyle.getPaint(geometry);
         if (paint != null) {
             g2d.setPaint(paint);
             g2d.fill(area);
         }
-        Paint borderPaint = looks.getBorderPaint(geometry);
-        Stroke borderStroke = looks.getBorderStroke(geometry);
+        Paint borderPaint = areaDrawStyle.getBorderPaint(geometry);
+        Stroke borderStroke = areaDrawStyle.getBorderStroke(geometry);
         if (borderPaint != null && borderStroke != null) {
             g2d.setPaint(borderPaint);
             g2d.setStroke(borderStroke);
@@ -77,6 +76,6 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     protected ChartPanel chartPanel;
     ChartGeometry chartGeometry;
 
-    protected final AreaLooks<G> looks;
+    protected final AreaDrawStyle<G> areaDrawStyle;
     
 }

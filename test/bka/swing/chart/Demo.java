@@ -18,23 +18,23 @@ public class Demo extends javax.swing.JFrame {
 
     public Demo() {
         initComponents();
-        PointLooks pointLooks = PointLooks.createLinear(new Color[] { Color.RED, Color.WHITE, Color.BLUE });
-        pointLooks.setBorder(Color.GREEN.darker());
+        PointDrawStyle redWhiteBluePointDrawStyle = PointDrawStyle.createLinear(new Color[] { Color.RED, Color.WHITE, Color.BLUE });
+        redWhiteBluePointDrawStyle.setBorder(Color.GREEN.darker());
         Polygon polygon = createStar(4, 5, 15);
-        PolygonDotRenderer ovalRenderer = new PolygonDotRenderer(polygon, pointLooks);
-        PointRenderer rectangleRenderer = new RectangleDotRenderer(2, DefaultLooks.createSolid(Color.BLACK));
-        LineLooks lineLooks = LineLooks.create(Color.MAGENTA, pointLooks);
+        PolygonDotRenderer ovalRenderer = new PolygonDotRenderer(polygon, redWhiteBluePointDrawStyle);
+        PointRenderer rectangleRenderer = new RectangleDotRenderer(2, DefaultDrawStyle.createSolid(Color.BLACK));
+        LineDrawStyle redWhiteBlueLineDrawStyle = LineDrawStyle.create(Color.MAGENTA, redWhiteBluePointDrawStyle);
         Color areaColor = new Color(0x80FFFF00, true);
-        lineLooks.setTopAreaPaint(areaColor);
-        lineLooks.setBottomAreaPaint(areaColor.darker());
+        redWhiteBlueLineDrawStyle.setTopAreaPaint(areaColor);
+        redWhiteBlueLineDrawStyle.setBottomAreaPaint(areaColor.darker());
         chartPanel.setShowLegend(true);
         displayPanel.add(chartPanel);
-        styleComboBox.addItem(new DefaultPieSectorRenderer(PieLooks.create(Palette.generateColors(7))));
-        styleComboBox.addItem(new DefaultLineRenderer(lineLooks, 9));
+        styleComboBox.addItem(new DefaultPieSectorRenderer(PieDrawStyle.create(Palette.generateColors(7))));
+        styleComboBox.addItem(new DefaultLineRenderer(redWhiteBlueLineDrawStyle, 9));
         styleComboBox.addItem(rectangleRenderer);
         styleComboBox.addItem(ovalRenderer);
         styleComboBox.addItem(new BarRenderer(null));
-        styleComboBox.addItem(new ScatterRenderer<>(pointLooks));
+        styleComboBox.addItem(new ScatterRenderer<>(redWhiteBluePointDrawStyle));
     }
     
 
@@ -156,12 +156,12 @@ public class Demo extends javax.swing.JFrame {
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_GRID_AREA);
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
             if (pointRenderer instanceof BarRenderer) {
-                BarLooks l1 = BarLooks.create(Color.BLUE, Color.CYAN);
-                l1.setBorder(Color.BLUE.darker());
-                AreaLooks l2 = DefaultLooks.createBorder(Color.RED, new BasicStroke(2.0f));
-                BarRenderer b1 = new BarRenderer(10, l1);
+                BarDrawStyle blueBarStyle = BarDrawStyle.create(Color.BLUE, Color.CYAN);
+                blueBarStyle.setBorder(Color.BLUE.darker());
+                AreaDrawStyle redArea2Style = DefaultDrawStyle.createBorder(Color.RED, new BasicStroke(2.0f));
+                BarRenderer b1 = new BarRenderer(10, blueBarStyle);
                 b1.setShift(-5);
-                BarRenderer b2 = new BarRenderer(10, l2);
+                BarRenderer b2 = new BarRenderer(10, redArea2Style);
                 b2.setShift(5);
                 Map graphs = new HashMap<>();
                 graphs.put("G1", g1);
@@ -187,6 +187,7 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setYWindowMinimum(null);
                 chartPanel.setYWindowMaximum(null);
                 chartPanel.setXGrid(new TimestampGrid());
+                chartPanel.setYGrid(new IntegerGrid());
                 chartPanel.setGridRenderer(new DefaultGridRenderer(ZEBRA_GRID_STYLE), ChartPanel.GridMode.X);
             }
             else if (pointRenderer instanceof ScatterRenderer) {
@@ -220,6 +221,7 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setYWindowMinimum(0);
                 chartPanel.setYWindowMaximum(yWindowMaximum);
                 chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
+                chartPanel.setXGrid(new Grid());
                 chartPanel.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartPanel.GridMode.X);
             }
             else if (pointRenderer instanceof DefaultLineRenderer) {
@@ -320,8 +322,8 @@ public class Demo extends javax.swing.JFrame {
     private static final GridStyle DEFAULT_GRID_STYLE = GridStyle.createGradient(
         new BasicStroke(2.0f), 
         Color.DARK_GRAY, 
-        new Color[] { new Color(0xc43e3e), new Color(0xea5454) }, 
-        new Color[] { new Color(0x09c1f9), new Color(0x51d6ff) });
+        new Color[] { new Color(0x80EEEE), new Color(0xEEEEEF) }, 
+        new Color[] { new Color(0xF07777), new Color(0x7777F0) });
     
     private static final GridStyle GRAY_GRID_STYLE = GridStyle.create(
         new BasicStroke(2.0f), 

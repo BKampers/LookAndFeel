@@ -5,16 +5,16 @@
 package bka.swing.chart.custom;
 
 
-import bka.swing.chart.geometry.AreaGeometry;
+import bka.swing.chart.geometry.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.logging.*;
 
 
-public class PointLooks implements AreaLooks<AreaGeometry> {
+public class PointDrawStyle implements AreaDrawStyle<AreaGeometry> {
 
 
-    PointLooks(boolean radial, float xShiftFactor, float yShiftFactor, float[] distribution, Color[] colors) {
+    PointDrawStyle(boolean radial, float xShiftFactor, float yShiftFactor, float[] distribution, Color[] colors) {
         this.radial = radial;
         this.xShiftFactor = xShiftFactor;
         this.yShiftFactor = yShiftFactor;
@@ -23,17 +23,17 @@ public class PointLooks implements AreaLooks<AreaGeometry> {
     }
 
 
-    public static PointLooks createLinear(float xShiftFactor, float yShiftFactor, float[] distribution, Color[] colors) {
-        return new PointLooks(false, xShiftFactor, yShiftFactor, distribution, colors);
+    public static PointDrawStyle createLinear(float xShiftFactor, float yShiftFactor, float[] distribution, Color[] colors) {
+        return new PointDrawStyle(false, xShiftFactor, yShiftFactor, distribution, colors);
     }
 
 
-    public static PointLooks createLinear(float[] distribution, Color[] colors) {
+    public static PointDrawStyle createLinear(float[] distribution, Color[] colors) {
         return createLinear(0.0f, 0.0f, distribution, colors);
     }
 
 
-    public static PointLooks createLinear(Color[] colors) {
+    public static PointDrawStyle createLinear(Color[] colors) {
         if (colors == null || colors.length < 2) {
             throw new IllegalArgumentException();
         }
@@ -41,17 +41,17 @@ public class PointLooks implements AreaLooks<AreaGeometry> {
     }
 
 
-    public static PointLooks createRadial(float xShiftFactor, float yShiftFactor, float[] distribution, Color[] colors) {
-        return new PointLooks(true, xShiftFactor, yShiftFactor, distribution, colors);
+    public static PointDrawStyle createRadial(float xShiftFactor, float yShiftFactor, float[] distribution, Color[] colors) {
+        return new PointDrawStyle(true, xShiftFactor, yShiftFactor, distribution, colors);
     }
 
 
-    public static PointLooks createRadial(float[] distribution, Color[] colors) {
+    public static PointDrawStyle createRadial(float[] distribution, Color[] colors) {
         return createRadial(0.0f, 0.0f, distribution, colors);
     }
 
 
-    public static PointLooks createRadial(Color[] colors) {
+    public static PointDrawStyle createRadial(Color[] colors) {
         if (colors == null || colors.length < 2) {
             throw new IllegalArgumentException();
         }
@@ -82,7 +82,7 @@ public class PointLooks implements AreaLooks<AreaGeometry> {
             }
         }
         catch (RuntimeException ex) {
-            Logger.getLogger(PointLooks.class.getName()).log(Level.SEVERE, "Invalid gradient parameters", ex);
+            Logger.getLogger(PointDrawStyle.class.getName()).log(Level.SEVERE, "Invalid gradient parameters", ex);
             return null;
         }
     }

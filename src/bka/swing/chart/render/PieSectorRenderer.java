@@ -7,8 +7,8 @@ package bka.swing.chart.render;
 
 
 import bka.swing.chart.*;
-import bka.swing.chart.custom.PieLooks;
-import bka.swing.chart.geometry.ArcAreaGeometry;
+import bka.swing.chart.custom.*;
+import bka.swing.chart.geometry.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
@@ -17,8 +17,8 @@ import java.util.*;
 public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcAreaGeometry> {
 
 
-    PieSectorRenderer(PieLooks looks) {
-        super(looks);
+    PieSectorRenderer(PieDrawStyle drawStyle) {
+        super(drawStyle);
     }
 
 

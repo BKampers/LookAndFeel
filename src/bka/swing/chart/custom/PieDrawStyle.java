@@ -1,25 +1,22 @@
 package bka.swing.chart.custom;
 
 
-import bka.swing.chart.geometry.ArcAreaGeometry;
+import bka.swing.chart.geometry.*;
 import java.awt.*;
 import java.awt.geom.*;
 
-/*
-** Copyright © Bart Kampers
-*/
 
 
-public class PieLooks implements AreaLooks<ArcAreaGeometry> {
+public class PieDrawStyle implements AreaDrawStyle<ArcAreaGeometry> {
 
 
-    private PieLooks(Color[] colors) {
+    private PieDrawStyle(Color[] colors) {
         this.colors = colors;
     }
 
 
-    public static PieLooks create(Color[] colors) {
-        return new PieLooks(colors);
+    public static PieDrawStyle create(Color[] colors) {
+        return new PieDrawStyle(colors);
     }
 
 

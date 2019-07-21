@@ -14,8 +14,8 @@ import java.util.*;
 public class ScatterRenderer<S extends Shape> extends AbstractDataAreaRenderer<ScatterGeometry<S>> {
 
 
-    public ScatterRenderer(AreaLooks looks) {
-        super(looks);
+    public ScatterRenderer(AreaDrawStyle drawStyle) {
+        super(drawStyle);
     }
 
 

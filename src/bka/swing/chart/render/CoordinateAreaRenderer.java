@@ -6,9 +6,8 @@ package bka.swing.chart.render;
 
 
 import bka.swing.chart.*;
-import bka.swing.chart.custom.AreaLooks;
-import bka.swing.chart.geometry.AreaGeometry;
-
+import bka.swing.chart.custom.*;
+import bka.swing.chart.geometry.*;
 import java.awt.*;
 import java.util.*;
 
@@ -16,8 +15,8 @@ import java.util.*;
 public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDataAreaRenderer<AreaGeometry<S>> {
 
 
-    CoordinateAreaRenderer(AreaLooks looks) {
-        super(looks);
+    CoordinateAreaRenderer(AreaDrawStyle drawStyle) {
+        super(drawStyle);
     }
 
 

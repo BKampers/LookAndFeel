@@ -440,7 +440,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private AbstractDataAreaRenderer getRenderer(Object key) {
         AbstractDataAreaRenderer renderer = renderers.get(key);
         if (renderer == null) {
-            renderer = new OvalDotRenderer(DefaultLooks.createSolid(Color.BLACK));
+            renderer = new OvalDotRenderer(DefaultDrawStyle.createSolid(Color.BLACK));
             renderers.put(key, renderer);
         }
         return renderer;

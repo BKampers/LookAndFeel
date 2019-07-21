@@ -4,14 +4,14 @@
 package bka.swing.chart.custom;
 
 
-import bka.swing.chart.geometry.AreaGeometry;
+import bka.swing.chart.geometry.*;
 import java.awt.*;
 
 
 /**
- * @param <G>
+ * @param <G> geometry
  */
-public interface AreaLooks<G extends AreaGeometry> {
+public interface AreaDrawStyle<G extends AreaGeometry> {
 
     public Paint getPaint(G geometry);
     public Paint getBorderPaint(G geometry);

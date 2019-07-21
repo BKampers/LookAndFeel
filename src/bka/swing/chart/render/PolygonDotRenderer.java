@@ -5,15 +5,15 @@
 package bka.swing.chart.render;
 
 
-import bka.swing.chart.custom.AreaLooks;
+import bka.swing.chart.custom.*;
 import java.awt.*;
 
 
 public class PolygonDotRenderer extends CoordinateAreaRenderer<Polygon> {
     
     
-    public PolygonDotRenderer(Polygon polygon, AreaLooks looks) {
-        super(looks);
+    public PolygonDotRenderer(Polygon polygon, AreaDrawStyle drawStyle) {
+        super(drawStyle);
         this.polygon = polygon;
     }
     

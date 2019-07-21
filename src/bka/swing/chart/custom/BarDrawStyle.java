@@ -5,30 +5,30 @@
 package bka.swing.chart.custom;
 
 
-import bka.swing.chart.geometry.AreaGeometry;
+import bka.swing.chart.geometry.*;
 import java.awt.*;
 
 
-public class BarLooks implements AreaLooks<AreaGeometry<Rectangle>> {
+public class BarDrawStyle implements AreaDrawStyle<AreaGeometry<Rectangle>> {
 
 
-    private BarLooks(float[] pattern, Color[] colors) {
+    private BarDrawStyle(float[] pattern, Color[] colors) {
         this.pattern = pattern;
         this.colors = colors;
     }
 
 
-    public static BarLooks create(float[] pattern, Color[] colors) {
-        return new BarLooks(pattern, colors);
+    public static BarDrawStyle create(float[] pattern, Color[] colors) {
+        return new BarDrawStyle(pattern, colors);
     }
 
-    public static BarLooks createAlternative(Color color1, Color color2) {
-        return new BarLooks(null, new Color[] { color1, color2 });
+    public static BarDrawStyle createAlternative(Color color1, Color color2) {
+        return new BarDrawStyle(null, new Color[] { color1, color2 });
     }
 
 
-    public static BarLooks create(Color centerColor, Color edgeColor) {
-        return new BarLooks(
+    public static BarDrawStyle create(Color centerColor, Color edgeColor) {
+        return new BarDrawStyle(
             new float[] { 0.0f, 0.5f, 1.0f },
             new Color[] { edgeColor, centerColor, edgeColor });
     }

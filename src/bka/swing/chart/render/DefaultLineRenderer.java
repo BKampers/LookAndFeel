@@ -5,8 +5,8 @@
 package bka.swing.chart.render;
 
 
-import bka.swing.chart.custom.LineLooks;
-import bka.swing.chart.geometry.PixelAreaGeometry;
+import bka.swing.chart.custom.*;
+import bka.swing.chart.geometry.*;
 import java.awt.*;
 import java.awt.geom.*;
 
@@ -14,36 +14,36 @@ import java.awt.geom.*;
 public class DefaultLineRenderer extends LineRenderer {
 
 
-    public DefaultLineRenderer(LineLooks lineLooks, int markerWidth, int markerHeight) {
-        super(lineLooks, markerWidth, markerHeight);
+    public DefaultLineRenderer(LineDrawStyle lineStyle, int markerWidth, int markerHeight) {
+        super(lineStyle, markerWidth, markerHeight);
     }
 
 
-    public DefaultLineRenderer(LineLooks lineLooks, int markerSize) {
-        this(lineLooks, markerSize, markerSize);
+    public DefaultLineRenderer(LineDrawStyle lineDrawStyle, int markerSize) {
+        this(lineDrawStyle, markerSize, markerSize);
     }
 
 
-    public DefaultLineRenderer(LineLooks lineLooks) {
-        this(lineLooks, 3, 3);
+    public DefaultLineRenderer(LineDrawStyle lineDrawStyle) {
+        this(lineDrawStyle, DEFAULT_SIZE, DEFAULT_SIZE);
     }
 
 
     @Override
     public void draw(Graphics2D g2d, java.util.List<PixelAreaGeometry> graphGeometry) {
         Polygon polyline = createPolyline(graphGeometry);
-        if (lineLooks.getBottomAreaPaint() != null) {
+        if (lineDrawStyle.getBottomAreaPaint() != null) {
             fillBottomArea(g2d, polyline);
         }
-        if (lineLooks.getTopAreaPaint() != null) {
+        if (lineDrawStyle.getTopAreaPaint() != null) {
             fillTopArea(g2d, polyline);
         }
-        if (lineLooks.getAreaLooks() != null) {
+        if (lineDrawStyle.getAreaDrawStyle() != null) {
             super.draw(g2d, graphGeometry);
         }
-        if (lineLooks.getLinePaint() != null && lineLooks.getLineStroke() != null) {
-            g2d.setPaint(lineLooks.getLinePaint());
-            g2d.setStroke(lineLooks.getLineStroke());
+        if (lineDrawStyle.getLinePaint() != null && lineDrawStyle.getLineStroke() != null) {
+            g2d.setPaint(lineDrawStyle.getLinePaint());
+            g2d.setStroke(lineDrawStyle.getLineStroke());
             g2d.drawPolyline(polyline.xpoints, polyline.ypoints, polyline.npoints);
         }
     }
@@ -61,7 +61,7 @@ public class DefaultLineRenderer extends LineRenderer {
     protected void drawSymbol(Graphics2D g2d, int x, int y) {
         RectangularShape area = createSymbolArea(x, y);
         super.draw(g2d, new PixelAreaGeometry<>(null, null, area, new Point(x, y)));
-        drawLine(g2d, x - 7, y, x + 7, y);
+        drawLine(g2d, x - SYMBOL_WIDTH / 2, y, x + SYMBOL_WIDTH / 2, y);
     }
 
 
@@ -77,13 +77,13 @@ public class DefaultLineRenderer extends LineRenderer {
 
     private void fillBottomArea(Graphics2D g2d, Polygon polyline) {
         int bottom = chartGeometry.yPixel(chartGeometry.getYMin());
-        fillArea(g2d, lineLooks.getBottomAreaPaint(), polyline, bottom);
+        fillArea(g2d, lineDrawStyle.getBottomAreaPaint(), polyline, bottom);
     }
 
 
     private void fillTopArea(Graphics2D g2d, Polygon polyline) {
         int top = chartGeometry.yPixel(chartGeometry.getYMax());
-        fillArea(g2d, lineLooks.getTopAreaPaint(), polyline, top);
+        fillArea(g2d, lineDrawStyle.getTopAreaPaint(), polyline, top);
     }
 
 
@@ -97,13 +97,17 @@ public class DefaultLineRenderer extends LineRenderer {
 
 
     private void drawLine(Graphics2D g2d, int x1, int y1, int x2, int y2) {
-        Paint paint = lineLooks.getLinePaint();
-        Stroke stroke = lineLooks.getLineStroke();
+        Paint paint = lineDrawStyle.getLinePaint();
+        Stroke stroke = lineDrawStyle.getLineStroke();
         if (paint != null && stroke != null) {
             g2d.setPaint(paint);
             g2d.setStroke(stroke);
             g2d.drawLine(x1, y1, x2, y2);
         }
     }
+
+    
+    private static final int DEFAULT_SIZE = 3;
+    private static final int SYMBOL_WIDTH = 15;
 
 }

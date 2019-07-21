@@ -6,8 +6,8 @@ package bka.swing.chart.render;
 
 
 import bka.swing.chart.*;
-import bka.swing.chart.custom.LineLooks;
-import bka.swing.chart.geometry.PixelAreaGeometry;
+import bka.swing.chart.custom.*;
+import bka.swing.chart.geometry.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
@@ -16,9 +16,9 @@ import java.util.*;
 public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeometry> {
 
 
-    LineRenderer(LineLooks lineLooks, int markerWidth, int markerHeight) {
-        super(lineLooks.getAreaLooks());
-        this.lineLooks = lineLooks;
+    LineRenderer(LineDrawStyle drawStyle, int markerWidth, int markerHeight) {
+        super(drawStyle.getAreaDrawStyle());
+        this.lineDrawStyle = drawStyle;
         this.markerWidth = markerWidth;
         this.markerHeight = markerHeight;
     }
@@ -44,7 +44,7 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
     }
 
 
-    protected final LineLooks lineLooks;
+    protected final LineDrawStyle lineDrawStyle;
     protected final int markerWidth;
     protected final int markerHeight;
     

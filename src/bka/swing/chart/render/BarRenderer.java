@@ -5,7 +5,7 @@
 
 package bka.swing.chart.render;
 
-import bka.swing.chart.custom.AreaLooks;
+import bka.swing.chart.custom.*;
 import bka.swing.chart.geometry.*;
 import java.awt.*;
 
@@ -13,14 +13,14 @@ import java.awt.*;
 public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
 
-    public BarRenderer(int width, AreaLooks looks) {
-        super(looks);
+    public BarRenderer(int width, AreaDrawStyle drawStyle) {
+        super(drawStyle);
         this.width = width;
     }
 
 
-    public BarRenderer(AreaLooks paintFactory) {
-        this(7, paintFactory);
+    public BarRenderer(AreaDrawStyle drawStyle) {
+        this(DEFAULT_WIDTH, drawStyle);
     }
 
 
@@ -63,5 +63,8 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
     private int width;
     private int shift;
+    
+    private static final int DEFAULT_WIDTH = 7;
+
 
 }

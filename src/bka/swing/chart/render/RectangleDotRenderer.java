@@ -5,25 +5,25 @@
 package bka.swing.chart.render;
 
 
-import bka.swing.chart.custom.AreaLooks;
-import java.awt.Rectangle;
+import bka.swing.chart.custom.*;
+import java.awt.*;
 
 
 public class RectangleDotRenderer extends PointRenderer<Rectangle> {
     
     
-    public RectangleDotRenderer(int width, int height, AreaLooks paintFactory) {
-        super(width, height, paintFactory);
+    public RectangleDotRenderer(int width, int height, AreaDrawStyle areaDrawStyle) {
+        super(width, height, areaDrawStyle);
     }
 
     
-    public RectangleDotRenderer(int size, AreaLooks paintFactory) {
-        super(size, size, paintFactory);
+    public RectangleDotRenderer(int size, AreaDrawStyle areaDrawStyle) {
+        super(size, size, areaDrawStyle);
     }
 
     
-    public RectangleDotRenderer(AreaLooks paintFactory) {
-        super(7, 7, paintFactory);
+    public RectangleDotRenderer(AreaDrawStyle areaDrawStyle) {
+        super(DEFAULT_SIZE, DEFAULT_SIZE, areaDrawStyle);
     }
     
 
@@ -31,5 +31,8 @@ public class RectangleDotRenderer extends PointRenderer<Rectangle> {
     protected Rectangle createArea(int x, int y) {
         return new Rectangle(x - width / 2, y - height / 2, width, height);
     }
+    
+    
+    private static final int DEFAULT_SIZE = 7;
     
 }
