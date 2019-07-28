@@ -64,8 +64,8 @@ public class PieDrawStyle implements AreaDrawStyle<ArcAreaGeometry> {
     }
 
 
-   private float[] fractions = new float[] { 0.0f, 1.0f };
-    private Color[] colors;
+    private final float[] fractions = new float[] { 0.0f, 1.0f };
+    private final Color[] colors;
     private boolean rotatedLabels;
 
 }

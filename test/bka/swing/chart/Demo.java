@@ -4,7 +4,6 @@
 package bka.swing.chart;
 
 import bka.awt.*;
-import static bka.awt.PolygonFactory.*;
 import bka.swing.chart.custom.*;
 import bka.swing.chart.grid.*;
 import bka.swing.chart.render.*;
@@ -18,25 +17,16 @@ public class Demo extends javax.swing.JFrame {
 
     public Demo() {
         initComponents();
-        PointDrawStyle redWhiteBluePointDrawStyle = PointDrawStyle.createLinear(new Color[] { Color.RED, Color.WHITE, Color.BLUE });
-        redWhiteBluePointDrawStyle.setBorder(Color.GREEN.darker());
-        Polygon polygon = createStar(4, 5, 15);
-        PolygonDotRenderer ovalRenderer = new PolygonDotRenderer(polygon, redWhiteBluePointDrawStyle);
-        PointRenderer rectangleRenderer = new RectangleDotRenderer(2, DefaultDrawStyle.createSolid(Color.BLACK));
-        LineDrawStyle redWhiteBlueLineDrawStyle = LineDrawStyle.create(Color.MAGENTA, redWhiteBluePointDrawStyle);
-        Color areaColor = new Color(0x80FFFF00, true);
-        redWhiteBlueLineDrawStyle.setTopAreaPaint(areaColor);
-        redWhiteBlueLineDrawStyle.setBottomAreaPaint(areaColor.darker());
         chartPanel.setShowLegend(true);
         displayPanel.add(chartPanel);
-        styleComboBox.addItem(new DefaultPieSectorRenderer(PieDrawStyle.create(Palette.generateColors(7))));
-        styleComboBox.addItem(new DefaultLineRenderer(redWhiteBlueLineDrawStyle, 9));
-        styleComboBox.addItem(rectangleRenderer);
-        styleComboBox.addItem(ovalRenderer);
+        styleComboBox.addItem(new DefaultPieSectorRenderer(createPieDrawStyle()));
+        styleComboBox.addItem(new DefaultLineRenderer(createLineDrawStyle(), LINE_MARKER_SIZE));
+        styleComboBox.addItem(createRectangleDotRenderer());
+        styleComboBox.addItem(createPolygonDotRenderer());
         styleComboBox.addItem(new BarRenderer(null));
-        styleComboBox.addItem(new ScatterRenderer<>(redWhiteBluePointDrawStyle));
+        styleComboBox.addItem(new ScatterRenderer<>(createPointDrawStyle()));
     }
-    
+
 
     public static void main(String args[]) {
         for (Handler handler : Logger.getLogger("").getHandlers()) {
@@ -222,6 +212,7 @@ public class Demo extends javax.swing.JFrame {
                 chartPanel.setYWindowMaximum(yWindowMaximum);
                 chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
                 chartPanel.setXGrid(new Grid());
+                chartPanel.setYGrid(new Grid());
                 chartPanel.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartPanel.GridMode.X);
             }
             else if (pointRenderer instanceof DefaultLineRenderer) {
@@ -312,18 +303,51 @@ public class Demo extends javax.swing.JFrame {
     private javax.swing.JComboBox styleComboBox;
     // End of variables declaration//GEN-END:variables
 
+
+    private static PieDrawStyle createPieDrawStyle() {
+        return PieDrawStyle.create(Palette.generateColors(PIE_COLOR_COUNT));
+    }
+
+
+    private static LineDrawStyle createLineDrawStyle() {
+        LineDrawStyle lineDrawStyle = LineDrawStyle.create(Color.MAGENTA, PointDrawStyle.createRadial(new Color[] { Color.GREEN, Color.GREEN.darker() }));
+        Color areaColor = new Color(0x80FFFF00, true);
+        lineDrawStyle.setTopAreaPaint(areaColor);
+        lineDrawStyle.setBottomAreaPaint(areaColor.darker());
+        return lineDrawStyle;
+    }
+
+
+    private static RectangleDotRenderer createRectangleDotRenderer() {
+        return new RectangleDotRenderer(RECTANGE_DOT_SIZE, DefaultDrawStyle.createSolid(Color.BLACK));
+    }
+
+
+    private static PolygonDotRenderer createPolygonDotRenderer() {
+        return new PolygonDotRenderer(PolygonFactory.createStar(4, 5, 15), createPointDrawStyle());
+    }
+
+
+    private static PointDrawStyle createPointDrawStyle() {
+        PointDrawStyle pointDrawStyle = PointDrawStyle.createLinear(new Color[] { Color.RED, Color.WHITE, Color.BLUE });
+        pointDrawStyle.setBorder(Color.GREEN.darker());
+        return pointDrawStyle;
+    }
+
+
     private final Map<Number, Number> g1 = new HashMap<>();
     private final Map<Number, Number> g2 = new HashMap<>();
     private final Map<Number, Number> g3 = new HashMap<>();
     private final Map<Number, Number> g4 = new TreeMap<>();
     private final Map<Number, Number> g5 = new TreeMap<>();
     private final ChartData<Number, Number> s1 = new ChartData<>();
-    
+
+
     private static final GridStyle DEFAULT_GRID_STYLE = GridStyle.createGradient(
-        new BasicStroke(2.0f), 
-        Color.DARK_GRAY, 
-        new Color[] { new Color(0x80EEEE), new Color(0xEEEEEF) }, 
-        new Color[] { new Color(0xF07777), new Color(0x7777F0) });
+        new BasicStroke(0.5f),
+        Color.GRAY,
+        new Color[] { new Color(0x00e68a), new Color(0x009973) },
+        new Color[] { new Color(0xccffcc), new Color(0xccffcc) });
     
     private static final GridStyle GRAY_GRID_STYLE = GridStyle.create(
         new BasicStroke(2.0f), 
@@ -335,5 +359,9 @@ public class Demo extends javax.swing.JFrame {
     
     private static final GridStyle WHITE_GRADIENT_GRID_STYLE = GridStyle.createGradient(
         new Color[] { Color.WHITE });
+
+    private static final int PIE_COLOR_COUNT = 7;
+    private static final int LINE_MARKER_SIZE = 9;
+    private static final int RECTANGE_DOT_SIZE = 2;
 
 }

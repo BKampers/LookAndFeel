@@ -4,6 +4,8 @@
 
 package bka.swing.chart.grid;
 
+import bka.numeric.*;
+
 
 public class IntegerGrid extends Grid {
 
@@ -12,19 +14,7 @@ public class IntegerGrid extends Grid {
     protected void compute(Number min, Number max) {
         double low = min.doubleValue();
         double high = max.doubleValue();
-        bka.numeric.Scientific range = new bka.numeric.Scientific(high - low);
-        long step = 10;
-        double coefficient = range.getCoefficient() * 10;
-        if (coefficient < 15) {
-            step = 1;
-        }
-        else if (coefficient < 20) {
-            step = 2;
-        }
-        else if (coefficient < 50) {
-            step = 5;
-        }
-        step = (long) (step * range.factor() / 10);
+        long step = computeStep(high, low);
         long start = (long) (low / step) * step;
         long markerValue = start;
         values.add(markerValue);
@@ -35,6 +25,31 @@ public class IntegerGrid extends Grid {
             ready = markerValue > high;
         }
         format = "%d";
+    }
+
+
+    private long computeStep(double high, double low) {
+        bka.numeric.Scientific range = new bka.numeric.Scientific(high - low);
+        long step = (long) (computeNormalizedStep(range) * range.factor() / 10);
+        if (step == 0) {
+            return 1;
+        }
+        return step;
+    }
+
+
+    private long computeNormalizedStep(Scientific range) {
+        double coefficient = range.getCoefficient() * 10;
+        if (coefficient < 15) {
+            return 1;
+        }
+        else if (coefficient < 20) {
+            return 2;
+        }
+        else if (coefficient < 50) {
+            return 5;
+        }
+        return 10;
     }
 
 
