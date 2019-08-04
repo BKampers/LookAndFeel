@@ -25,20 +25,20 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
     
     public ChartPanel() {
+        this(100, 100, 50, 50);
+    }
+
+    
+    public ChartPanel(int leftMargin, int rightMargin, int topMargin, int bottomMargin) {
+        this.leftMargin = leftMargin;
+        this.rightMargin = rightMargin;
+        this.topMargin = topMargin;
+        this.bottomMargin = bottomMargin;
         selectionRectangleColor = UIManager.getColor("Chart.selectionRectangleColor");
         if (selectionRectangleColor == null) {
             selectionRectangleColor = Color.GRAY;
         }
         addListeners();
-    }
-
-    
-    public ChartPanel(int leftMargin, int rightMargin, int topMargin, int bottomMargin) {
-        this();
-        this.leftMargin = leftMargin;
-        this.rightMargin = rightMargin;
-        this.topMargin = topMargin;
-        this.bottomMargin = bottomMargin;
     }
 
 
@@ -71,10 +71,12 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     public void clearGraphs() {
         LOGGER.log(Level.FINE, "clearGraphs");
-        synchronized (geometry) {
-            geometry.clear();
+        if (! geometry.isEmpty()) {
+            synchronized (geometry) {
+                geometry.clear();
+            }
+            repaint();
         }
-        repaint();
     }
 
     
@@ -89,53 +91,63 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setXWindowMinimum(Number min) {
-        synchronized (geometry) {
-            xWindowMin = min;
-            initializeGeometry();
+        if (! Objects.equals(xWindowMin, min)) {
+            synchronized (geometry) {
+                xWindowMin = min;
+                initializeGeometry();
+            }
+            repaint();
+            notifyZoomListeners(min, null, null, null);
         }
-        repaint();
-        notifyZoomListeners(min, null, null, null);
     }
     
     
     public void setXWindowMaximum(Number max) {
-        synchronized (geometry) {
-            xWindowMax = max;
-            initializeGeometry();
+        if (! Objects.equals(xWindowMax, max)) {
+            synchronized (geometry) {
+                xWindowMax = max;
+                initializeGeometry();
+            }
+            repaint();
+            notifyZoomListeners(null, max, null, null);
         }
-        repaint();
-        notifyZoomListeners(null, max, null, null);
     }
     
     
     public void setXWindow(Number min, Number max) {
-        synchronized (geometry) {
-            xWindowMin = min;
-            xWindowMax = max;
-            initializeGeometry();
+        if (! Objects.equals(xWindowMin, min) && ! Objects.equals(xWindowMax, max)) {
+            synchronized (geometry) {
+                xWindowMin = min;
+                xWindowMax = max;
+                initializeGeometry();
+            }
+            repaint();
+            notifyZoomListeners(min, max, null, null);
         }
-        repaint();
-        notifyZoomListeners(min, max, null, null);
     }
     
     
     public void setYWindowMinimum(Number min) {
-        synchronized (geometry) {
-            yWindowMin = min;
-            initializeGeometry();
+        if (! Objects.equals(yWindowMin, min)) {
+            synchronized (geometry) {
+                yWindowMin = min;
+                initializeGeometry();
+            }
+            repaint();
+            notifyZoomListeners(null, null, min, null);
         }
-        repaint();
-        notifyZoomListeners(null, null, min, null);
     }
     
     
     public void setYWindowMaximum(Number max) {
-        synchronized (geometry) {
-            yWindowMax = max;
-            initializeGeometry();
+        if (! Objects.equals(yWindowMax, max)) {
+            synchronized (geometry) {
+                yWindowMax = max;
+                initializeGeometry();
+            }
+            repaint();
+            notifyZoomListeners(null, null, null, max);
         }
-        repaint();
-        notifyZoomListeners(null, null, null, max);
     }
     
     
@@ -162,26 +174,30 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setYWindow(Number min, Number max) {
-        synchronized (geometry) {
-            yWindowMin = min;
-            yWindowMax = max;
-            initializeGeometry();
+        if (! Objects.equals(yWindowMin, min) && ! Objects.equals(yWindowMax, max)) {
+            synchronized (geometry) {
+                yWindowMin = min;
+                yWindowMax = max;
+                initializeGeometry();
+            }
+            repaint();
+            notifyZoomListeners(null, null, min, max);
         }
-        repaint();
-        notifyZoomListeners(null, null, min, max);
     }
     
     
     public void setWindow(Number xMin, Number xMax, Number yMin, Number yMax) {
-        synchronized (geometry) {
-            xWindowMin = xMin;
-            xWindowMax = xMax;
-            yWindowMin = yMin;
-            yWindowMax = yMax;
-            initializeGeometry();
-        }        
-        repaint();
-        notifyZoomListeners(xMin, xMax, yMin, yMax);
+        if (! Objects.equals(xWindowMin, xMin) && ! Objects.equals(xWindowMax, xMax) && ! Objects.equals(yWindowMin, yMin) && ! Objects.equals(yWindowMax, yMax)) {
+            synchronized (geometry) {
+                xWindowMin = xMin;
+                xWindowMax = xMax;
+                yWindowMin = yMin;
+                yWindowMax = yMax;
+                initializeGeometry();
+            }
+            repaint();
+            notifyZoomListeners(xMin, xMax, yMin, yMax);
+        }
     }
     
     
@@ -205,7 +221,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         }
         geometry.setRenderers(renderers);
         initializeGeometry();
-
     }
     
 
@@ -729,20 +744,21 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private Point mousePoint;
     
     private Rectangle page;
-    
-    private int leftMargin   = 100; // pixels
-    private int rightMargin  = 100; // pixels
-    private int topMargin    =  50; // pixels
-    private int bottomMargin =  50; // pixels
+
+    // Margins in pixels
+    private final int leftMargin;
+    private final int rightMargin;
+    private final int topMargin;
+    private final int bottomMargin;
     
 
     private final ArrayList<ZoomListener> zoomListeners = new ArrayList<>();
 
     private static final int ZOOM_CURSOR = Cursor.HAND_CURSOR;
     
-    private static final int LEFT_MARGIN_PRINT   = 60;
-    private static final int RIGHT_MARGIN_PRINT  =  5;
-    private static final int TOP_MARGIN_PRINT    = 40;
+    private static final int LEFT_MARGIN_PRINT = 60;
+    private static final int RIGHT_MARGIN_PRINT = 5;
+    private static final int TOP_MARGIN_PRINT = 40;
     private static final int BOTTOM_MARGIN_PRINT = 20;
 
     

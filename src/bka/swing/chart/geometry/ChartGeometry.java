@@ -112,6 +112,11 @@ public final class ChartGeometry {
         graphs.clear();
         dataMap = null;
     }
+
+
+    public boolean isEmpty() {
+        return dataMap == null && graphs.isEmpty();
+    }
     
     
     public double xValue(int pixelX) {
