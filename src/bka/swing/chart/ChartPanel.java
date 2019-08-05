@@ -187,7 +187,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setWindow(Number xMin, Number xMax, Number yMin, Number yMax) {
-        if (! Objects.equals(xWindowMin, xMin) && ! Objects.equals(xWindowMax, xMax) && ! Objects.equals(yWindowMin, yMin) && ! Objects.equals(yWindowMax, yMax)) {
+        if (! Objects.equals(xWindowMin, xMin) || ! Objects.equals(xWindowMax, xMax) || ! Objects.equals(yWindowMin, yMin) || ! Objects.equals(yWindowMax, yMax)) {
             synchronized (geometry) {
                 xWindowMin = xMin;
                 xWindowMax = xMax;
