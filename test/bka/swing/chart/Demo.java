@@ -135,7 +135,7 @@ public class Demo extends javax.swing.JFrame {
         chartPanel.setHighlightFormat("G2", "x = %d", "y = %d");
         chartPanel.setHighlightFormat("G3", "x = %d", "y = %d");
         chartPanel.setHighlightFormat("G4", "x = %d", "y = %f");
-        chartPanel.setHighlightFormat("G5", "YYYY-MM-dd", "y = %d");
+        chartPanel.setHighlightFormat("G5", "yyyy-MM-dd", "y = %d");
         chartPanel.setShowLegend(true);
     }
 
@@ -183,10 +183,7 @@ public class Demo extends javax.swing.JFrame {
     private void configureDefaultChart(Map graphs, AbstractDataAreaRenderer pointRenderer) {
         chartPanel.setGraphs(graphs);
         chartPanel.setRenderer("G1", pointRenderer);
-        chartPanel.setXWindowMinimum(null);
-        chartPanel.setXWindowMaximum(null);
-        chartPanel.setYWindowMinimum(null);
-        chartPanel.setYWindowMaximum(null);
+        chartPanel.setWindow(null, null, null, null);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
         chartPanel.setXGrid(new Grid());
         chartPanel.setGridRenderer(new DefaultGridRenderer(DEFAULT_GRID_STYLE), ChartPanel.GridMode.X);
@@ -196,10 +193,7 @@ public class Demo extends javax.swing.JFrame {
     private void configureLineChart(Map graphs, AbstractDataAreaRenderer pointRenderer) {
         chartPanel.setGraphs(graphs);
         chartPanel.setRenderer("G1", pointRenderer);
-        chartPanel.setXWindowMinimum(null);
-        chartPanel.setXWindowMaximum(null);
-        chartPanel.setYWindowMinimum(null);
-        chartPanel.setYWindowMaximum(null);
+        chartPanel.setWindow(null, null, null, null);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
         chartPanel.setXGrid(new Grid());
         chartPanel.setGridRenderer(new DefaultGridRenderer(WHITE_GRADIENT_GRID_STYLE), ChartPanel.GridMode.X);
@@ -232,10 +226,7 @@ public class Demo extends javax.swing.JFrame {
         }
         chartPanel.setChart("S1", s1);
         chartPanel.setRenderer("S1", pointRenderer);
-        chartPanel.setXWindowMinimum(xWindowMinimum);
-        chartPanel.setXWindowMaximum(xWindowMaximum);
-        chartPanel.setYWindowMinimum(0);
-        chartPanel.setYWindowMaximum(yWindowMaximum);
+        chartPanel.setWindow(xWindowMinimum, xWindowMaximum, 0, yWindowMaximum);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
         chartPanel.setXGrid(new Grid());
         chartPanel.setYGrid(new Grid());
@@ -246,10 +237,7 @@ public class Demo extends javax.swing.JFrame {
     private void configureDotChart(Map graphs, AbstractDataAreaRenderer pointRenderer) {
         chartPanel.setGraphs(graphs);
         chartPanel.setRenderer("G5", pointRenderer);
-        chartPanel.setXWindowMinimum(null);
-        chartPanel.setXWindowMaximum(null);
-        chartPanel.setYWindowMinimum(null);
-        chartPanel.setYWindowMaximum(null);
+        chartPanel.setWindow(null, null, null, null);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
         chartPanel.setXGrid(new TimestampGrid());
         chartPanel.setYGrid(new IntegerGrid());
@@ -270,17 +258,16 @@ public class Demo extends javax.swing.JFrame {
             for (Number x : dataSet.keySet()) {
                 if (xMax == null || x.doubleValue() > xMax.doubleValue()) {
                     xMax = x.doubleValue();
-                    System.out.printf("%f %f\n", x.doubleValue(), xMax.doubleValue());
                 }
             }
+        }
+        if (xMax != null) {
+            xMax = xMax.intValue() + 1;
         }
         chartPanel.setGraphs(graphs);
         chartPanel.setRenderer("G1", b1);
         chartPanel.setRenderer("G2", b2);
-        chartPanel.setXWindowMinimum(0);
-        chartPanel.setXWindowMaximum((xMax != null) ? xMax.intValue() + 1 : null);
-        chartPanel.setYWindowMinimum(0);
-        chartPanel.setYWindowMaximum(null);
+        chartPanel.setWindow(0, xMax, 0, null);
         chartPanel.setXGrid(new IntegerGrid());
         chartPanel.setGridRenderer(new DefaultGridRenderer(WHITE_GRADIENT_GRID_STYLE), ChartPanel.GridMode.Y);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
