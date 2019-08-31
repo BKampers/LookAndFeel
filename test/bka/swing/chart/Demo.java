@@ -121,12 +121,12 @@ public class Demo extends javax.swing.JFrame {
 
     
     private void populateComboBox() {
-        styleComboBox.addItem(new DefaultPieSectorRenderer(createPieDrawStyle()));
-        styleComboBox.addItem(new DefaultLineRenderer(createLineDrawStyle(), LINE_MARKER_SIZE));
-        styleComboBox.addItem(createRectangleDotRenderer());
-        styleComboBox.addItem(createPolygonDotRenderer());
-        styleComboBox.addItem(new BarRenderer(null));
-        styleComboBox.addItem(new ScatterRenderer<>(createPointDrawStyle()));
+        styleComboBox.addItem(GraphStyle.PIE);
+        styleComboBox.addItem(GraphStyle.LINE);
+        styleComboBox.addItem(GraphStyle.DOT);
+        styleComboBox.addItem(GraphStyle.POLYGON);
+        styleComboBox.addItem(GraphStyle.BAR);
+        styleComboBox.addItem(GraphStyle.SCATTER);
     }
 
 
@@ -141,48 +141,49 @@ public class Demo extends javax.swing.JFrame {
 
 
     private void styleComboBox_actionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_styleComboBox_actionPerformed
-        AbstractDataAreaRenderer pointRenderer = (AbstractDataAreaRenderer) styleComboBox.getSelectedItem();
-        if (pointRenderer instanceof PieSectorRenderer) {
+        Object selectedItem = styleComboBox.getSelectedItem();
+        if (GraphStyle.PIE.equals(selectedItem)) {
             Map graphs = new HashMap<>();
             graphs.put("G4", g4);
-            configurePieChart(graphs, pointRenderer);
+            configurePieChart(graphs);
         }
         else {
             chartPanel.setAxisRenderer(new DefaultAxisRenderer());
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_GRID_AREA);
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
-            if (pointRenderer instanceof BarRenderer) {
+            if (GraphStyle.BAR.equals(selectedItem)) {
                 Map<Object, Map<Number, Number>> graphs = new HashMap<>();
                 graphs.put("G1", g1);
                 graphs.put("G2", g2);
                 configureBarChart(graphs);
             }
-            else if (pointRenderer instanceof RectangleDotRenderer) {
+            else if (GraphStyle.DOT.equals(selectedItem)) {
                 Map graphs = new HashMap<>();
                 graphs.put("G5", g5);
-                configureDotChart(graphs, pointRenderer);
+                configureDotChart(graphs);
             }
-            else if (pointRenderer instanceof ScatterRenderer) {
-                configureScatterPlotChart(pointRenderer);
+            else if (GraphStyle.SCATTER.equals(selectedItem)) {
+                configureScatterPlotChart();
             }
-            else if (pointRenderer instanceof DefaultLineRenderer) {
+            else if (GraphStyle.LINE.equals(selectedItem)) {
                 Map graphs = new HashMap<>();
                 graphs.put("G1", g1);
-                configureLineChart(graphs, pointRenderer);
+                graphs.put("G2", g2);
+                configureLineChart(graphs);
             }
             else {
                 Map graphs = new HashMap<>();
                 graphs.put("G1", g1);
-                configureDefaultChart(graphs, pointRenderer);
+                configureDefaultChart(graphs);
             }
         }
         chartPanel.revalidate();
     }//GEN-LAST:event_styleComboBox_actionPerformed
 
 
-    private void configureDefaultChart(Map graphs, AbstractDataAreaRenderer pointRenderer) {
+    private void configureDefaultChart(Map graphs) {
         chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer("G1", pointRenderer);
+        chartPanel.setRenderer("G1", createPolygonDotRenderer());
         chartPanel.setWindow(null, null, null, null);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
         chartPanel.setXGrid(new Grid());
@@ -190,9 +191,10 @@ public class Demo extends javax.swing.JFrame {
     }
 
 
-    private void configureLineChart(Map graphs, AbstractDataAreaRenderer pointRenderer) {
+    private void configureLineChart(Map graphs) {
         chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer("G1", pointRenderer);
+        chartPanel.setRenderer("G1", new DefaultLineRenderer(createLineDrawStyle(Color.GREEN), LINE_MARKER_SIZE));
+        chartPanel.setRenderer("G2", new DefaultLineRenderer(createLineDrawStyle(Color.RED), LINE_MARKER_SIZE));
         chartPanel.setWindow(null, null, null, null);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
         chartPanel.setXGrid(new Grid());
@@ -200,7 +202,7 @@ public class Demo extends javax.swing.JFrame {
     }
 
 
-    private void configureScatterPlotChart(AbstractDataAreaRenderer pointRenderer) {
+    private void configureScatterPlotChart() {
         Number xWindowMinimum = null;
         Number xWindowMaximum = null;
         Number yWindowMaximum = null;
@@ -225,7 +227,7 @@ public class Demo extends javax.swing.JFrame {
             yWindowMaximum = Math.ceil(yWindowMaximum.doubleValue() + 0.001);
         }
         chartPanel.setChart("S1", s1);
-        chartPanel.setRenderer("S1", pointRenderer);
+        chartPanel.setRenderer("S1", new ScatterRenderer<>(createPointDrawStyle()));
         chartPanel.setWindow(xWindowMinimum, xWindowMaximum, 0, yWindowMaximum);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
         chartPanel.setXGrid(new Grid());
@@ -234,9 +236,9 @@ public class Demo extends javax.swing.JFrame {
     }
 
 
-    private void configureDotChart(Map graphs, AbstractDataAreaRenderer pointRenderer) {
+    private void configureDotChart(Map graphs) {
         chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer("G5", pointRenderer);
+        chartPanel.setRenderer("G5", createRectangleDotRenderer());
         chartPanel.setWindow(null, null, null, null);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
         chartPanel.setXGrid(new TimestampGrid());
@@ -274,7 +276,7 @@ public class Demo extends javax.swing.JFrame {
     }
 
 
-    private void configurePieChart(Map graphs, AbstractDataAreaRenderer pointRenderer) {
+    private void configurePieChart(Map graphs) {
         chartPanel.setXWindowMinimum(null);
         chartPanel.setXWindowMaximum(null);
         chartPanel.setYWindowMinimum(null);
@@ -284,7 +286,7 @@ public class Demo extends javax.swing.JFrame {
         chartPanel.setGridRenderer(null, ChartPanel.GridMode.NONE);
         chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.NONE);
         chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.NONE);
-        chartPanel.setRenderer("G4", pointRenderer);
+        chartPanel.setRenderer("G4", new DefaultPieSectorRenderer(createPieDrawStyle()));
     }
 
     
@@ -349,8 +351,8 @@ public class Demo extends javax.swing.JFrame {
     }
 
 
-    private static LineDrawStyle createLineDrawStyle() {
-        LineDrawStyle lineDrawStyle = LineDrawStyle.create(Color.MAGENTA, PointDrawStyle.createRadial(new Color[] { Color.GREEN, Color.GREEN.darker() }));
+    private static LineDrawStyle createLineDrawStyle(Color color) {
+        LineDrawStyle lineDrawStyle = LineDrawStyle.create(Color.MAGENTA, PointDrawStyle.createRadial(new Color[] { color, color.darker() }));
         Color areaColor = new Color(0x80FFFF00, true);
         lineDrawStyle.setTopAreaPaint(areaColor);
         lineDrawStyle.setBottomAreaPaint(areaColor.darker());
@@ -381,6 +383,9 @@ public class Demo extends javax.swing.JFrame {
     private final Map<Number, Number> g4 = new TreeMap<>();
     private final Map<Number, Number> g5 = new TreeMap<>();
     private final ChartData<Number, Number> s1 = new ChartData<>();
+
+
+    private enum GraphStyle { PIE, LINE, DOT, POLYGON, BAR, SCATTER };
 
 
     private static final GridStyle DEFAULT_GRID_STYLE = GridStyle.createGradient(
