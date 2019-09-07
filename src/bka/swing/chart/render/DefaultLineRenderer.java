@@ -32,19 +32,21 @@ public class DefaultLineRenderer extends LineRenderer {
     @Override
     public void draw(Graphics2D g2d, java.util.List<PixelAreaGeometry> graphGeometry) {
         Polygon polyline = createPolyline(graphGeometry);
-        if (lineDrawStyle.getBottomAreaPaint() != null) {
-            fillBottomArea(g2d, polyline);
-        }
-        if (lineDrawStyle.getTopAreaPaint() != null) {
-            fillTopArea(g2d, polyline);
-        }
-        if (lineDrawStyle.getAreaDrawStyle() != null) {
-            super.draw(g2d, graphGeometry);
-        }
-        if (lineDrawStyle.getLinePaint() != null && lineDrawStyle.getLineStroke() != null) {
-            g2d.setPaint(lineDrawStyle.getLinePaint());
-            g2d.setStroke(lineDrawStyle.getLineStroke());
-            g2d.drawPolyline(polyline.xpoints, polyline.ypoints, polyline.npoints);
+        if (polyline.npoints > 0) {
+            if (lineDrawStyle.getBottomAreaPaint() != null) {
+                fillBottomArea(g2d, polyline);
+            }
+            if (lineDrawStyle.getTopAreaPaint() != null) {
+                fillTopArea(g2d, polyline);
+            }
+            if (lineDrawStyle.getAreaDrawStyle() != null) {
+                super.draw(g2d, graphGeometry);
+            }
+            if (lineDrawStyle.getLinePaint() != null && lineDrawStyle.getLineStroke() != null) {
+                g2d.setPaint(lineDrawStyle.getLinePaint());
+                g2d.setStroke(lineDrawStyle.getLineStroke());
+                g2d.drawPolyline(polyline.xpoints, polyline.ypoints, polyline.npoints);
+            }
         }
     }
 
