@@ -162,10 +162,7 @@ public final class ChartGeometry {
 
 
     private static int pixel(Number number, Number min, double range, int size) {
-        if (number == null) {
-            LOGGER.log(Level.SEVERE, "Cannot compute null pixel");
-            throw new java.lang.IllegalArgumentException();
-        }
+        Objects.requireNonNull(number, "Cannot compute null pixel");
         double ratio = size / range;
         long pixel = Math.round((value(number) - value(min)) * ratio);
         if (pixel < Integer.MIN_VALUE || Integer.MAX_VALUE < pixel) {
@@ -203,6 +200,9 @@ public final class ChartGeometry {
                     if (window.yMax == null || value(window.yMax) < valueY) {
                         window.yMax = y;
                     }
+                }
+                else if (! inRange(xWindowMin, xWindowMax, valueX)) {
+
                 }
             }
         }

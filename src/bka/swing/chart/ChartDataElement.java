@@ -28,20 +28,20 @@ public class ChartDataElement<K, V> {
 
     @Override
     public boolean equals(Object other) {
-        return
-            this == other ||
-            (other instanceof ChartDataElement) &&
-            key.equals(((ChartDataElement) other).key) &&
-            value.equals(((ChartDataElement) other).value);
+        if (this == other) {
+            return true;
+        }
+        if (! (other instanceof ChartDataElement)) {
+            return false;
+        }
+        ChartDataElement element = (ChartDataElement) other;
+        return Objects.equals(key, element.key) && Objects.equals(value, element.value);
     }
 
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + Objects.hashCode(key);
-        hash = 97 * hash + Objects.hashCode(value);
-        return hash;
+        return Objects.hash(key, value);
     }
 
 
