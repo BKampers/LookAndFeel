@@ -17,14 +17,19 @@ public class ChartData<K, V> implements Iterable<ChartDataElement<K, V>> {
 
     public ChartData(Map<K, V> source) {
         entries = new ArrayList<>(source.size());
-        for (Map.Entry<K,V> entry : source.entrySet()) {
-            add(entry.getKey(), entry.getValue());
+        for (Map.Entry<K, V> entry : source.entrySet()) {
+            add(entry.getKey(), entry.getValue(), false);
         }
     }
 
 
     public final void add(K key, V value) {
-        entries.add(new ChartDataElement<>(key, value));
+        add(key, value, false);
+    }
+
+
+    public final void add(K key, V value, boolean outOfRange) {
+        entries.add(new ChartDataElement<>(key, value, outOfRange));
     }
 
 
@@ -34,8 +39,18 @@ public class ChartData<K, V> implements Iterable<ChartDataElement<K, V>> {
     }
 
 
+    public final boolean isEmpty() {
+        return entries.isEmpty();
+    }
+
+
     public final int size() {
         return entries.size();
+    }
+
+
+    public ChartDataElement<K, V> get(int index) {
+        return entries.get(index);
     }
 
 
