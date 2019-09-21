@@ -46,10 +46,10 @@ public final class ChartGeometry {
         LOGGER.log(Level.FINE, "Initialize area {0}", area);
         this.area = area;
         graphs.clear();
-        xMin = xWindowMin;
-        xMax = xWindowMax;
-        yMin = yWindowMin;
-        yMax = yWindowMax;
+        this.xWindowMin = xMin = xWindowMin;
+        this.xWindowMax = xMax = xWindowMax;
+        this.yWindowMin = yMin = yWindowMin;
+        this.yWindowMax = yMax = yWindowMax;
         if (dataMap != null) {
             Window window = computeWindow(xWindowMin, xWindowMax, yWindowMin, yWindowMax);
             computeRanges(window, yWindowBase);
@@ -73,17 +73,17 @@ public final class ChartGeometry {
             yMax = window.yMax;
         }
         if (yWindowBase != null) {
-            if (yMin != null && value(yMin) > value(yWindowBase)) {
+            if (yMin != null && yMin.doubleValue() > yWindowBase.doubleValue()) {
                 yMin = yWindowBase;
             }
-            if (yMax != null && value(yMax) < value(yWindowBase)) {
+            if (yMax != null && yMax.doubleValue() < yWindowBase.doubleValue()) {
                 yMax = yWindowBase;
             }
         }
     }
 
     
-    public Map<Object, java.util.List<AreaGeometry>> getGraphs() {
+    public Map<Object, GraphGeometry<AreaGeometry>> getGraphs() {
         return graphs;
     }
 
@@ -121,13 +121,13 @@ public final class ChartGeometry {
     
     public double xValue(int pixelX) {
         double ratio = xRange() / area.width;
-        return (pixelX - area.x) * ratio + value(xMin);
+        return (pixelX - area.x) * ratio + xMin.doubleValue();
     }
 
     
     public double yValue(int pixelY) {
         double ratio = yRange() / area.height;
-        return (area.height - pixelY + area.y) * ratio + value(yMin);
+        return (area.height - pixelY + area.y) * ratio + yMin.doubleValue();
     }
     
     
@@ -161,10 +161,30 @@ public final class ChartGeometry {
     }
 
 
+    Number getXWindowMin() {
+        return xWindowMin;
+    }
+
+
+    Number getXWindowMax() {
+        return xWindowMax;
+    }
+
+
+    Number getYWindowMin() {
+        return yWindowMin;
+    }
+
+
+    Number getYWindowMax() {
+        return yWindowMax;
+    }
+
+
     private static int pixel(Number number, Number min, double range, int size) {
         Objects.requireNonNull(number, "Cannot compute null pixel");
         double ratio = size / range;
-        long pixel = Math.round((value(number) - value(min)) * ratio);
+        long pixel = Math.round((number.doubleValue() - min.doubleValue()) * ratio);
         if (pixel < Integer.MIN_VALUE || Integer.MAX_VALUE < pixel) {
             LOGGER.log(Level.WARNING, "Pixel {0} out of range [{1}, {2}]", new Object[] { pixel, Integer.MIN_VALUE, Integer.MAX_VALUE });
         }
@@ -179,39 +199,83 @@ public final class ChartGeometry {
     private Window computeWindow(Number xWindowMin, Number xWindowMax, Number yWindowMin, Number yWindowMax) {
         Window window = new Window();
         for (Map.Entry<Object, ChartData<Number, Number>> dataGraph : dataMap.entrySet()) {
+            boolean keep = renderers.get(dataGraph.getKey()) instanceof LineRenderer;
             ChartData<Number, Number> graphPointsInWindow = new ChartData<>();
             window.points.put(dataGraph.getKey(), graphPointsInWindow);
+            boolean seriesStarted = false;
+            boolean lastOutOfRange = false;
+            ChartDataElement<Number, Number> last = null;
             for (ChartDataElement<Number, Number> element : dataGraph.getValue()) {
                 Number x = element.getKey();
                 Number y = element.getValue();
-                double valueX = value(x);
-                double valueY = value(y);
-                if (inRange(xWindowMin, xWindowMax, valueX) && inRange(yWindowMin, yWindowMax, valueY)) {
+                if (inRange(xWindowMin, xWindowMax, x) && inRange(yWindowMin, yWindowMax, y)) {
+                    if (keep && last != null) {
+                        graphPointsInWindow.add(last.getKey(), last.getValue(), true);
+                    }
                     graphPointsInWindow.add(x, y);
-                    if (window.xMin == null || valueX < value(window.xMin)) { 
+                    seriesStarted = true;
+                    lastOutOfRange = false;
+                    if (window.xMin == null || x.doubleValue() < window.xMin.doubleValue()) {
                         window.xMin = x;
                     }
-                    if (window.xMax == null || value(window.xMax) < valueX) {
+                    if (window.xMax == null || window.xMax.doubleValue() < x.doubleValue()) {
                         window.xMax = x;
                     }
-                    if (window.yMin == null || valueY < value(window.yMin)) {
+                    if (window.yMin == null || y.doubleValue() < window.yMin.doubleValue()) {
                         window.yMin = y;
                     }
-                    if (window.yMax == null || value(window.yMax) < valueY) {
+                    if (window.yMax == null || window.yMax.doubleValue() < y.doubleValue()) {
                         window.yMax = y;
                     }
+                    last = null;
                 }
-                else if (! inRange(xWindowMin, xWindowMax, valueX)) {
-
+                else {
+                    if (keep && ! lastOutOfRange) {
+                        graphPointsInWindow.add(x, y, true);
+                        last = null;
+                    }
+                    else if (keep) {
+                        last = element;
+                    }
+                    lastOutOfRange = true;
                 }
+//                else if (xWindowMin != null && yWindowMin != null && xWindowMax != null && yWindowMax != null) {
+//                    if (x.doubleValue() < xWindowMin.doubleValue()) {
+//                        if (graphPointsInWindow.isEmpty()) {
+//                            window.leftOfRange.put(dataGraph.getKey(), new ChartDataElement<>(x, y));
+//                        }
+//                        else if (window.rightOfRange == null) {
+//                            window.rightOfRange.put(dataGraph.getKey(), new ChartDataElement<>(x, y));
+//                        }
+//                    }
+//                }
             }
+//            System.out.printf("%s: ", dataGraph.getKey());
+//            if (xWindowMin != null && yWindowMin != null && window.leftOfRange.containsKey(dataGraph.getKey()) && ! graphPointsInWindow.isEmpty()) {
+//                ChartDataElement<Number, Number> p0 = graphPointsInWindow.get(0);
+//                double slope = (p0.getValue().doubleValue() - window.leftOfRange.get(dataGraph.getKey()).getValue().doubleValue()) / (p0.getKey().doubleValue() - window.leftOfRange.get(dataGraph.getKey()).getKey().doubleValue());
+//                double intersectionY = (xWindowMin.doubleValue() - p0.getKey().doubleValue()) * slope + p0.getValue().doubleValue();
+//                if (intersectionY >= yWindowMin.doubleValue()) {
+//                        window.leftOfRange.put(dataGraph.getKey(), new ChartDataElement(xWindowMin, intersectionY));
+//                }
+//                else {
+//                    double intersectionX = yWindowMin.doubleValue() - p0.getValue().doubleValue() * slope + p0.getKey().doubleValue();
+//                        window.leftOfRange.put(dataGraph.getKey(), new ChartDataElement(intersectionX, yWindowMin));
+//                }
+//                System.out.printf("(%f;%f)", window.leftOfRange.get(dataGraph.getKey()).getKey().doubleValue(), window.leftOfRange.get(dataGraph.getKey()).getValue().doubleValue());
+//            }
+//            System.out.print(" .. ");
+//            if (window.rightOfRange.containsKey(dataGraph.getKey())) {
+//                System.out.printf("(%f;%f)", window.rightOfRange.get(dataGraph.getKey()).getKey().doubleValue(), window.rightOfRange.get(dataGraph.getKey()).getValue().doubleValue());
+//            }
+//            System.out.println();
         }
         return window;
     }
     
     
-    private static boolean inRange(Number min, Number max, double value) {
-        return (min == null || value(min) <= value) && (max == null || value <= value(max));
+    private static boolean inRange(Number min, Number max, Number value) {
+        return (min == null || min.doubleValue() <= value.doubleValue()) && (max == null || value.doubleValue() <= max.doubleValue());
     }
 
     
@@ -222,8 +286,7 @@ public final class ChartGeometry {
         for (Map.Entry<Object, ChartData<Number, Number>> map : window.points.entrySet()) {
             AbstractDataAreaRenderer renderer = renderers.get(map.getKey());
             if (renderer != null) {
-                java.util.List<AreaGeometry> points = renderer.createGraphGeomerty(map.getValue());
-                graphs.put(map.getKey(), points);
+                graphs.put(map.getKey(), renderer.createGraphGeomerty(map.getValue(), xWindowMin, xWindowMax, yWindowMin, yWindowMax));
             }
         }
     }
@@ -244,22 +307,19 @@ public final class ChartGeometry {
 
     
     private double xRange() {
-        return value(xMax) - value(xMin);
+        return xMax.doubleValue() - xMin.doubleValue();
     }
 
     
     private double yRange() {
-        return value(yMax) - value(yMin);
+        return yMax.doubleValue() - yMin.doubleValue();
     }
 
     
-    private static double value(Number number) {
-        return number.doubleValue();
-    }
-    
-    
     private class Window {
-        Map<Object, ChartData<Number, Number>> points = new LinkedHashMap<>();
+        final Map<Object, ChartData<Number, Number>> points = new LinkedHashMap<>();
+        final Map<Object, ChartDataElement<Number, Number>>leftOfRange = new HashMap<>();
+        final Map<Object, ChartDataElement<Number, Number>> rightOfRange = new HashMap<>();
         Number xMin, xMax, yMin, yMax;
     }
 
@@ -273,12 +333,17 @@ public final class ChartGeometry {
     private Map<Object, ChartData<Number, Number>> dataMap;
     private Map<Object, AbstractDataAreaRenderer> renderers;
 
-    private final Map<Object, java.util.List<AreaGeometry>> graphs = new LinkedHashMap<>();
+    private final Map<Object, GraphGeometry<AreaGeometry>> graphs = new LinkedHashMap<>();
 
-    private Number xMin = null;
-    private Number xMax = null;
-    private Number yMin = null;
-    private Number yMax = null;
+    private Number xMin;
+    private Number xMax;
+    private Number yMin;
+    private Number yMax;
+
+    private Number xWindowMin;
+    private Number xWindowMax;
+    private Number yWindowMin;
+    private Number yWindowMax;
 
     private static final Logger LOGGER = Logger.getLogger(ChartGeometry.class.getName());
     
