@@ -20,12 +20,12 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     }
 
     
-    public abstract java.util.List<G> createGraphGeomerty(ChartData<Number, Number> chart);
+    public abstract GraphGeometry<G> createGraphGeomerty(ChartData<Number, Number> chart);
     protected abstract G createSymbolGeometry(int x, int y, G geometry);
 
 
-    public void draw(Graphics2D g2d, java.util.List<G> graphGeometry) {
-        for (G dataAreaGeometry : graphGeometry) {
+    public void draw(Graphics2D g2d, GraphGeometry<G> graphGeometry) {
+        for (G dataAreaGeometry : graphGeometry.getDataPoints()) {
             draw(g2d, dataAreaGeometry);
         }
     }

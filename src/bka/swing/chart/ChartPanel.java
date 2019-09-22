@@ -411,11 +411,9 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
 
     private void drawData(Graphics2D g2d) {
-        for (Map.Entry<Object, java.util.List<AreaGeometry>> entry : geometry.getGraphs().entrySet()) {
-            Object key = entry.getKey();
-            java.util.List<AreaGeometry> graphGeometry = entry.getValue();
-            AbstractDataAreaRenderer renderer = getRenderer(key);
-            renderer.draw(g2d, graphGeometry);
+        for (Map.Entry<Object, GraphGeometry<AreaGeometry>> entry : geometry.getGraphs().entrySet()) {
+            AbstractDataAreaRenderer renderer = getRenderer(entry.getKey());
+            renderer.draw(g2d, entry.getValue());
         }
     }
 
@@ -663,9 +661,10 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
         private AreaGeometry findContainingArea() {
             synchronized (geometry) {
-                for (Map.Entry<Object, java.util.List<AreaGeometry>> entry : geometry.getGraphs().entrySet()) {
-                    for (AreaGeometry dataAreaGeometry : entry.getValue()) {
-                        if (dataAreaGeometry.getArea().contains(mousePoint)) {
+                Map<Object, GraphGeometry<AreaGeometry>> graphGeometries = geometry.getGraphs();
+                for (Map.Entry<Object, GraphGeometry<AreaGeometry>> entry : graphGeometries.entrySet()) {
+                    for (AreaGeometry dataAreaGeometry : entry.getValue().getDataPoints()) {
+                        if (dataAreaGeometry.getArea() != null && dataAreaGeometry.getArea().contains(mousePoint)) {
                             highlightRenderer = pointHighlightRenderers.get(entry.getKey());
                             return dataAreaGeometry;
                         }

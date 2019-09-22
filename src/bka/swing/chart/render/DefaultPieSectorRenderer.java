@@ -26,7 +26,7 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
         int y = geometry.getY();
         g2d.setFont(geometry.getFont());
         FontMetrics fontMetrics = g2d.getFontMetrics();
-        for (AreaGeometry areaGeometry : graphGeometry) {
+        for (AreaGeometry areaGeometry : graphGeometry.getDataPoints()) {
             drawSymbol(g2d, x, y, (ArcAreaGeometry) areaGeometry);
             g2d.setColor(geometry.getColor());
             g2d.drawString(areaGeometry.getX().toString(), x + geometry.getSpace(), y + fontMetrics.getDescent());

@@ -30,22 +30,32 @@ public class DefaultLineRenderer extends LineRenderer {
 
 
     @Override
-    public void draw(Graphics2D g2d, java.util.List<PixelAreaGeometry> graphGeometry) {
+    public void draw(Graphics2D g2d, GraphGeometry<PixelAreaGeometry> graphGeometry) {
         Polygon polyline = createPolyline(graphGeometry);
         if (polyline.npoints > 0) {
+            Shape clipRestore = g2d.getClip();
+            if (chartGeometry.getXWindowMin() != null && chartGeometry.getXWindowMax() != null &&
+                chartGeometry.getYWindowMin() != null && chartGeometry.getYWindowMax() != null) {
+                int xWindowMin = chartGeometry.xPixel(chartGeometry.getXWindowMin());
+                int xWindowMax = chartGeometry.xPixel(chartGeometry.getXWindowMax());
+                int yWindowMin = chartGeometry.yPixel(chartGeometry.getYWindowMin());
+                int yWindowMax = chartGeometry.yPixel(chartGeometry.getYWindowMax());
+                g2d.clipRect(xWindowMin, yWindowMax, xWindowMax - xWindowMin, yWindowMin - yWindowMax);
+            }
             if (lineDrawStyle.getBottomAreaPaint() != null) {
                 fillBottomArea(g2d, polyline);
             }
             if (lineDrawStyle.getTopAreaPaint() != null) {
                 fillTopArea(g2d, polyline);
             }
+            g2d.setClip(clipRestore);
             if (lineDrawStyle.getAreaDrawStyle() != null) {
                 super.draw(g2d, graphGeometry);
             }
             if (lineDrawStyle.getLinePaint() != null && lineDrawStyle.getLineStroke() != null) {
                 g2d.setPaint(lineDrawStyle.getLinePaint());
                 g2d.setStroke(lineDrawStyle.getLineStroke());
-                g2d.drawPolyline(polyline.xpoints, polyline.ypoints, polyline.npoints);
+                drawLines(g2d, graphGeometry);
             }
         }
     }
@@ -67,9 +77,43 @@ public class DefaultLineRenderer extends LineRenderer {
     }
 
 
-    private Polygon createPolyline(java.util.List<PixelAreaGeometry> graphGeometry) {
+    private void drawLines(Graphics2D g2d, GraphGeometry<PixelAreaGeometry> graphGeometry) {
+        for (int i = 1; i < graphGeometry.getDataPoints().size(); ++i) {
+            PixelAreaGeometry<RectangularShape> g0 = graphGeometry.getDataPoints().get(i - 1);
+            PixelAreaGeometry<RectangularShape> g1 = graphGeometry.getDataPoints().get(i);
+            if (g0.getArea() != null && g1.getArea() != null) {
+                g2d.drawLine(g0.getPixel().x, g0.getPixel().y, g1.getPixel().x, g1.getPixel().y);
+            }
+        }
+    }
+    // TODO draw lines to edge of window
+//            else if (p0.isOutOfRange() && ! p1.isOutOfRange()) {
+//                double slope = (p0.getValue().doubleValue() - p1.getValue().doubleValue()) / (p0.getKey().doubleValue() - p1.getKey().doubleValue());
+//                double intersectionY = (xWindowMin.doubleValue() - p0.getKey().doubleValue()) * slope + p0.getValue().doubleValue();
+//                if (intersectionY >= yWindowMin.doubleValue()) {
+//                    add(xWindowMin, intersectionY, dataGeometry);
+//                }
+//                else {
+//                    double intersectionX = yWindowMin.doubleValue() - p0.getValue().doubleValue() * slope + p0.getKey().doubleValue();
+//                    add(intersectionX, yWindowMin, dataGeometry);
+//                }
+//            }
+//            else if (! p0.isOutOfRange() && p1.isOutOfRange()) {
+//                double slope = (p0.getValue().doubleValue() - p1.getValue().doubleValue()) / (p0.getKey().doubleValue() - p1.getKey().doubleValue());
+//                double intersectionY = (xWindowMax.doubleValue() - p0.getKey().doubleValue()) * slope + p0.getValue().doubleValue();
+//                if (intersectionY <= yWindowMax.doubleValue()) {
+//                    add(xWindowMax, intersectionY, dataGeometry);
+//                }
+//                else {
+//                    double intersectionX = yWindowMax.doubleValue() - p0.getValue().doubleValue() * slope + p0.getKey().doubleValue();
+//                    add(intersectionX, yWindowMax, dataGeometry);
+//                }
+//            }
+
+
+    private Polygon createPolyline(GraphGeometry<PixelAreaGeometry> graphGeometry) {
         Polygon polyline = new Polygon();
-        for (PixelAreaGeometry<RectangularShape> dataAreaGeometry : graphGeometry) {
+        for (PixelAreaGeometry<RectangularShape> dataAreaGeometry : graphGeometry.getDataPoints()) {
             Point pixel = dataAreaGeometry.getPixel();
             polyline.addPoint(pixel.x, pixel.y);
         }

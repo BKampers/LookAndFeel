@@ -11,6 +11,7 @@ package bka.swing.chart.geometry;
  */
 public class AreaGeometry<S extends java.awt.Shape> {
 
+
     public AreaGeometry(Number x, Number y, S area) {
         this.x = x;
         this.y = y;

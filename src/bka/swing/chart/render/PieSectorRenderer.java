@@ -11,7 +11,6 @@ import bka.swing.chart.custom.*;
 import bka.swing.chart.geometry.*;
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.*;
 
 
 public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcAreaGeometry> {
@@ -23,8 +22,8 @@ public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcArea
 
 
     @Override
-    public java.util.List<ArcAreaGeometry> createGraphGeomerty(ChartData<Number, Number> chart) {
-        graphGeometry = new ArrayList<>();
+    public GraphGeometry<ArcAreaGeometry> createGraphGeomerty(ChartData<Number, Number> chart) {
+        graphGeometry = new GraphGeometry<>();
         diameter = Math.min(chartPanel.areaWidth(), chartPanel.areaHeight()) - DIAMETER_MARGIN;
         float pieLeft = chartPanel.areaLeft() + (chartPanel.areaWidth() - diameter) / 2.0f;
         float pieTop = chartPanel.areaTop() + (chartPanel.areaHeight() - diameter) / 2.0f;
@@ -66,7 +65,7 @@ public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcArea
     }
 
 
-    protected java.util.List<ArcAreaGeometry> graphGeometry;
+    protected GraphGeometry<ArcAreaGeometry> graphGeometry;
 
 
     private Point center;

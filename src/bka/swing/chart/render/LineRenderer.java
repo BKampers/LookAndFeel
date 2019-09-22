@@ -10,7 +10,6 @@ import bka.swing.chart.custom.*;
 import bka.swing.chart.geometry.*;
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.*;
 
 
 public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeometry> {
@@ -25,17 +24,33 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
 
     
     @Override
-    public java.util.List<PixelAreaGeometry> createGraphGeomerty(ChartData<Number, Number> chart) {
-        ArrayList<PixelAreaGeometry> dataGeometry = new ArrayList<>();
-        for (ChartDataElement<Number, Number> element : chart) {
-            Number x = element.getKey();
-            Number y = element.getValue();
-            int xPixel = chartGeometry.xPixel(x);
-            int yPixel = chartGeometry.yPixel(y);
-            RectangularShape area = createSymbolArea(xPixel, yPixel);
-            dataGeometry.add(new PixelAreaGeometry(x, y, area, new Point(xPixel, yPixel)));
+    public GraphGeometry createGraphGeomerty(ChartData<Number, Number> chart) {
+        GraphGeometry<AreaGeometry> dataGeometry = new GraphGeometry<>();
+        for (int i = 1; i < chart.size(); ++i) {
+            ChartDataElement<Number, Number> p0 = chart.get(i - 1);
+            ChartDataElement<Number, Number> p1 = chart.get(i);
+            add(p0, dataGeometry);
+            add(p1, dataGeometry);
         }
         return dataGeometry;
+    }
+
+
+    private void add(ChartDataElement<Number, Number> element, GraphGeometry<AreaGeometry> dataGeometry) {
+        add(element.getKey(), element.getValue(), dataGeometry, ! element.isOutOfRange());
+    }
+
+
+    private void add(Number x, Number y, GraphGeometry<AreaGeometry> dataGeometry) {
+        add(x, y, dataGeometry, false);
+    }
+
+
+    private void add(Number x, Number y, GraphGeometry<AreaGeometry> dataGeometry, boolean createArea) {
+        int xPixel = chartGeometry.xPixel(x);
+        int yPixel = chartGeometry.yPixel(y);
+        RectangularShape area = (createArea) ? createSymbolArea(xPixel, yPixel) : null;
+        dataGeometry.add(new PixelAreaGeometry(x, y, area, new Point(xPixel, yPixel)));
     }
 
     

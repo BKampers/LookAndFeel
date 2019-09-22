@@ -9,7 +9,6 @@ import bka.swing.chart.*;
 import bka.swing.chart.custom.*;
 import bka.swing.chart.geometry.*;
 import java.awt.*;
-import java.util.*;
 
 
 public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDataAreaRenderer<AreaGeometry<S>> {
@@ -24,14 +23,16 @@ public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDa
 
 
     @Override
-    public java.util.List<AreaGeometry<S>> createGraphGeomerty(ChartData<Number, Number> chart) {
-        ArrayList<AreaGeometry<S>> geometry = new ArrayList<>();
+    public GraphGeometry<AreaGeometry<S>> createGraphGeomerty(ChartData<Number, Number> chart) {
+        GraphGeometry<AreaGeometry<S>> graphGeometry = new GraphGeometry<>();
         for (ChartDataElement<Number, Number> element : chart) {
-            Number x = element.getKey();
-            Number y = element.getValue();
-            geometry.add(new AreaGeometry<>(x, y, createArea(x, y)));
+            if (! element.isOutOfRange()) {
+                Number x = element.getKey();
+                Number y = element.getValue();
+                graphGeometry.add(new AreaGeometry<>(x, y, createArea(x, y)));
+            }
         }
-        return geometry;
+        return graphGeometry;
     }
 
 

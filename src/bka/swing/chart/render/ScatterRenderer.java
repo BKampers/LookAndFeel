@@ -20,7 +20,7 @@ public class ScatterRenderer<S extends Shape> extends AbstractDataAreaRenderer<S
 
 
     @Override
-    public java.util.List<ScatterGeometry<S>> createGraphGeomerty(ChartData<Number, Number> chart) {
+    public GraphGeometry<ScatterGeometry<S>> createGraphGeomerty(ChartData<Number, Number> chart) {
         Map<ChartDataElement<Number, Number>, ScatterGeometry<S>> map = new HashMap<>();
         for (ChartDataElement<Number, Number> element : chart) {
             Number x = element.getKey();
@@ -31,7 +31,7 @@ public class ScatterRenderer<S extends Shape> extends AbstractDataAreaRenderer<S
             geom = new ScatterGeometry(x, y, area, count);
             map.put(element, geom);
         }
-        return new ArrayList(map.values());
+        return new GraphGeometry<>(map.values());
     }
 
 

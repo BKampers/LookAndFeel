@@ -161,22 +161,22 @@ public final class ChartGeometry {
     }
 
 
-    Number getXWindowMin() {
+    public Number getXWindowMin() {
         return xWindowMin;
     }
 
 
-    Number getXWindowMax() {
+    public Number getXWindowMax() {
         return xWindowMax;
     }
 
 
-    Number getYWindowMin() {
+    public Number getYWindowMin() {
         return yWindowMin;
     }
 
 
-    Number getYWindowMax() {
+    public Number getYWindowMax() {
         return yWindowMax;
     }
 
@@ -286,7 +286,7 @@ public final class ChartGeometry {
         for (Map.Entry<Object, ChartData<Number, Number>> map : window.points.entrySet()) {
             AbstractDataAreaRenderer renderer = renderers.get(map.getKey());
             if (renderer != null) {
-                graphs.put(map.getKey(), renderer.createGraphGeomerty(map.getValue(), xWindowMin, xWindowMax, yWindowMin, yWindowMax));
+                graphs.put(map.getKey(), renderer.createGraphGeomerty(map.getValue()));
             }
         }
     }

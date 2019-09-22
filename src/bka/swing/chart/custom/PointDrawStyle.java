@@ -73,6 +73,9 @@ public class PointDrawStyle implements AreaDrawStyle<AreaGeometry> {
     @Override
     public Paint getPaint(AreaGeometry geometry) {
         Shape area = geometry.getArea();
+        if (area == null) {
+            return null;
+        }
         try {
             if (radial) {
                 return createRadialGradientPaint(area);
