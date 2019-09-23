@@ -202,7 +202,6 @@ public final class ChartGeometry {
             boolean keep = renderers.get(dataGraph.getKey()) instanceof LineRenderer;
             ChartData<Number, Number> graphPointsInWindow = new ChartData<>();
             window.points.put(dataGraph.getKey(), graphPointsInWindow);
-            boolean seriesStarted = false;
             boolean lastOutOfRange = false;
             ChartDataElement<Number, Number> last = null;
             for (ChartDataElement<Number, Number> element : dataGraph.getValue()) {
@@ -213,7 +212,6 @@ public final class ChartGeometry {
                         graphPointsInWindow.add(last.getKey(), last.getValue(), true);
                     }
                     graphPointsInWindow.add(x, y);
-                    seriesStarted = true;
                     lastOutOfRange = false;
                     if (window.xMin == null || x.doubleValue() < window.xMin.doubleValue()) {
                         window.xMin = x;
@@ -237,38 +235,9 @@ public final class ChartGeometry {
                     else if (keep) {
                         last = element;
                     }
-                    lastOutOfRange = true;
+                    lastOutOfRange = ! inRange(xWindowMin, xWindowMax, x);
                 }
-//                else if (xWindowMin != null && yWindowMin != null && xWindowMax != null && yWindowMax != null) {
-//                    if (x.doubleValue() < xWindowMin.doubleValue()) {
-//                        if (graphPointsInWindow.isEmpty()) {
-//                            window.leftOfRange.put(dataGraph.getKey(), new ChartDataElement<>(x, y));
-//                        }
-//                        else if (window.rightOfRange == null) {
-//                            window.rightOfRange.put(dataGraph.getKey(), new ChartDataElement<>(x, y));
-//                        }
-//                    }
-//                }
             }
-//            System.out.printf("%s: ", dataGraph.getKey());
-//            if (xWindowMin != null && yWindowMin != null && window.leftOfRange.containsKey(dataGraph.getKey()) && ! graphPointsInWindow.isEmpty()) {
-//                ChartDataElement<Number, Number> p0 = graphPointsInWindow.get(0);
-//                double slope = (p0.getValue().doubleValue() - window.leftOfRange.get(dataGraph.getKey()).getValue().doubleValue()) / (p0.getKey().doubleValue() - window.leftOfRange.get(dataGraph.getKey()).getKey().doubleValue());
-//                double intersectionY = (xWindowMin.doubleValue() - p0.getKey().doubleValue()) * slope + p0.getValue().doubleValue();
-//                if (intersectionY >= yWindowMin.doubleValue()) {
-//                        window.leftOfRange.put(dataGraph.getKey(), new ChartDataElement(xWindowMin, intersectionY));
-//                }
-//                else {
-//                    double intersectionX = yWindowMin.doubleValue() - p0.getValue().doubleValue() * slope + p0.getKey().doubleValue();
-//                        window.leftOfRange.put(dataGraph.getKey(), new ChartDataElement(intersectionX, yWindowMin));
-//                }
-//                System.out.printf("(%f;%f)", window.leftOfRange.get(dataGraph.getKey()).getKey().doubleValue(), window.leftOfRange.get(dataGraph.getKey()).getValue().doubleValue());
-//            }
-//            System.out.print(" .. ");
-//            if (window.rightOfRange.containsKey(dataGraph.getKey())) {
-//                System.out.printf("(%f;%f)", window.rightOfRange.get(dataGraph.getKey()).getKey().doubleValue(), window.rightOfRange.get(dataGraph.getKey()).getValue().doubleValue());
-//            }
-//            System.out.println();
         }
         return window;
     }
