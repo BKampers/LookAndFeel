@@ -181,6 +181,21 @@ public final class ChartGeometry {
     }
 
 
+    /**
+     * @return Rectangle in pixels of the drawing window
+     */
+    public Rectangle getWindow() {
+        if (xWindowMin == null || xWindowMax == null || yWindowMin == null || yWindowMax == null) {
+            return null;
+        }
+        return new Rectangle(
+            xPixel(xWindowMin),
+            yPixel(yWindowMax),
+            xPixel(xWindowMax) - xPixel(xWindowMin),
+            yPixel(yWindowMin) - yPixel(yWindowMax));
+    }
+
+
     private static int pixel(Number number, Number min, double range, int size) {
         Objects.requireNonNull(number, "Cannot compute null pixel");
         double ratio = size / range;

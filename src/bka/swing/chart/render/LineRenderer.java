@@ -37,7 +37,7 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
 
 
     private void add(ChartDataElement<Number, Number> element, GraphGeometry<AreaGeometry> dataGeometry) {
-        add(element.getKey(), element.getValue(), dataGeometry, ! element.isOutOfRange());
+        add(element.getKey(), element.getValue(), dataGeometry, ! element.isOutsideWindow());
     }
 
 

@@ -10,10 +10,10 @@ import java.util.*;
 public class ChartDataElement<K, V> {
 
 
-    public ChartDataElement(K key, V value, boolean outOfRange) {
+    public ChartDataElement(K key, V value, boolean outsideWindow) {
         this.key = key;
         this.value = value;
-        this.outOfRange = outOfRange;
+        this.outsideWindow = outsideWindow;
     }
 
     
@@ -27,8 +27,8 @@ public class ChartDataElement<K, V> {
     }
 
 
-    public boolean isOutOfRange() {
-        return outOfRange;
+    public boolean isOutsideWindow() {
+        return outsideWindow;
     }
 
 
@@ -53,6 +53,6 @@ public class ChartDataElement<K, V> {
 
     private final K key;
     private final V value;
-    private final boolean outOfRange;
+    private final boolean outsideWindow;
 
 }

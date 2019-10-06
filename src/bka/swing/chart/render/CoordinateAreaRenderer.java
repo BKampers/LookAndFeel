@@ -26,7 +26,7 @@ public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDa
     public GraphGeometry<AreaGeometry<S>> createGraphGeomerty(ChartData<Number, Number> chart) {
         GraphGeometry<AreaGeometry<S>> graphGeometry = new GraphGeometry<>();
         for (ChartDataElement<Number, Number> element : chart) {
-            if (! element.isOutOfRange()) {
+            if (! element.isOutsideWindow()) {
                 Number x = element.getKey();
                 Number y = element.getValue();
                 graphGeometry.add(new AreaGeometry<>(x, y, createArea(x, y)));

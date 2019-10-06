@@ -28,8 +28,8 @@ public class ChartData<K, V> implements Iterable<ChartDataElement<K, V>> {
     }
 
 
-    public final void add(K key, V value, boolean outOfRange) {
-        entries.add(new ChartDataElement<>(key, value, outOfRange));
+    public final void add(K key, V value, boolean outsideWindow) {
+        entries.add(new ChartDataElement<>(key, value, outsideWindow));
     }
 
 
