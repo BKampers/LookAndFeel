@@ -51,7 +51,7 @@ public final class ChartGeometry {
         this.yWindowMin = yMin = yWindowMin;
         this.yWindowMax = yMax = yWindowMax;
         if (dataMap != null) {
-            Window window = computeWindow(xWindowMin, xWindowMax, yWindowMin, yWindowMax);
+            Window window = computeWindow();
             computeRanges(window, yWindowBase);
             computeDataPoints(window);
         }
@@ -60,18 +60,6 @@ public final class ChartGeometry {
 
 
     private void computeRanges(Window window, Number yWindowBase) {
-        if (xMin == null) {
-            xMin = window.xMin;
-        }
-        if (xMax == null) {
-            xMax = window.xMax;
-        }
-        if (yMin == null) {
-            yMin = window.yMin;
-        }
-        if (yMax == null) {
-            yMax = window.yMax;
-        }
         if (yWindowBase != null) {
             if (yMin != null && yMin.doubleValue() > yWindowBase.doubleValue()) {
                 yMin = yWindowBase;
@@ -181,18 +169,8 @@ public final class ChartGeometry {
     }
 
 
-    /**
-     * @return Rectangle in pixels of the drawing window
-     */
-    public Rectangle getWindow() {
-        if (xWindowMin == null || xWindowMax == null || yWindowMin == null || yWindowMax == null) {
-            return null;
-        }
-        return new Rectangle(
-            xPixel(xWindowMin),
-            yPixel(yWindowMax),
-            xPixel(xWindowMax) - xPixel(xWindowMin),
-            yPixel(yWindowMin) - yPixel(yWindowMax));
+    public Rectangle getArea() {
+        return area;
     }
 
 
@@ -208,66 +186,26 @@ public final class ChartGeometry {
 
 
     /**
-     * Collect all points in x,y range and determine their min and max values for x and y.
+     * Collect all points in x,y range and determine their min and max values.
      * return everything in a Dataset.Window object 
      */
-    private Window computeWindow(Number xWindowMin, Number xWindowMax, Number yWindowMin, Number yWindowMax) {
+    private Window computeWindow() {
         Window window = new Window();
         for (Map.Entry<Object, ChartData<Number, Number>> dataGraph : dataMap.entrySet()) {
-            boolean keep = renderers.get(dataGraph.getKey()) instanceof LineRenderer;
-            ChartData<Number, Number> graphPointsInWindow = new ChartData<>();
-            window.points.put(dataGraph.getKey(), graphPointsInWindow);
-            boolean lastOutOfRange = false;
-            ChartDataElement<Number, Number> last = null;
-            for (ChartDataElement<Number, Number> element : dataGraph.getValue()) {
-                Number x = element.getKey();
-                Number y = element.getValue();
-                if (inRange(xWindowMin, xWindowMax, x) && inRange(yWindowMin, yWindowMax, y)) {
-                    if (keep && last != null) {
-                        graphPointsInWindow.add(last.getKey(), last.getValue(), true);
-                    }
-                    graphPointsInWindow.add(x, y);
-                    lastOutOfRange = false;
-                    if (window.xMin == null || x.doubleValue() < window.xMin.doubleValue()) {
-                        window.xMin = x;
-                    }
-                    if (window.xMax == null || window.xMax.doubleValue() < x.doubleValue()) {
-                        window.xMax = x;
-                    }
-                    if (window.yMin == null || y.doubleValue() < window.yMin.doubleValue()) {
-                        window.yMin = y;
-                    }
-                    if (window.yMax == null || window.yMax.doubleValue() < y.doubleValue()) {
-                        window.yMax = y;
-                    }
-                    last = null;
-                }
-                else {
-                    if (keep && ! lastOutOfRange) {
-                        graphPointsInWindow.add(x, y, true);
-                        last = null;
-                    }
-                    else if (keep) {
-                        last = element;
-                    }
-                    lastOutOfRange = ! inRange(xWindowMin, xWindowMax, x);
-                }
+            AbstractDataAreaRenderer renderer = renderers.get(dataGraph.getKey());
+            if (renderer != null) {
+                renderer.addPointsInWindow(dataGraph.getKey(), dataGraph.getValue(), window);
             }
         }
         return window;
     }
     
     
-    private static boolean inRange(Number min, Number max, Number value) {
-        return (min == null || min.doubleValue() <= value.doubleValue()) && (max == null || value.doubleValue() <= max.doubleValue());
-    }
-
-    
     /**
      * Compute render data for points in window
      */
     private void computeDataPoints(Window window) {
-        for (Map.Entry<Object, ChartData<Number, Number>> map : window.points.entrySet()) {
+        for (Map.Entry<Object, ChartData<Number, Number>> map : window.entrySet()) {
             AbstractDataAreaRenderer renderer = renderers.get(map.getKey());
             if (renderer != null) {
                 graphs.put(map.getKey(), renderer.createGraphGeomerty(map.getValue()));
@@ -300,11 +238,48 @@ public final class ChartGeometry {
     }
 
     
-    private class Window {
-        final Map<Object, ChartData<Number, Number>> points = new LinkedHashMap<>();
-        final Map<Object, ChartDataElement<Number, Number>>leftOfRange = new HashMap<>();
-        final Map<Object, ChartDataElement<Number, Number>> rightOfRange = new HashMap<>();
-        Number xMin, xMax, yMin, yMax;
+    public class Window {
+
+        private Window() {
+        }
+
+        public void putPoints(Object key, ChartData<Number, Number> graphPointsInWindow) {
+            points.put(key, graphPointsInWindow);
+        }
+
+
+        public void setBounds(Number x, Number y) {
+            if (xMin == null || x.doubleValue() < xMin.doubleValue()) {
+                xMin = x;
+            }
+            if (xMax == null || xMax.doubleValue() < x.doubleValue()) {
+                xMax = x;
+            }
+            if (yMin == null || y.doubleValue() < yMin.doubleValue()) {
+                yMin = y;
+            }
+            if (yMax == null || yMax.doubleValue() < y.doubleValue()) {
+                yMax = y;
+            }
+        }
+
+        public boolean inXRange(Number x) {
+            return inRange(x, xWindowMin, xWindowMax);
+        }
+
+        public boolean inYRange(Number y) {
+            return inRange(y, yWindowMin, yWindowMax);
+        }
+
+        private boolean inRange(Number n, Number min, Number max) {
+            return (min == null || min.doubleValue() <= n.doubleValue()) && (max == null || n.doubleValue() <= max.doubleValue());
+        }
+
+        private Set<Map.Entry<Object, ChartData<Number, Number>>> entrySet() {
+            return points.entrySet();
+        }
+
+        private final Map<Object, ChartData<Number, Number>> points = new LinkedHashMap<>();
     }
 
     

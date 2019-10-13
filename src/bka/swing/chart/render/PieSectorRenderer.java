@@ -24,6 +24,7 @@ public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcArea
     @Override
     public GraphGeometry<ArcAreaGeometry> createGraphGeomerty(ChartData<Number, Number> chart) {
         graphGeometry = new GraphGeometry<>();
+        ChartPanel chartPanel = getChartPanel();
         diameter = Math.min(chartPanel.areaWidth(), chartPanel.areaHeight()) - DIAMETER_MARGIN;
         float pieLeft = chartPanel.areaLeft() + (chartPanel.areaWidth() - diameter) / 2.0f;
         float pieTop = chartPanel.areaTop() + (chartPanel.areaHeight() - diameter) / 2.0f;
@@ -43,6 +44,12 @@ public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcArea
             index++;
         }
         return graphGeometry;
+    }
+
+
+    @Override
+    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData, ChartGeometry.Window window) {
+        window.putPoints(key, chartData);
     }
 
 

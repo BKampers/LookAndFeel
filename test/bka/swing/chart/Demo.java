@@ -131,11 +131,12 @@ public class Demo extends javax.swing.JFrame {
 
 
     private void initChartPanel() {
-        chartPanel.setHighlightFormat("G1", "x = %d", "y = %.2f");
-        chartPanel.setHighlightFormat("G2", "x = %d", "y = %d");
-        chartPanel.setHighlightFormat("G3", "x = %d", "y = %d");
-        chartPanel.setHighlightFormat("G4", "x = %d", "y = %f");
-        chartPanel.setHighlightFormat("G5", "yyyy-MM-dd", "y = %d");
+        chartPanel.setHighlightFormat(SINE, "x = %.3f", "y = %.3f");
+        chartPanel.setHighlightFormat(G1, "x = %d", "y = %.2f");
+        chartPanel.setHighlightFormat(G2, "x = %d", "y = %d");
+        chartPanel.setHighlightFormat(G3, "x = %d", "y = %d");
+        chartPanel.setHighlightFormat(G4, "x = %d", "y = %f");
+        chartPanel.setHighlightFormat(G5, "yyyy-MM-dd", "y = %d");
         chartPanel.setShowLegend(true);
     }
 
@@ -153,8 +154,8 @@ public class Demo extends javax.swing.JFrame {
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
             if (GraphStyle.BAR.equals(selectedItem)) {
                 Map<Object, Map<Number, Number>> graphs = new HashMap<>();
-                graphs.put("G1", g1);
-                graphs.put("G2", g2);
+                graphs.put(G1, g1);
+                graphs.put(G2, g2);
                 configureBarChart(graphs);
             }
             else if (GraphStyle.DOT.equals(selectedItem)) {
@@ -166,14 +167,15 @@ public class Demo extends javax.swing.JFrame {
                 configureScatterPlotChart();
             }
             else if (GraphStyle.LINE.equals(selectedItem)) {
-                Map graphs = new HashMap<>();
-                graphs.put("G1", g1);
-                graphs.put("G2", g2);
+                Map graphs = new LinkedHashMap<>();
+                graphs.put(G1, g1);
+                graphs.put(G2, g2);
+                graphs.put(SINE, sine);
                 configureLineChart(graphs);
             }
             else {
                 Map graphs = new HashMap<>();
-                graphs.put("G1", g1);
+                graphs.put(G1, g1);
                 configureDefaultChart(graphs);
             }
         }
@@ -183,7 +185,7 @@ public class Demo extends javax.swing.JFrame {
 
     private void configureDefaultChart(Map graphs) {
         chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer("G1", createPolygonDotRenderer());
+        chartPanel.setRenderer(G1, createPolygonDotRenderer());
         chartPanel.setWindow(null, null, null, null);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
         chartPanel.setXGrid(new Grid());
@@ -193,8 +195,9 @@ public class Demo extends javax.swing.JFrame {
 
     private void configureLineChart(Map graphs) {
         chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer("G1", new DefaultLineRenderer(createLineDrawStyle(Color.GREEN), LINE_MARKER_SIZE));
-        chartPanel.setRenderer("G2", new DefaultLineRenderer(createLineDrawStyle(Color.RED), LINE_MARKER_SIZE));
+        chartPanel.setRenderer(G1, new DefaultLineRenderer(createLineDrawStyle(Color.GREEN), LINE_MARKER_SIZE));
+        chartPanel.setRenderer(G2, new DefaultLineRenderer(createLineDrawStyle(Color.RED), LINE_MARKER_SIZE));
+        chartPanel.setRenderer(SINE, new DefaultLineRenderer(createLineDrawStyle(Color.BLUE), LINE_MARKER_SIZE));
         chartPanel.setWindow(null, null, null, null);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
         chartPanel.setXGrid(new Grid());
@@ -267,8 +270,8 @@ public class Demo extends javax.swing.JFrame {
             xMax = xMax.intValue() + 1;
         }
         chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer("G1", b1);
-        chartPanel.setRenderer("G2", b2);
+        chartPanel.setRenderer(G1, b1);
+        chartPanel.setRenderer(G2, b2);
         chartPanel.setWindow(0, xMax, 0, null);
         chartPanel.setXGrid(new IntegerGrid());
         chartPanel.setGridRenderer(new DefaultGridRenderer(WHITE_GRADIENT_GRID_STYLE), ChartPanel.GridMode.Y);
@@ -291,6 +294,9 @@ public class Demo extends javax.swing.JFrame {
 
     
     private void populateDataSets() {
+        for (double x = 0.0; x <= 20.0; x += Math.PI / 32.0) {
+            sine.put(x, 12.5 + Math.sin(x) * 10.0);
+        }
         for (int x = 1; x <= 20; ++x) {
             g1.put(x, 1.0 / x * 25.0);
             g2.put(x, x);
@@ -377,6 +383,7 @@ public class Demo extends javax.swing.JFrame {
     }
 
 
+    private final Map<Number, Number> sine = new TreeMap<>();
     private final Map<Number, Number> g1 = new HashMap<>();
     private final Map<Number, Number> g2 = new HashMap<>();
     private final Map<Number, Number> g3 = new HashMap<>();
@@ -404,6 +411,13 @@ public class Demo extends javax.swing.JFrame {
     
     private static final GridStyle WHITE_GRADIENT_GRID_STYLE = GridStyle.createGradient(
         new Color[] { Color.WHITE });
+
+    private static final String G5 = "G5";
+    private static final String G4 = "G4";
+    private static final String G3 = "G3";
+    private static final String G2 = "G2";
+    private static final String G1 = "G1";
+    private static final String SINE = "Sine";
 
     private static final int PIE_COLOR_COUNT = 7;
     private static final int LINE_MARKER_SIZE = 9;

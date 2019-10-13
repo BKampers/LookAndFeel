@@ -33,8 +33,8 @@ public class DefaultLineRenderer extends LineRenderer {
     public void draw(Graphics2D g2d, GraphGeometry<PixelAreaGeometry> graphGeometry) {
         Polygon polyline = createPolyline(graphGeometry);
         if (polyline.npoints > 0) {
-            DrawingWindow window = new DrawingWindow();
-            window.clip(g2d);
+            Shape restoreShape = g2d.getClip();
+            g2d.clip(getChartGeometry().getArea());
             if (lineDrawStyle.getBottomAreaPaint() != null) {
                 fillBottomArea(g2d, polyline);
             }
@@ -46,7 +46,7 @@ public class DefaultLineRenderer extends LineRenderer {
                 g2d.setStroke(lineDrawStyle.getLineStroke());
                 g2d.drawPolyline(polyline.xpoints, polyline.ypoints, polyline.npoints);
             }
-            window.restore(g2d);
+            g2d.setClip(restoreShape);
             if (lineDrawStyle.getAreaDrawStyle() != null) {
                 super.draw(g2d, graphGeometry);
             }
@@ -81,12 +81,14 @@ public class DefaultLineRenderer extends LineRenderer {
 
 
     private void fillBottomArea(Graphics2D g2d, Polygon polyline) {
+        ChartGeometry chartGeometry = getChartGeometry();
         int bottom = chartGeometry.yPixel(chartGeometry.getYMin());
         fillArea(g2d, lineDrawStyle.getBottomAreaPaint(), polyline, bottom);
     }
 
 
     private void fillTopArea(Graphics2D g2d, Polygon polyline) {
+        ChartGeometry chartGeometry = getChartGeometry();
         int top = chartGeometry.yPixel(chartGeometry.getYMax());
         fillArea(g2d, lineDrawStyle.getTopAreaPaint(), polyline, top);
     }
@@ -109,26 +111,6 @@ public class DefaultLineRenderer extends LineRenderer {
             g2d.setStroke(stroke);
             g2d.drawLine(x1, y1, x2, y2);
         }
-    }
-
-
-    private class DrawingWindow {
-
-        void clip(Graphics2D g2d) {
-            Rectangle rectangle = chartGeometry.getWindow();
-            if (rectangle != null) {
-                restoreShape = g2d.getClip();
-                g2d.clipRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
-            }
-        }
-
-        void restore(Graphics2D g2d) {
-            if (restoreShape != null) {
-                g2d.setClip(restoreShape);
-            }
-        }
-
-        private Shape restoreShape;
     }
 
     

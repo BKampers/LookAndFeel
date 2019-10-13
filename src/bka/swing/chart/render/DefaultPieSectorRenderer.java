@@ -61,13 +61,10 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
 
 
     private void drawLabel(Graphics2D g2d, ArcAreaGeometry geometry) {
-        if (((PieDrawStyle) areaDrawStyle).getLabelPaint(geometry) != null) {
-            g2d.setPaint(((PieDrawStyle) areaDrawStyle).getLabelPaint(geometry));
-        }
-        if (((PieDrawStyle) areaDrawStyle).getLabelFont(geometry) != null) {
-            g2d.setFont(((PieDrawStyle) areaDrawStyle).getLabelFont(geometry));
-        }
-        if (((PieDrawStyle) areaDrawStyle).getRotatedLabels()) {
+        PieDrawStyle drawStyle = (PieDrawStyle) getAreaDrawStyle();
+        g2d.setPaint(drawStyle.getLabelPaint(geometry));
+        g2d.setFont(drawStyle.getLabelFont(geometry));
+        if (drawStyle.getRotatedLabels()) {
             drawRotatedLabel(g2d, geometry);
         }
         else {

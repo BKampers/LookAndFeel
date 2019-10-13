@@ -33,6 +33,11 @@ public class ChartData<K, V> implements Iterable<ChartDataElement<K, V>> {
     }
 
 
+    public void add(ChartDataElement<K, V> element) {
+        entries.add(element);
+    }
+
+
     @Override
     public final Iterator<ChartDataElement<K, V>> iterator() {
         return entries.iterator();

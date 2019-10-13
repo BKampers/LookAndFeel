@@ -48,7 +48,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
 
     public void setGraphs(Map<Object, Map<Number, Number>> graphs) {
-        Map<Object, ChartData<Number, Number>> charts = new HashMap<>();
+        Map<Object, ChartData<Number, Number>> charts = new LinkedHashMap<>();
         for (Map.Entry<Object, Map<Number, Number>> graph : graphs.entrySet()) {
             charts.put(graph.getKey(), new ChartData<>(graph.getValue()));
         }
@@ -352,7 +352,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public int areaRight() {
-        return chartArea().x + chartArea().width;
+        Rectangle area = chartArea();
+        return area.x + area.width;
     }
     
     
@@ -367,7 +368,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public int areaBottom() {
-        return chartArea().height + chartArea().y;
+        Rectangle area = chartArea();
+        return area.height + area.y;
     }
     
     
@@ -510,7 +512,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     private void addListeners() {
-        addComponentListener(componentAdapter);
+        addComponentListener(new ComponentAdapter());
+        MouseAdapter mouseAdapter = new MouseAdapter();
         addMouseMotionListener(mouseAdapter);
         addMouseListener(mouseAdapter);
     }
@@ -521,7 +524,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
 
 
-    private final java.awt.event.ComponentAdapter componentAdapter = new java.awt.event.ComponentAdapter() {
+    private class ComponentAdapter extends java.awt.event.ComponentAdapter {
         
         @Override
         public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -530,10 +533,10 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             }
         }
         
-    };
-    
-    
-    private final java.awt.event.MouseAdapter mouseAdapter = new java.awt.event.MouseAdapter() {
+    }
+
+
+    private class MouseAdapter extends java.awt.event.MouseAdapter {
 
         @Override
         public void mouseMoved(java.awt.event.MouseEvent evt) {
@@ -605,40 +608,41 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         
         @Override
         public void mouseReleased(java.awt.event.MouseEvent evt) {
-            if (dragStartPoint != null && dragEndPoint != null && evt.getButton() == java.awt.event.MouseEvent.BUTTON1) {
-                Number xMin = null;
-                Number xMax = null;
-                Number yMin = null;
-                Number yMax = null;
-                if (geometry.getXMin() != null && geometry.getXMax() != null) {
-                    xMin = geometry.xValue(Math.min(dragStartPoint.x, dragEndPoint.x));
-                    xMax = geometry.xValue(Math.max(dragStartPoint.x, dragEndPoint.x));
-                }
-                if (geometry.getYMin() != null && geometry.getYMax() != null) {
-                    yMin = geometry.yValue(Math.max(dragStartPoint.y, dragEndPoint.y));
-                    yMax = geometry.yValue(Math.min(dragStartPoint.y, dragEndPoint.y));
+            if (dragStartPoint != null && dragEndPoint != null) {
+                if (evt.getButton() == java.awt.event.MouseEvent.BUTTON1) {
+                    switch (dragZoomMode) {
+                        case X:
+                            setXWindow(xMin(), xMax());
+                            break;
+                        case Y:
+                            setYWindow(yMin(), yMax());
+                            break;
+                        case XY:
+                            setWindow(xMin(), xMax(), yMin(), yMax());
+                            break;
+                    }
                 }
                 dragStartPoint = null;
                 dragEndPoint = null;
-                switch (dragZoomMode) {
-                    case X: 
-                        setXWindow(xMin, xMax); 
-                        break;
-                    case Y:
-                        setYWindow(yMin, yMax);
-                        break;
-                    case XY:
-                        setWindow(xMin, xMax, yMin, yMax);
-                        break;
-                }
-            }
-            else {
-                dragStartPoint = null;
-                dragEndPoint = null;
-                repaint();
             }
         }
-        
+
+        private Number xMin() {
+            return geometry.xValue(Math.min(dragStartPoint.x, dragEndPoint.x));
+        }
+
+        private Number xMax() {
+            return geometry.xValue(Math.max(dragStartPoint.x, dragEndPoint.x));
+        }
+
+        private Number yMin(){
+            return geometry.yValue(Math.max(dragStartPoint.y, dragEndPoint.y));
+        }
+
+        private Number yMax() {
+            return geometry.yValue(Math.min(dragStartPoint.y, dragEndPoint.y));
+        }
+
         @Override
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             Point point = evt.getPoint();

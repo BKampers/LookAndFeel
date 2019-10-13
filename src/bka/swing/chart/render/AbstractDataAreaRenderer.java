@@ -24,10 +24,49 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     protected abstract G createSymbolGeometry(int x, int y, G geometry);
 
 
+    public void setChartPanel(ChartPanel chartPanel) {
+        this.chartPanel = chartPanel;
+    }
+
+
+    public void setChartGeometry(ChartGeometry chartGeometry) {
+        this.chartGeometry = chartGeometry;
+    }
+
+
+    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData, ChartGeometry.Window window) {
+        ChartData<Number, Number> graphPointsInWindow = new ChartData<>();
+        for (ChartDataElement<Number, Number> element : chartData) {
+            Number x = element.getKey();
+            Number y = element.getValue();
+            if (window.inXRange(x) && window.inYRange(y)) {
+                graphPointsInWindow.add(x, y);
+                window.setBounds(x, y);
+            }
+        }
+        window.putPoints(key, graphPointsInWindow);
+    }
+
+
     public void draw(Graphics2D g2d, GraphGeometry<G> graphGeometry) {
         for (G dataAreaGeometry : graphGeometry.getDataPoints()) {
             draw(g2d, dataAreaGeometry);
         }
+    }
+
+
+    public void drawLegend(Graphics2D g2d, Object key, LegendGeometry geometry) {
+        drawSymbol(g2d, geometry.getX(), geometry.getY());
+        g2d.setColor(geometry.getColor());
+        g2d.setFont(geometry.getFont());
+        FontMetrics fontMetrics = g2d.getFontMetrics();
+        g2d.drawString(key.toString(), geometry.getX() + geometry.getSpace(), geometry.getY() + fontMetrics.getDescent());
+        geometry.setY(geometry.getY() + geometry.getFeed() + fontMetrics.getHeight());
+    }
+
+
+    protected void drawSymbol(Graphics2D g2d, int x, int y) {
+        draw(g2d, createSymbolGeometry(x, y, null));
     }
 
 
@@ -48,34 +87,24 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     }
 
 
-    public void drawLegend(Graphics2D g2d, Object key, LegendGeometry geometry) {
-        drawSymbol(g2d, geometry.getX(), geometry.getY());
-        g2d.setColor(geometry.getColor());
-        g2d.setFont(geometry.getFont());
-        FontMetrics fontMetrics = g2d.getFontMetrics();
-        g2d.drawString(key.toString(), geometry.getX() + geometry.getSpace(), geometry.getY() + fontMetrics.getDescent());
-        geometry.setY(geometry.getY() + geometry.getFeed() + fontMetrics.getHeight());
+    protected ChartGeometry getChartGeometry() {
+        return chartGeometry;
     }
 
 
-    protected void drawSymbol(Graphics2D g2d, int x, int y) {
-        draw(g2d, createSymbolGeometry(x, y, null));
+    protected AreaDrawStyle<G> getAreaDrawStyle() {
+        return areaDrawStyle;
     }
 
 
-    public void setChartPanel(ChartPanel chartPanel) {
-        this.chartPanel = chartPanel;
+    protected ChartPanel getChartPanel() {
+        return chartPanel;
     }
 
 
-    public void setChartGeometry(ChartGeometry chartGeometry) {
-        this.chartGeometry = chartGeometry;
-    }
+    private ChartPanel chartPanel;
+    private ChartGeometry chartGeometry;
 
+    private final AreaDrawStyle<G> areaDrawStyle;
 
-    protected ChartPanel chartPanel;
-    ChartGeometry chartGeometry;
-
-    protected final AreaDrawStyle<G> areaDrawStyle;
-    
 }

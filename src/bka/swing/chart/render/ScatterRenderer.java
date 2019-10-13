@@ -25,11 +25,11 @@ public class ScatterRenderer<S extends Shape> extends AbstractDataAreaRenderer<S
         for (ChartDataElement<Number, Number> element : chart) {
             Number x = element.getKey();
             Number y = element.getValue();
-            ScatterGeometry<S> geom = map.get(element);
-            int count = (geom == null) ? 1 : geom.getCount() + 1;
-            Shape area = createShape(chartGeometry.xPixel(x), chartGeometry.yPixel(y), count * 3.0f);
-            geom = new ScatterGeometry(x, y, area, count);
-            map.put(element, geom);
+            ScatterGeometry<S> scaterGeometry = map.get(element);
+            int count = (scaterGeometry == null) ? 1 : scaterGeometry.getCount() + 1;
+            Shape area = createShape(getChartGeometry().xPixel(x), getChartGeometry().yPixel(y), count * 3.0f);
+            scaterGeometry = new ScatterGeometry(x, y, area, count);
+            map.put(element, scaterGeometry);
         }
         return new GraphGeometry<>(map.values());
     }

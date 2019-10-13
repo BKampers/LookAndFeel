@@ -99,12 +99,11 @@ public abstract class AxisRenderer {
 
     
     protected int x0() {
-        if (chartGeometry.getXMin() != null && chartGeometry.getXMax() != null) {
-            return xPixel(0);
+        int x = xPixel(0);
+        if (panel.areaLeft() <= x && x <= panel.areaRight()) {
+            return x;
         }
-        else {
-            return panel.areaLeft();
-        }
+        return panel.areaLeft();
     }
 
     
@@ -124,12 +123,11 @@ public abstract class AxisRenderer {
 
     
     protected int y0() {
-        if (chartGeometry.getYMin() != null && chartGeometry.getYMax() != null) {
-            return yPixel(0);
+        int y = yPixel(0);
+        if (panel.areaTop() <= y && y <= panel.areaBottom()) {
+            return y;
         }
-        else {
-            return panel.areaBottom();
-        }
+        return panel.areaBottom();
     }
     
     
