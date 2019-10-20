@@ -24,13 +24,11 @@ public abstract class FrameApplication extends JFrame {
 
     
     public Object setProperty(String key, String value) {
-        if (value != null) {
-            return properties.setProperty(key, value);
-        }
-        else {
+        if (value == null) {
             properties.remove(key);
             return null;
         }
+        return properties.setProperty(key, value);
     }
 
 
@@ -46,9 +44,14 @@ public abstract class FrameApplication extends JFrame {
 
     public Long getLongProperty(String key) {
         try {
-            return Long.parseLong(getProperty(key));
+            String value = getProperty(key);
+            if (value == null) {
+                return null;
+            }
+            return Long.parseLong(value);
         }
         catch (NumberFormatException ex) {
+            Logger.getLogger(FrameApplication.class.getName()).log(Level.WARNING, PROPERTY_TYPE_MISMATCH, ex); 
             return null;
         }
     }
@@ -56,20 +59,23 @@ public abstract class FrameApplication extends JFrame {
 
     public long getLongProperty(String key, long defaultValue) {
         Long value = getLongProperty(key);
-        if (value != null) {
-            return value;
-        }
-        else {
+        if (value == null) {
             return defaultValue;
         }
+        return value;
     }
 
 
     public Integer getIntProperty(String key) {
         try {
-            return Integer.parseInt(getProperty(key));
+            String value = getProperty(key);
+            if (value == null) {
+                return null;
+            }
+            return Integer.parseInt(value);
         }
         catch (NumberFormatException ex) {
+            Logger.getLogger(FrameApplication.class.getName()).log(Level.WARNING, PROPERTY_TYPE_MISMATCH, ex); 
             return null;
         }
     }
@@ -339,17 +345,19 @@ public abstract class FrameApplication extends JFrame {
     }
 
 
-    protected void parseArguments(String[] arguments) {
+    /**
+     * Overrule read properties with arguments
+     * 
+     * @param args 
+     */
+    protected void parseArguments(String[] args) {
         loadProperties();
-        if (arguments != null) {
-            // Overrule read properties with arguments
-            for (String argument : arguments) {
-                int index = argument.indexOf('=');
-                if (index > 0) {
-                    String key = argument.substring(0, index);
-                    String value = argument.substring(index + 1);
-                    properties.put(key, value);
-                }
+        for (String argument : args) {
+            int index = argument.indexOf('=');
+            if (index > 0) {
+                String key = argument.substring(0, index);
+                String value = argument.substring(index + 1);
+                properties.put(key, value);
             }
         }
     }
@@ -703,5 +711,7 @@ public abstract class FrameApplication extends JFrame {
     private File dataDirectory = null;
 
     private LanguageResourceBundle languageResourceBundle = null;
+    
+    private static final String PROPERTY_TYPE_MISMATCH = "Property type mismatch";
     
 }
