@@ -46,10 +46,10 @@ public final class ChartGeometry {
         LOGGER.log(Level.FINE, "Initialize area {0}", area);
         this.area = area;
         graphs.clear();
-        this.xWindowMin = xMin = xWindowMin;
-        this.xWindowMax = xMax = xWindowMax;
-        this.yWindowMin = yMin = yWindowMin;
-        this.yWindowMax = yMax = yWindowMax;
+        this.xWindowMin = xDataMin = xWindowMin;
+        this.xWindowMax = xDataMax = xWindowMax;
+        this.yWindowMin = yDataMin = yWindowMin;
+        this.yWindowMax = yDataMax = yWindowMax;
         if (dataMap != null) {
             Window window = computeWindow();
             computeRanges(window, yWindowBase);
@@ -61,11 +61,11 @@ public final class ChartGeometry {
 
     private void computeRanges(Window window, Number yWindowBase) {
         if (yWindowBase != null) {
-            if (yMin != null && yMin.doubleValue() > yWindowBase.doubleValue()) {
-                yMin = yWindowBase;
+            if (yDataMin != null && yDataMin.doubleValue() > yWindowBase.doubleValue()) {
+                yDataMin = yWindowBase;
             }
-            if (yMax != null && yMax.doubleValue() < yWindowBase.doubleValue()) {
-                yMax = yWindowBase;
+            if (yDataMax != null && yDataMax.doubleValue() < yWindowBase.doubleValue()) {
+                yDataMax = yWindowBase;
             }
         }
     }
@@ -77,22 +77,22 @@ public final class ChartGeometry {
 
     
     public Number getXMin() {
-        return xMin;
+        return xDataMin;
     }
 
     
     public Number getXMax() {
-        return xMax;
+        return xDataMax;
     }
 
     
     public Number getYMin() {
-        return yMin;
+        return yDataMin;
     }
 
     
     public Number getYMax() {
-        return yMax;
+        return yDataMax;
     }
 
     
@@ -109,23 +109,23 @@ public final class ChartGeometry {
     
     public double xValue(int pixelX) {
         double ratio = xRange() / area.width;
-        return (pixelX - area.x) * ratio + xMin.doubleValue();
+        return (pixelX - area.x) * ratio + xDataMin.doubleValue();
     }
 
     
     public double yValue(int pixelY) {
         double ratio = yRange() / area.height;
-        return (area.height - pixelY + area.y) * ratio + yMin.doubleValue();
+        return (area.height - pixelY + area.y) * ratio + yDataMin.doubleValue();
     }
     
     
     public int xPixel(Number x) {
-        return area.x + pixel(x, xMin, xRange(), area.width);
+        return area.x + pixel(x, xDataMin, xRange(), area.width);
     }
 
     
     public int yPixel(Number y) {
-        return area.height + area.y - pixel(y, yMin, yRange(), area.height);
+        return area.height + area.y - pixel(y, yDataMin, yRange(), area.height);
     }
 
 
@@ -219,22 +219,22 @@ public final class ChartGeometry {
             xGrid = new Grid();
         }
         xGrid.setLocale(locale);
-        xGrid.initialize(xMin, xMax);
+        xGrid.initialize(xDataMin, xDataMax);
         if (yGrid == null) {
             yGrid = new Grid();
         }
         yGrid.setLocale(locale);
-        yGrid.initialize(yMin, yMax);
+        yGrid.initialize(yDataMin, yDataMax);
     }
 
     
     private double xRange() {
-        return xMax.doubleValue() - xMin.doubleValue();
+        return xDataMax.doubleValue() - xDataMin.doubleValue();
     }
 
     
     private double yRange() {
-        return yMax.doubleValue() - yMin.doubleValue();
+        return yDataMax.doubleValue() - yDataMin.doubleValue();
     }
 
     
@@ -249,17 +249,17 @@ public final class ChartGeometry {
 
 
         public void setBounds(Number x, Number y) {
-            if (xMin == null || x.doubleValue() < xMin.doubleValue()) {
-                xMin = x;
+            if (xDataMin == null || x.doubleValue() < xDataMin.doubleValue()) {
+                xDataMin = x;
             }
-            if (xMax == null || xMax.doubleValue() < x.doubleValue()) {
-                xMax = x;
+            if (xDataMax == null || xDataMax.doubleValue() < x.doubleValue()) {
+                xDataMax = x;
             }
-            if (yMin == null || y.doubleValue() < yMin.doubleValue()) {
-                yMin = y;
+            if (yDataMin == null || y.doubleValue() < yDataMin.doubleValue()) {
+                yDataMin = y;
             }
-            if (yMax == null || yMax.doubleValue() < y.doubleValue()) {
-                yMax = y;
+            if (yDataMax == null || yDataMax.doubleValue() < y.doubleValue()) {
+                yDataMax = y;
             }
         }
 
@@ -294,10 +294,10 @@ public final class ChartGeometry {
 
     private final Map<Object, GraphGeometry<AreaGeometry>> graphs = new LinkedHashMap<>();
 
-    private Number xMin;
-    private Number xMax;
-    private Number yMin;
-    private Number yMax;
+    private Number xDataMin;
+    private Number xDataMax;
+    private Number yDataMin;
+    private Number yDataMax;
 
     private Number xWindowMin;
     private Number xWindowMax;

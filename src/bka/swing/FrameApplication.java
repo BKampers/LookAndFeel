@@ -103,7 +103,68 @@ public abstract class FrameApplication extends JFrame {
     }
 
 
+    protected Boolean getConfigurationBoolean(String key) {
+        JSONObject configuration = getConfiguration();
+        if (configuration != null) {
+            try {
+                if (configuration.has(key))
+                return configuration.getBoolean(key);
+            }
+            catch (JSONException ex) {
+                Logger.getLogger(FrameApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
+    }
+
+
+    protected String getConfigurationString(String key) {
+        JSONObject configuration = getConfiguration();
+        if (configuration != null) {
+            try {
+                if (configuration.has(key)) {
+                    return configuration.getString(key);
+                }
+            }
+            catch (JSONException ex) {
+                Logger.getLogger(FrameApplication.class.getName()).log(Level.WARNING, null, ex);
+            }
+        }
+        return null;
+    }
+
+
+    protected JSONArray getConfigurationArray(String key) {
+        JSONObject configuration = getConfiguration();
+        if (configuration != null) {
+            try {
+                if (configuration.has(key)) {
+                    return configuration.getJSONArray(key);
+                }
+            }
+            catch (JSONException ex) {
+                Logger.getLogger(FrameApplication.class.getName()).log(Level.WARNING, null, ex);
+            }
+        }
+        return null;
+    }
+
+
     private JSONObject getConfigurationObject(String key) {
+        JSONObject configuration = getConfiguration();
+        if (configuration != null) {
+            try {
+                return configuration.getJSONObject(key);
+            }
+            catch (JSONException ex) {
+                Logger.getLogger(FrameApplication.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
+    }
+
+
+    private JSONObject getConfiguration() {
         File file = configurationFile();
         try {
             FileInputStream stream = new FileInputStream(file);
@@ -111,8 +172,7 @@ public abstract class FrameApplication extends JFrame {
             byte[] buffer = new byte[count];
             stream.read(buffer);
             String source = new String(buffer);
-            JSONObject configuration = new JSONObject(source);
-            return configuration.getJSONObject(key);
+            return new JSONObject(source);
         }
         catch (FileNotFoundException ex) {
             Logger.getLogger(FrameApplication.class.getName()).log(Level.FINEST, "Configuration not available", ex);
