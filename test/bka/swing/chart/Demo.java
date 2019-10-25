@@ -367,7 +367,7 @@ public class Demo extends javax.swing.JFrame {
 
 
     private static RectangleDotRenderer createRectangleDotRenderer() {
-        return new RectangleDotRenderer(RECTANGE_DOT_SIZE, DefaultDrawStyle.createSolid(Color.BLACK));
+        return new RectangleDotRenderer(RECTANGLE_DOT_SIZE, DefaultDrawStyle.createSolid(Color.BLACK));
     }
 
 
@@ -421,6 +421,6 @@ public class Demo extends javax.swing.JFrame {
 
     private static final int PIE_COLOR_COUNT = 7;
     private static final int LINE_MARKER_SIZE = 9;
-    private static final int RECTANGE_DOT_SIZE = 2;
+    private static final int RECTANGLE_DOT_SIZE = 2;
 
 }

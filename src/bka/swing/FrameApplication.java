@@ -157,7 +157,7 @@ public abstract class FrameApplication extends JFrame {
                 return configuration.getJSONObject(key);
             }
             catch (JSONException ex) {
-                Logger.getLogger(FrameApplication.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FrameApplication.class.getName()).log(Level.FINEST, null, ex);
             }
         }
         return null;

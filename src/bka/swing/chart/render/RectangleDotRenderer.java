@@ -22,8 +22,8 @@ public class RectangleDotRenderer extends PointRenderer<Rectangle> {
     }
 
     
-    public RectangleDotRenderer(AreaDrawStyle areaDrawStyle) {
-        super(DEFAULT_SIZE, DEFAULT_SIZE, areaDrawStyle);
+    public RectangleDotRenderer(int size, Color color) {
+        super(size, size, DefaultDrawStyle.createSolid(color));
     }
     
 
@@ -31,8 +31,5 @@ public class RectangleDotRenderer extends PointRenderer<Rectangle> {
     protected Rectangle createArea(int x, int y) {
         return new Rectangle(x - width / 2, y - height / 2, width, height);
     }
-    
-    
-    private static final int DEFAULT_SIZE = 7;
     
 }

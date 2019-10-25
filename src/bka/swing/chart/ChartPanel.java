@@ -422,8 +422,12 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
     private void drawAxises(Graphics2D g2d) {
         if (axisRenderer != null) {
-            axisRenderer.drawXAxis(g2d);
-            axisRenderer.drawYAxis(g2d);
+            if (geometry.getXMin() != null && geometry.getXMax() != null) {
+                axisRenderer.drawXAxis(g2d);
+            }
+            if (geometry.getYMin() != null && geometry.getYMax() != null) {
+                axisRenderer.drawYAxis(g2d);
+            }
         }
     }
 

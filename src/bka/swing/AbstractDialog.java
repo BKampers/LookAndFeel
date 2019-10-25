@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.logging.*;
+import javax.swing.*;
 
 
 public abstract class AbstractDialog extends javax.swing.JDialog {
@@ -94,6 +95,14 @@ public abstract class AbstractDialog extends javax.swing.JDialog {
 
 
     private void store() {
+        store(parent);
+        if (persistencyDelegate != null) {
+            persistencyDelegate.onStore();
+        }
+    }
+
+
+    public static void store(FrameApplication parent) {
         File file = parent.applicationFile(FILE_NAME);
         try (ObjectOutputStream objectStream = new ObjectOutputStream(new FileOutputStream(file))) {
             objectStream.writeObject(locations);
@@ -101,9 +110,6 @@ public abstract class AbstractDialog extends javax.swing.JDialog {
         }
         catch (IOException ex) {
             Logger.getLogger(AbstractDialog.class.getName()).log(Level.WARNING, "Cannot store dialog properties", ex);
-        }
-        if (persistencyDelegate != null) {
-            persistencyDelegate.onStore();
         }
     }
 
@@ -158,6 +164,7 @@ public abstract class AbstractDialog extends javax.swing.JDialog {
     
     
     private void addListener() {
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         addWindowListener(new WindowPersistencyAdapter());
     }
 
