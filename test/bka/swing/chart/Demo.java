@@ -198,7 +198,7 @@ public class Demo extends javax.swing.JFrame {
         chartPanel.setRenderer(G1, new DefaultLineRenderer(createLineDrawStyle(Color.GREEN), LINE_MARKER_SIZE));
         chartPanel.setRenderer(G2, new DefaultLineRenderer(createLineDrawStyle(Color.RED), LINE_MARKER_SIZE));
         chartPanel.setRenderer(SINE, new DefaultLineRenderer(createLineDrawStyle(Color.BLUE), LINE_MARKER_SIZE));
-        chartPanel.setWindow(null, null, null, null);
+        chartPanel.setWindow(null, null, 0, 25);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
         chartPanel.setXGrid(new Grid());
         chartPanel.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartPanel.GridMode.X);
@@ -282,7 +282,6 @@ public class Demo extends javax.swing.JFrame {
     private void configurePieChart(Map graphs) {
         chartPanel.setXWindowMinimum(null);
         chartPanel.setXWindowMaximum(null);
-        chartPanel.setYWindowMinimum(null);
         chartPanel.setGraphs(graphs);
         chartPanel.setAxisRenderer(null);
         chartPanel.setAxisPositions(null, null);
