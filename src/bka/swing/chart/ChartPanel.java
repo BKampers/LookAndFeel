@@ -92,9 +92,9 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setXWindowMinimum(Number min) {
-        if (! Objects.equals(xWindowMin, min)) {
+        if (! minEquals(xRange, min)) {
             synchronized (geometry) {
-                xWindowMin = min;
+                xRange.setMin(min);
                 initializeGeometry();
             }
             repaint();
@@ -104,9 +104,9 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setXWindowMaximum(Number max) {
-        if (! Objects.equals(xWindowMax, max)) {
+        if (! maxEquals(xRange, max)) {
             synchronized (geometry) {
-                xWindowMax = max;
+                xRange.setMax(max);
                 initializeGeometry();
             }
             repaint();
@@ -116,10 +116,9 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setXWindow(Number min, Number max) {
-        if (! Objects.equals(xWindowMin, min) && ! Objects.equals(xWindowMax, max)) {
+        if (! rangeEquals(xRange, min, max)) {
             synchronized (geometry) {
-                xWindowMin = min;
-                xWindowMax = max;
+                xRange.set(min, max);
                 initializeGeometry();
             }
             repaint();
@@ -129,7 +128,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setYWindowMinimum(Number min) {
-        if (! Objects.equals(yRanges.getDefault().getMin(), min)) {
+        if (! minEquals(yRanges.getDefault(), min)) {
             synchronized (geometry) {
                 yRanges.getDefault().setMin(min);
                 initializeGeometry();
@@ -141,7 +140,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
 
     public void setYWindowMaximum(Number max) {
-        if (! Objects.equals(yRanges.getDefault().getMax(), max)) {
+        if (! maxEquals(yRanges.getDefault(), max)) {
             synchronized (geometry) {
                 yRanges.getDefault().setMax(max);
                 initializeGeometry();
@@ -175,7 +174,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setYWindow(Number min, Number max) {
-        if (! Objects.equals(yRanges.getDefault().getMin(), min) && ! Objects.equals(yRanges.getDefault().getMax(), max)) {
+        if (! rangeEquals(yRanges.getDefault(), min, max)) {
             synchronized (geometry) {
                 yRanges.getDefault().setMin(min);
                 yRanges.getDefault().setMax(max);
@@ -200,20 +199,33 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
     
     public void setWindow(Number xMin, Number xMax, Number yMin, Number yMax) {
-        if (! Objects.equals(xWindowMin, xMin) || ! Objects.equals(xWindowMax, xMax) || ! Objects.equals(yRanges.getDefault().getMin(), yMin) || ! Objects.equals(yRanges.getDefault().getMax(), yMax)) {
+        if (! rangeEquals(xRange, xMin, xMax) || ! rangeEquals(yRanges.getDefault(), yMin, yMax)) {
             synchronized (geometry) {
-                xWindowMin = xMin;
-                xWindowMax = xMax;
-                yRanges.getDefault().setMin(yMin);
-                yRanges.getDefault().setMax(yMax);
+                xRange.set(xMin, xMax);
+                yRanges.getDefault().set(yMin, yMax);
                 initializeGeometry();
             }
             repaint();
             notifyZoomListeners(xMin, xMax, yMin, yMax);
         }
     }
-    
-    
+
+
+    private static boolean rangeEquals(Range range, Number min, Number max) {
+        return minEquals(range, min) && maxEquals(range, max);
+    }
+
+
+    private static boolean minEquals(Range range, Number number) {
+        return Objects.equals(range.getMin(), number);
+    }
+
+
+    private static boolean maxEquals(Range range, Number number) {
+        return Objects.equals(range.getMax(), number);
+    }
+
+
     public void setXGrid(Grid grid) {
         geometry.setXGrid(grid);
     }
@@ -495,7 +507,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     private void initializeGeometry() {
-        geometry.initialize(chartArea(), xWindowMin, xWindowMax, yRanges, yWindowBase, getLocale());
+        geometry.initialize(chartArea(), xRange, yRanges, yWindowBase, getLocale());
     }
 
     
@@ -541,7 +553,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
 
 
-    private static final Logger getLogger() {
+    private static Logger getLogger() {
         return Logger.getLogger(ChartPanel.class.getName());
     }
 
@@ -748,8 +760,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private DragZoomMode dragZoomMode = DragZoomMode.NONE;
     private ClickZoomMode clickZoomMode = ClickZoomMode.NONE;
     
-    private Number xWindowMin;
-    private Number xWindowMax;
+    private final Range xRange = new Range(null, null);
     private final RangeMap yRanges = new RangeMap(null, null);
     private Number yWindowBase;
     

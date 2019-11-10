@@ -48,12 +48,12 @@ public final class ChartGeometry {
      * @param yWindowBase: x location where the y-axis is drawn, null means origin
      * @param locale: to convert numbers and dates to strings
      */
-    public void initialize(Rectangle area, Number xWindowMin, Number xWindowMax, RangeMap yRanges, Number yWindowBase, Locale locale) {
+    public void initialize(Rectangle area, Range xWindow, RangeMap yRanges, Number yWindowBase, Locale locale) {
         this.area = area;
         graphs.clear();
-        this.xWindowMin = xDataMin = xWindowMin;
-        this.xWindowMax = xDataMax = xWindowMax;
+        xWindowRange = new Range(xWindow);
         yWindowRanges = new RangeMap(yRanges);
+        xDataRange = new Range(xWindow);
         yDataRanges = new RangeMap(yRanges);
         if (dataMap != null) {
             computeWindows();
@@ -84,12 +84,12 @@ public final class ChartGeometry {
 
     
     public Number getXMin() {
-        return xDataMin;
+        return xDataRange.getMin();
     }
 
     
     public Number getXMax() {
-        return xDataMax;
+        return xDataRange.getMax();
     }
 
     
@@ -116,7 +116,7 @@ public final class ChartGeometry {
     
     public double xValue(int pixelX) {
         double ratio = xRange() / area.width;
-        return (pixelX - area.x) * ratio + xDataMin.doubleValue();
+        return (pixelX - area.x) * ratio + xDataRange.getMin().doubleValue();
     }
 
     
@@ -127,7 +127,7 @@ public final class ChartGeometry {
     
     
     public int xPixel(Number x) {
-        return area.x + pixel(x, xDataMin, xRange(), area.width);
+        return area.x + pixel(x, xDataRange.getMin(), xRange(), area.width);
     }
 
 
@@ -162,12 +162,12 @@ public final class ChartGeometry {
 
 
     public Number getXWindowMin() {
-        return xWindowMin;
+        return xWindowRange.getMin();
     }
 
 
     public Number getXWindowMax() {
-        return xWindowMax;
+        return xWindowRange.getMax();
     }
 
 
@@ -240,7 +240,7 @@ public final class ChartGeometry {
             xGrid = new Grid();
         }
         xGrid.setLocale(locale);
-        xGrid.initialize(xDataMin, xDataMax);
+        xGrid.initialize(xDataRange.getMin(), xDataRange.getMax());
         if (yGrid == null) {
             yGrid = new Grid();
         }
@@ -250,7 +250,7 @@ public final class ChartGeometry {
 
     
     private double xRange() {
-        return xDataMax.doubleValue() - xDataMin.doubleValue();
+        return xDataRange.getMax().doubleValue() - xDataRange.getMin().doubleValue();
     }
 
     
@@ -275,11 +275,11 @@ public final class ChartGeometry {
         }
 
         public void setBounds(Number x, Number y) {
-            if (xDataMin == null || x.doubleValue() < xDataMin.doubleValue()) {
-                xDataMin = x;
+            if (xDataRange.getMin() == null || x.doubleValue() < xDataRange.getMin().doubleValue()) {
+                xDataRange.setMin(x);
             }
-            if (xDataMax == null || xDataMax.doubleValue() < x.doubleValue()) {
-                xDataMax = x;
+            if (xDataRange.getMax() == null || xDataRange.getMax().doubleValue() < x.doubleValue()) {
+                xDataRange.setMax(x);
             }
             if (yDataRanges.get(key).getMin() == null || y.doubleValue() < yDataRanges.get(key).getMin().doubleValue()) {
                 yDataRanges.get(key).setMin(y);
@@ -310,7 +310,7 @@ public final class ChartGeometry {
         }
 
         public boolean inXRange(Number x) {
-            return inRange(x, xWindowMin, xWindowMax);
+            return inRange(x, xWindowRange.getMin(), xWindowRange.getMax());
         }
 
         public boolean inYRange(Number y) {
@@ -342,12 +342,10 @@ public final class ChartGeometry {
     private final Map<Object, GraphGeometry<AreaGeometry>> graphs = new LinkedHashMap<>();
     private final Map<Object, Window> windows = new HashMap<>();
 
-    private Number xDataMin;
-    private Number xDataMax;
+    private Range xDataRange;
     private RangeMap yDataRanges;
 
-    private Number xWindowMin;
-    private Number xWindowMax;
+    private Range xWindowRange;
     private RangeMap yWindowRanges;
 
 }
