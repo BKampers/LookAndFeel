@@ -97,8 +97,8 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
 
 
     private void add(Number x, Number y, GraphGeometry<AreaGeometry> dataGeometry, boolean createArea) {
-        int xPixel = getChartGeometry().xPixel(x);
-        int yPixel = getChartGeometry().yPixel(y);
+        int xPixel = getWindow().xPixel(x);
+        int yPixel = getWindow().yPixel(y);
         RectangularShape area = (createArea) ? createSymbolArea(xPixel, yPixel) : null;
         dataGeometry.add(new PixelAreaGeometry(x, y, area, new Point(xPixel, yPixel)));
     }

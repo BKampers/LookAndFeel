@@ -27,7 +27,7 @@ public class ScatterRenderer<S extends Shape> extends AbstractDataAreaRenderer<S
             Number y = element.getValue();
             ScatterGeometry<S> scaterGeometry = map.get(element);
             int count = (scaterGeometry == null) ? 1 : scaterGeometry.getCount() + 1;
-            Shape area = createShape(getChartGeometry().xPixel(x), getChartGeometry().yPixel(y), count * 3.0f);
+            Shape area = createShape(getWindow().xPixel(x), getWindow().yPixel(y), count * 3.0f);
             scaterGeometry = new ScatterGeometry(x, y, area, count);
             map.put(element, scaterGeometry);
         }

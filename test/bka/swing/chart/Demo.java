@@ -132,11 +132,10 @@ public class Demo extends javax.swing.JFrame {
 
     private void initChartPanel() {
         chartPanel.setHighlightFormat(SINE, "x = %.3f", "y = %.3f");
-        chartPanel.setHighlightFormat(G1, "x = %d", "y = %.2f");
-        chartPanel.setHighlightFormat(G2, "x = %d", "y = %d");
-        chartPanel.setHighlightFormat(G3, "x = %d", "y = %d");
-        chartPanel.setHighlightFormat(G4, "x = %d", "y = %f");
-        chartPanel.setHighlightFormat(G5, "yyyy-MM-dd", "y = %d");
+        chartPanel.setHighlightFormat(CURVE, "x = %d", "y = %.2f");
+        chartPanel.setHighlightFormat(LINE, "x = %d", "y = %d");
+        chartPanel.setHighlightFormat(YEARS, "x = %d", "y = %f");
+        chartPanel.setHighlightFormat(MONTHS, "yyyy-MM-dd", "y = %d");
         chartPanel.setShowLegend(true);
     }
 
@@ -145,7 +144,7 @@ public class Demo extends javax.swing.JFrame {
         Object selectedItem = styleComboBox.getSelectedItem();
         if (GraphStyle.PIE.equals(selectedItem)) {
             Map graphs = new HashMap<>();
-            graphs.put("G4", g4);
+            graphs.put(YEARS, years);
             configurePieChart(graphs);
         }
         else {
@@ -154,13 +153,13 @@ public class Demo extends javax.swing.JFrame {
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
             if (GraphStyle.BAR.equals(selectedItem)) {
                 Map<Object, Map<Number, Number>> graphs = new HashMap<>();
-                graphs.put(G1, g1);
-                graphs.put(G2, g2);
+                graphs.put(CURVE, curve);
+                graphs.put(LINE, line);
                 configureBarChart(graphs);
             }
             else if (GraphStyle.DOT.equals(selectedItem)) {
                 Map graphs = new HashMap<>();
-                graphs.put("G5", g5);
+                graphs.put(MONTHS, months);
                 configureDotChart(graphs);
             }
             else if (GraphStyle.SCATTER.equals(selectedItem)) {
@@ -168,14 +167,14 @@ public class Demo extends javax.swing.JFrame {
             }
             else if (GraphStyle.LINE.equals(selectedItem)) {
                 Map graphs = new LinkedHashMap<>();
-                graphs.put(G1, g1);
-                graphs.put(G2, g2);
+                graphs.put(CURVE, curve);
+                graphs.put(LINE, line);
                 graphs.put(SINE, sine);
                 configureLineChart(graphs);
             }
             else {
                 Map graphs = new HashMap<>();
-                graphs.put(G1, g1);
+                graphs.put(CURVE, curve);
                 configureDefaultChart(graphs);
             }
         }
@@ -185,7 +184,7 @@ public class Demo extends javax.swing.JFrame {
 
     private void configureDefaultChart(Map graphs) {
         chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer(G1, createPolygonDotRenderer());
+        chartPanel.setRenderer(CURVE, createPolygonDotRenderer());
         chartPanel.setWindow(null, null, null, null);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
         chartPanel.setXGrid(new Grid());
@@ -195,10 +194,11 @@ public class Demo extends javax.swing.JFrame {
 
     private void configureLineChart(Map graphs) {
         chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer(G1, new DefaultLineRenderer(createLineDrawStyle(Color.GREEN), LINE_MARKER_SIZE));
-        chartPanel.setRenderer(G2, new DefaultLineRenderer(createLineDrawStyle(Color.RED), LINE_MARKER_SIZE));
+        chartPanel.setRenderer(CURVE, new DefaultLineRenderer(createLineDrawStyle(Color.GREEN), LINE_MARKER_SIZE));
+        chartPanel.setRenderer(LINE, new DefaultLineRenderer(createLineDrawStyle(Color.RED), LINE_MARKER_SIZE));
         chartPanel.setRenderer(SINE, new DefaultLineRenderer(createLineDrawStyle(Color.BLUE), LINE_MARKER_SIZE));
         chartPanel.setWindow(null, null, 0, 25);
+        chartPanel.setYWindow(LINE, 1, 20);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
         chartPanel.setXGrid(new Grid());
         chartPanel.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartPanel.GridMode.X);
@@ -209,7 +209,7 @@ public class Demo extends javax.swing.JFrame {
         Number xWindowMinimum = null;
         Number xWindowMaximum = null;
         Number yWindowMaximum = null;
-        for (ChartDataElement<Number, Number> data : s1) {
+        for (ChartDataElement<Number, Number> data : scatter) {
             if (xWindowMinimum == null || data.getKey().doubleValue() < xWindowMinimum.doubleValue()) {
                 xWindowMinimum = data.getKey();
             }
@@ -229,8 +229,8 @@ public class Demo extends javax.swing.JFrame {
         if (yWindowMaximum != null) {
             yWindowMaximum = Math.ceil(yWindowMaximum.doubleValue() + 0.001);
         }
-        chartPanel.setChart("S1", s1);
-        chartPanel.setRenderer("S1", new ScatterRenderer<>(createPointDrawStyle()));
+        chartPanel.setChart(SCATTER, scatter);
+        chartPanel.setRenderer(SCATTER, new ScatterRenderer<>(createPointDrawStyle()));
         chartPanel.setWindow(xWindowMinimum, xWindowMaximum, 0, yWindowMaximum);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
         chartPanel.setXGrid(new Grid());
@@ -241,7 +241,7 @@ public class Demo extends javax.swing.JFrame {
 
     private void configureDotChart(Map graphs) {
         chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer("G5", createRectangleDotRenderer());
+        chartPanel.setRenderer(MONTHS, createRectangleDotRenderer());
         chartPanel.setWindow(null, null, null, null);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
         chartPanel.setXGrid(new TimestampGrid());
@@ -270,8 +270,8 @@ public class Demo extends javax.swing.JFrame {
             xMax = xMax.intValue() + 1;
         }
         chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer(G1, b1);
-        chartPanel.setRenderer(G2, b2);
+        chartPanel.setRenderer(CURVE, b1);
+        chartPanel.setRenderer(LINE, b2);
         chartPanel.setWindow(0, xMax, 0, null);
         chartPanel.setXGrid(new IntegerGrid());
         chartPanel.setGridRenderer(new DefaultGridRenderer(WHITE_GRADIENT_GRID_STYLE), ChartPanel.GridMode.Y);
@@ -288,7 +288,7 @@ public class Demo extends javax.swing.JFrame {
         chartPanel.setGridRenderer(null, ChartPanel.GridMode.NONE);
         chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.NONE);
         chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.NONE);
-        chartPanel.setRenderer("G4", new DefaultPieSectorRenderer(createPieDrawStyle()));
+        chartPanel.setRenderer(YEARS, new DefaultPieSectorRenderer(createPieDrawStyle()));
     }
 
     
@@ -297,52 +297,49 @@ public class Demo extends javax.swing.JFrame {
             sine.put(x, 12.5 + Math.sin(x) * 10.0);
         }
         for (int x = 1; x <= 20; ++x) {
-            g1.put(x, 1.0 / x * 25.0);
-            g2.put(x, x);
-        }
-        for (int x = 1; x <= 1000000; ++x) {
-            g3.put(x, x);
+            curve.put(x, 25.0 / x);
+            line.put(x, x);
         }
         for (int x = 1950; x <= 2010; x += 10) {
             Random random = new Random();
-            g4.put(x, random.nextFloat());
+            years.put(x, random.nextFloat());
         }
         Calendar calendar = Calendar.getInstance();
         calendar.set(2019, Calendar.JANUARY, 1);
         for (int x = 0; x < 24; ++x) {
-            g5.put(calendar.getTimeInMillis(), calendar.get(Calendar.MONTH));
+            months.put(calendar.getTimeInMillis(), calendar.get(Calendar.MONTH));
             calendar.add(Calendar.MONTH, 1);
         }
-        s1.add(1.5, 1.75);
-        s1.add(1.5, 1.75);
-        s1.add(2, 1);
-        s1.add(2, 1);
-        s1.add(2, 1);
-        s1.add(2, 0.75);
-        s1.add(2, 0.75);
-        s1.add(2, 0.75);
-        s1.add(-1.5, 1.5);
-        s1.add(-1.5, 1.5);
-        s1.add(-1.5, 1.5);
-        s1.add(-1.5, 1.5);
-        s1.add(-1.5, 1.5);
-        s1.add(-1.5, 1.5);
-        s1.add(4.3, 1.5);
-        s1.add(4.3, 1.5);
-        s1.add(4.3, 1.5);
-        s1.add(4.3, 1.5);
-        s1.add(1, 2.5);
-        s1.add(1, 2.5);
-        s1.add(1, 2.5);
-        s1.add(1, 2.5);
-        s1.add(1, 2.5);
-        s1.add(1, 2.5);
-        s1.add(1, 2.5);
-        s1.add(1, 2.5);
+        scatter.add(1.5, 1.75);
+        scatter.add(1.5, 1.75);
+        scatter.add(2, 1);
+        scatter.add(2, 1);
+        scatter.add(2, 1);
+        scatter.add(2, 0.75);
+        scatter.add(2, 0.75);
+        scatter.add(2, 0.75);
+        scatter.add(-1.5, 1.5);
+        scatter.add(-1.5, 1.5);
+        scatter.add(-1.5, 1.5);
+        scatter.add(-1.5, 1.5);
+        scatter.add(-1.5, 1.5);
+        scatter.add(-1.5, 1.5);
+        scatter.add(4.3, 1.5);
+        scatter.add(4.3, 1.5);
+        scatter.add(4.3, 1.5);
+        scatter.add(4.3, 1.5);
+        scatter.add(1, 2.5);
+        scatter.add(1, 2.5);
+        scatter.add(1, 2.5);
+        scatter.add(1, 2.5);
+        scatter.add(1, 2.5);
+        scatter.add(1, 2.5);
+        scatter.add(1, 2.5);
+        scatter.add(1, 2.5);
     }
 
 
-    private final ChartPanel chartPanel = new ChartPanel();
+    private final ChartPanel chartPanel = new ChartPanel(100, 125, 50, 50);
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel controlPanel;
@@ -383,12 +380,12 @@ public class Demo extends javax.swing.JFrame {
 
 
     private final Map<Number, Number> sine = new TreeMap<>();
-    private final Map<Number, Number> g1 = new HashMap<>();
-    private final Map<Number, Number> g2 = new HashMap<>();
-    private final Map<Number, Number> g3 = new HashMap<>();
-    private final Map<Number, Number> g4 = new TreeMap<>();
-    private final Map<Number, Number> g5 = new TreeMap<>();
-    private final ChartData<Number, Number> s1 = new ChartData<>();
+    private final Map<Number, Number> curve = new HashMap<>();
+    private final Map<Number, Number> line = new HashMap<>();
+//    private final Map<Number, Number> g3 = new HashMap<>();
+    private final Map<Number, Number> years = new TreeMap<>();
+    private final Map<Number, Number> months = new TreeMap<>();
+    private final ChartData<Number, Number> scatter = new ChartData<>();
 
 
     private enum GraphStyle { PIE, LINE, DOT, POLYGON, BAR, SCATTER };
@@ -411,12 +408,13 @@ public class Demo extends javax.swing.JFrame {
     private static final GridStyle WHITE_GRADIENT_GRID_STYLE = GridStyle.createGradient(
         new Color[] { Color.WHITE });
 
-    private static final String G5 = "G5";
-    private static final String G4 = "G4";
-    private static final String G3 = "G3";
-    private static final String G2 = "G2";
-    private static final String G1 = "G1";
-    private static final String SINE = "Sine";
+    private static final String LINE = "y = x";
+    private static final String CURVE = "y = 25 \u00f7 x";
+    private static final String SINE = "y = sin(x)";
+    private static final String SCATTER = "S1";
+    private static final String YEARS = "Random per year";
+    private static final String MONTHS = "Per month";
+
 
     private static final int PIE_COLOR_COUNT = 7;
     private static final int LINE_MARKER_SIZE = 9;

@@ -43,9 +43,7 @@ public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDa
 
 
     private S createArea(Number x, Number y) {
-        int pixelX = getChartGeometry().xPixel(x);
-        int pixelY = getChartGeometry().yPixel(y);
-        return createArea(pixelX, pixelY);
+        return createArea(getWindow().xPixel(x), getWindow().yPixel(y));
     }
 
 

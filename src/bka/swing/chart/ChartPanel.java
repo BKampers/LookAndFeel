@@ -17,7 +17,8 @@ import javax.swing.*;
 
 
 public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Printable {
-    
+
+
     public enum AxisPosition { ORIGIN, MINIMUM, MAXIMUM }
     public enum GridMode { NONE, X, Y }
     public enum DragZoomMode { NONE, X, Y, XY }
@@ -64,13 +65,13 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
 
     public void setCharts(Map<Object, ChartData<Number, Number>> charts) {
-        LOGGER.log(Level.FINE, "setGraphs {0}", charts);
+        getLogger().log(Level.FINE, "setGraphs {0}", charts);
         setData(charts);
     }
     
     
     public void clearGraphs() {
-        LOGGER.log(Level.FINE, "clearGraphs");
+        getLogger().log(Level.FINE, "clearGraphs");
         if (! geometry.isEmpty()) {
             synchronized (geometry) {
                 geometry.clear();
@@ -128,21 +129,21 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setYWindowMinimum(Number min) {
-        if (! Objects.equals(yWindowMin, min)) {
+        if (! Objects.equals(yRanges.getDefault().getMin(), min)) {
             synchronized (geometry) {
-                yWindowMin = min;
+                yRanges.getDefault().setMin(min);
                 initializeGeometry();
             }
             repaint();
             notifyZoomListeners(null, null, min, null);
         }
     }
-    
-    
+
+
     public void setYWindowMaximum(Number max) {
-        if (! Objects.equals(yWindowMax, max)) {
+        if (! Objects.equals(yRanges.getDefault().getMax(), max)) {
             synchronized (geometry) {
-                yWindowMax = max;
+                yRanges.getDefault().setMax(max);
                 initializeGeometry();
             }
             repaint();
@@ -174,25 +175,37 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     public void setYWindow(Number min, Number max) {
-        if (! Objects.equals(yWindowMin, min) && ! Objects.equals(yWindowMax, max)) {
+        if (! Objects.equals(yRanges.getDefault().getMin(), min) && ! Objects.equals(yRanges.getDefault().getMax(), max)) {
             synchronized (geometry) {
-                yWindowMin = min;
-                yWindowMax = max;
+                yRanges.getDefault().setMin(min);
+                yRanges.getDefault().setMax(max);
                 initializeGeometry();
             }
             repaint();
             notifyZoomListeners(null, null, min, max);
         }
     }
-    
+
+
+    public void setYWindow(Object key, Number min, Number max) {
+        yRanges.put(key, min, max);
+        synchronized (geometry) {
+            initializeGeometry();
+            if (renderers.containsKey(key)) {
+                geometry.updateRenderers();
+            }
+        }
+        repaint();
+    }
+
     
     public void setWindow(Number xMin, Number xMax, Number yMin, Number yMax) {
-        if (! Objects.equals(xWindowMin, xMin) || ! Objects.equals(xWindowMax, xMax) || ! Objects.equals(yWindowMin, yMin) || ! Objects.equals(yWindowMax, yMax)) {
+        if (! Objects.equals(xWindowMin, xMin) || ! Objects.equals(xWindowMax, xMax) || ! Objects.equals(yRanges.getDefault().getMin(), yMin) || ! Objects.equals(yRanges.getDefault().getMax(), yMax)) {
             synchronized (geometry) {
                 xWindowMin = xMin;
                 xWindowMax = xMax;
-                yWindowMin = yMin;
-                yWindowMax = yMax;
+                yRanges.getDefault().setMin(yMin);
+                yRanges.getDefault().setMax(yMax);
                 initializeGeometry();
             }
             repaint();
@@ -259,21 +272,21 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
    }
    
    
-   public void setGridRenderer(GridRenderer renderer, GridMode mode) {
-       this.gridRenderer = renderer;
-       this.gridMode = mode;
-       if (renderer != null) {
-           renderer.setPanel(this);
+   public void setGridRenderer(GridRenderer gridRenderer, GridMode gridMode) {
+       this.gridRenderer = gridRenderer;
+       this.gridMode = gridMode;
+       if (gridRenderer != null) {
+           gridRenderer.setPanel(this);
        }
    }
    
    
-   public void setGridMode(GridMode mode) {
-       if (gridRenderer == null && mode != GridMode.NONE) {
-           setGridRenderer(new DefaultGridRenderer(GridStyle.create(Color.WHITE)), mode);
+   public void setGridMode(GridMode gridMode) {
+       if (gridRenderer == null && gridMode != GridMode.NONE) {
+           setGridRenderer(new DefaultGridRenderer(GridStyle.create(Color.WHITE)), gridMode);
        }
        else {
-           this.gridMode = mode;
+           this.gridMode = gridMode;
        }
    }
    
@@ -482,7 +495,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     private void initializeGeometry() {
-        geometry.initialize(chartArea(), xWindowMin, xWindowMax, yWindowMin, yWindowMax, yWindowBase, getLocale());
+        geometry.initialize(chartArea(), xWindowMin, xWindowMax, yRanges, yWindowBase, getLocale());
     }
 
     
@@ -525,6 +538,11 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
     private boolean zoomEnabled() {
         return dragZoomMode != DragZoomMode.NONE || clickZoomMode != ClickZoomMode.NONE;
+    }
+
+
+    private static final Logger getLogger() {
+        return Logger.getLogger(ChartPanel.class.getName());
     }
 
 
@@ -640,11 +658,11 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         }
 
         private Number yMin(){
-            return geometry.yValue(Math.max(dragStartPoint.y, dragEndPoint.y));
+            return geometry.yValue(null, Math.max(dragStartPoint.y, dragEndPoint.y));
         }
 
         private Number yMax() {
-            return geometry.yValue(Math.min(dragStartPoint.y, dragEndPoint.y));
+            return geometry.yValue(null, Math.min(dragStartPoint.y, dragEndPoint.y));
         }
 
         @Override
@@ -732,10 +750,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     private Number xWindowMin;
     private Number xWindowMax;
-    private Number yWindowMin;
-    private Number yWindowMax;
+    private final RangeMap yRanges = new RangeMap(null, null);
     private Number yWindowBase;
-
     
     private AxisRenderer axisRenderer;
     private GridRenderer gridRenderer;
@@ -767,8 +783,5 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private static final int RIGHT_MARGIN_PRINT = 5;
     private static final int TOP_MARGIN_PRINT = 40;
     private static final int BOTTOM_MARGIN_PRINT = 20;
-
-    
-    private static final Logger LOGGER = Logger.getLogger(ChartPanel.class.getName());
 
 }

@@ -29,8 +29,8 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     }
 
 
-    public void setChartGeometry(ChartGeometry chartGeometry) {
-        this.chartGeometry = chartGeometry;
+    public void setWindow(ChartGeometry.Window window) {
+        this.window = window;
     }
 
 
@@ -87,8 +87,8 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     }
 
 
-    protected ChartGeometry getChartGeometry() {
-        return chartGeometry;
+    protected ChartGeometry.Window getWindow() {
+        return window;
     }
 
 
@@ -103,7 +103,7 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
 
 
     private ChartPanel chartPanel;
-    private ChartGeometry chartGeometry;
+    private ChartGeometry.Window window;
 
     private final AreaDrawStyle<G> areaDrawStyle;
 

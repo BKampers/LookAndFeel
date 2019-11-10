@@ -34,7 +34,7 @@ public class DefaultLineRenderer extends LineRenderer {
         Polygon polyline = createPolyline(graphGeometry);
         if (polyline.npoints > 0) {
             Shape restoreShape = g2d.getClip();
-            g2d.clip(getChartGeometry().getArea());
+            g2d.clip(getWindow().getChartArea());
             if (lineDrawStyle.getBottomAreaPaint() != null) {
                 fillBottomArea(g2d, polyline);
             }
@@ -81,16 +81,12 @@ public class DefaultLineRenderer extends LineRenderer {
 
 
     private void fillBottomArea(Graphics2D g2d, Polygon polyline) {
-        ChartGeometry chartGeometry = getChartGeometry();
-        int bottom = chartGeometry.yPixel(chartGeometry.getYMin());
-        fillArea(g2d, lineDrawStyle.getBottomAreaPaint(), polyline, bottom);
+        fillArea(g2d, lineDrawStyle.getBottomAreaPaint(), polyline, getWindow().getYPixelBottom());
     }
 
 
     private void fillTopArea(Graphics2D g2d, Polygon polyline) {
-        ChartGeometry chartGeometry = getChartGeometry();
-        int top = chartGeometry.yPixel(chartGeometry.getYMax());
-        fillArea(g2d, lineDrawStyle.getTopAreaPaint(), polyline, top);
+        fillArea(g2d, lineDrawStyle.getTopAreaPaint(), polyline, getWindow().getYPixelTop());
     }
 
 

@@ -107,7 +107,7 @@ public class DefaultGridRenderer extends GridRenderer {
         java.util.List<Number> values = chartGeometry.getYGrid().getValues();
         int count = values.size();
         for (int i = 1; i < count; ++i) {
-            int paintBottom = chartGeometry.yPixel(values.get(i-1));
+            int paintBottom = chartGeometry.yPixel(values.get(i - 1));
             int paintTop = chartGeometry.yPixel(values.get(i));
             int bottom = Math.min(paintBottom, areaBottom);
             int top = Math.max(paintTop, areaTop);
