@@ -18,7 +18,7 @@ public class ChartData<K, V> implements Iterable<ChartDataElement<K, V>> {
     public ChartData(Map<K, V> source) {
         entries = new ArrayList<>(source.size());
         for (Map.Entry<K, V> entry : source.entrySet()) {
-            add(entry.getKey(), entry.getValue(), false);
+            add(entry.getKey(), entry.getValue());
         }
     }
 

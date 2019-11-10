@@ -143,7 +143,7 @@ public class Demo extends javax.swing.JFrame {
     private void styleComboBox_actionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_styleComboBox_actionPerformed
         Object selectedItem = styleComboBox.getSelectedItem();
         if (GraphStyle.PIE.equals(selectedItem)) {
-            Map graphs = new HashMap<>();
+            Map<Object, Map<Number, Number>> graphs = new HashMap<>();
             graphs.put(YEARS, years);
             configurePieChart(graphs);
         }
@@ -152,13 +152,13 @@ public class Demo extends javax.swing.JFrame {
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_GRID_AREA);
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
             if (GraphStyle.BAR.equals(selectedItem)) {
-                Map<Object, Map<Number, Number>> graphs = new HashMap<>();
+                Map<Object, Map<Number, Number>> graphs = new LinkedHashMap<>();
                 graphs.put(CURVE, curve);
                 graphs.put(LINE, line);
                 configureBarChart(graphs);
             }
             else if (GraphStyle.DOT.equals(selectedItem)) {
-                Map graphs = new HashMap<>();
+                Map<Object, Map<Number, Number>> graphs = new LinkedHashMap<>();
                 graphs.put(MONTHS, months);
                 configureDotChart(graphs);
             }
@@ -166,14 +166,14 @@ public class Demo extends javax.swing.JFrame {
                 configureScatterPlotChart();
             }
             else if (GraphStyle.LINE.equals(selectedItem)) {
-                Map graphs = new LinkedHashMap<>();
+                Map<Object, Map<Number, Number>> graphs = new LinkedHashMap<>();
                 graphs.put(CURVE, curve);
                 graphs.put(LINE, line);
                 graphs.put(SINE, sine);
                 configureLineChart(graphs);
             }
             else {
-                Map graphs = new HashMap<>();
+                Map<Object, Map<Number, Number>> graphs = new LinkedHashMap<>();
                 graphs.put(CURVE, curve);
                 configureDefaultChart(graphs);
             }
@@ -182,7 +182,7 @@ public class Demo extends javax.swing.JFrame {
     }//GEN-LAST:event_styleComboBox_actionPerformed
 
 
-    private void configureDefaultChart(Map graphs) {
+    private void configureDefaultChart(Map<Object, Map<Number, Number>> graphs) {
         chartPanel.setGraphs(graphs);
         chartPanel.setRenderer(CURVE, createPolygonDotRenderer());
         chartPanel.setWindow(null, null, null, null);
@@ -192,7 +192,7 @@ public class Demo extends javax.swing.JFrame {
     }
 
 
-    private void configureLineChart(Map graphs) {
+    private void configureLineChart(Map<Object, Map<Number, Number>> graphs) {
         chartPanel.setGraphs(graphs);
         chartPanel.setRenderer(CURVE, new DefaultLineRenderer(createLineDrawStyle(Color.GREEN), LINE_MARKER_SIZE));
         chartPanel.setRenderer(LINE, new DefaultLineRenderer(createLineDrawStyle(Color.RED), LINE_MARKER_SIZE));
@@ -239,7 +239,7 @@ public class Demo extends javax.swing.JFrame {
     }
 
 
-    private void configureDotChart(Map graphs) {
+    private void configureDotChart(Map<Object, Map<Number, Number>> graphs) {
         chartPanel.setGraphs(graphs);
         chartPanel.setRenderer(MONTHS, createRectangleDotRenderer());
         chartPanel.setWindow(null, null, null, null);
@@ -279,7 +279,7 @@ public class Demo extends javax.swing.JFrame {
     }
 
 
-    private void configurePieChart(Map graphs) {
+    private void configurePieChart(Map<Object, Map<Number, Number>> graphs) {
         chartPanel.setXWindowMinimum(null);
         chartPanel.setXWindowMaximum(null);
         chartPanel.setGraphs(graphs);
@@ -380,9 +380,8 @@ public class Demo extends javax.swing.JFrame {
 
 
     private final Map<Number, Number> sine = new TreeMap<>();
-    private final Map<Number, Number> curve = new HashMap<>();
-    private final Map<Number, Number> line = new HashMap<>();
-//    private final Map<Number, Number> g3 = new HashMap<>();
+    private final Map<Number, Number> curve = new TreeMap<>();
+    private final Map<Number, Number> line = new TreeMap<>();
     private final Map<Number, Number> years = new TreeMap<>();
     private final Map<Number, Number> months = new TreeMap<>();
     private final ChartData<Number, Number> scatter = new ChartData<>();

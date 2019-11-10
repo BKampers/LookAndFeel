@@ -225,12 +225,11 @@ public final class ChartGeometry {
      * Compute render data for points in window
      */
     private void computeDataPoints() {
-        for (Window window : windows.values()) {
-            for (Map.Entry<Object, ChartData<Number, Number>> map : window.entrySet()) {
-                AbstractDataAreaRenderer renderer = renderers.get(map.getKey());
-                if (renderer != null) {
-                    graphs.put(map.getKey(), renderer.createGraphGeomerty(map.getValue()));
-                }
+        for (Object key : dataMap.keySet()) {
+            AbstractDataAreaRenderer renderer = renderers.get(key);
+            if (renderer != null) {
+                Window window = getWindow(key);
+                graphs.put(key, renderer.createGraphGeomerty(window.getPoints(key)));
             }
         }
     }
@@ -321,9 +320,9 @@ public final class ChartGeometry {
         private boolean inRange(Number n, Number min, Number max) {
             return (min == null || min.doubleValue() <= n.doubleValue()) && (max == null || n.doubleValue() <= max.doubleValue());
         }
-
-        private Set<Map.Entry<Object, ChartData<Number, Number>>> entrySet() {
-            return points.entrySet();
+        
+        private ChartData<Number, Number> getPoints(Object key) {
+            return points.get(key);
         }
 
         private final Object key;
