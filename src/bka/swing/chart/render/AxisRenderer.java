@@ -8,6 +8,7 @@ package bka.swing.chart.render;
 import bka.swing.chart.*;
 import bka.swing.chart.geometry.*;
 import bka.swing.chart.grid.*;
+import java.util.*;
 
 
 public abstract class AxisRenderer {
@@ -53,33 +54,21 @@ public abstract class AxisRenderer {
     }
 
 
-    protected String xGridLabel(Number value) {
-        return chartGeometry.getXGrid().label(value);
+    protected java.util.List<Grid.MarkerList> xMarkerLists() {
+        return getMarketLists(chartGeometry.getXGrid());
     }
 
 
-    protected java.util.List<Number> xGridValues() {
-        java.util.List<Number> values = new java.util.ArrayList<>();
-        Grid xGrid = chartGeometry.getXGrid();
-        if (xGrid != null) {
-            values.addAll(xGrid.getValues());
+    protected java.util.List<Grid.MarkerList> yMarkerLists() {
+        return getMarketLists(chartGeometry.getYGrid());
+    }
+
+
+    private List<Grid.MarkerList> getMarketLists(Grid grid) {
+        if (grid != null) {
+            return grid.getMarkerLists();
         }
-        return values;
-    }
-
-
-    protected String yGridLabel(Number value) {
-        return chartGeometry.getYGrid().label(value);
-    }
-
-
-    protected java.util.List<Number> yGridValues() {
-        java.util.List<Number> values = new java.util.ArrayList<>();
-        Grid yGrid = chartGeometry.getYGrid();
-        if (yGrid != null) {
-            values.addAll(yGrid.getValues());
-        }
-        return values;
+        return Collections.emptyList();
     }
 
 
@@ -131,14 +120,13 @@ public abstract class AxisRenderer {
     }
     
     
-    protected String xTitle = null;
-    protected String yTitle = null;
+    protected String xTitle;
+    protected String yTitle;
     
-    protected String xUnit = null;
-    protected String yUnit = null;
+    protected String xUnit;
+    protected String yUnit;
 
-    
-    // Private attributes must be initialized by a Panel.
+    // Private attributes must be initialized by a ChartPanel.
     private ChartPanel panel; 
     private ChartGeometry chartGeometry;
     
