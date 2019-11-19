@@ -83,47 +83,59 @@ public class TimestampGrid extends Grid {
     
     @Override
     protected void compute(Number min, Number max) {
-        Calendar low = Calendar.getInstance();
-        low.setTimeInMillis(min.longValue());
-        Calendar high = Calendar.getInstance();
-        high.setTimeInMillis(max.longValue());
-        StepSize stepSize = determineStepSize(low, high);
-        adjust(low, stepSize);
-        round(low, stepSize);
-        List<Number> primarySet = new ArrayList<>();
-        List<Number> secondarySet = new ArrayList<>();
-        primarySet.add(low.getTimeInMillis());
-        boolean ready = false;
-        while (! ready) {
-            low.add(stepSize.field, stepSize.amount);
-            primarySet.add(low.getTimeInMillis());
-            ready = low.after(high);
-        }
-        markerLists.add(new MarkerList(primarySet, stepSize.format));
+        StepSize stepSize = primaryStepSize(min.longValue(), max.longValue());
+        populatePrimaryMarkers(min.longValue(), max.longValue(), stepSize);
+        populateSecondaryMarkers(min.longValue(), max.longValue(), stepSize);
+    }
+    
+    
+    private void populatePrimaryMarkers(long min, long max, StepSize stepSize) {
+        Calendar calendar = getCalendar(min, stepSize);
+        List<Number> markerValues = new ArrayList<>();
+        markerValues.add(calendar.getTimeInMillis());
+        addMarkerValues(calendar, max, stepSize, markerValues);
+        markerLists.add(new MarkerList(markerValues, stepSize.format));
+    }
+    
+    
+    private void populateSecondaryMarkers(long min, long max, StepSize stepSize) {
         StepSize secondaryStepSize = secondaryStepSize(stepSize);
         if (secondaryStepSize != null) {
-            low.setTimeInMillis(min.longValue());
-            adjust(low, secondaryStepSize);
-            round(low, secondaryStepSize);
-            secondarySet.add(min);
-            ready = false;
-            while (! ready) {
-                low.add(secondaryStepSize.field, secondaryStepSize.amount);
-                ready = low.after(high);
-                if (! ready) {
-                    secondarySet.add(low.getTimeInMillis());
-                }
-            }
-            secondarySet.add(max);
+            Calendar calendar = getCalendar(min, secondaryStepSize);
+            List<Number> markerValues = new ArrayList<>();
+            markerValues.add(min);
+            addMarkerValues(calendar, max, secondaryStepSize, markerValues);
+            markerValues.add(max);
             String format = secondaryStepSize.format;
             if (! format.endsWith(">")) {
                 format += ">";
             }
-            markerLists.add(new MarkerList(secondarySet, format));
+            markerLists.add(new MarkerList(markerValues, format));
         }
     }
 
-
+    
+    private void addMarkerValues(Calendar calendar, long max, StepSize stepSize, List<Number> markerValues) {
+        boolean ready = false;
+        while (! ready) {
+            calendar.add(stepSize.field, stepSize.amount);
+            ready = calendar.getTimeInMillis() > max;
+            if (! ready) {
+                markerValues.add(calendar.getTimeInMillis());
+            }
+        }
+    }
+    
+    
+    private static Calendar getCalendar(long timestamp, StepSize stepSize) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+        adjust(calendar, stepSize);
+        round(calendar, stepSize);
+        return calendar;
+    }
+    
+    
     private static void adjust(Calendar calendar, StepSize stepSize) {
         switch (stepSize.field) {
             case Calendar.YEAR:
@@ -133,13 +145,11 @@ public class TimestampGrid extends Grid {
                 calendar.set(Calendar.DATE, calendar.getMinimum(Calendar.DATE));
                 break;
             case Calendar.WEEK_OF_YEAR:
-                int delta = calendar.getActualMinimum(Calendar.DAY_OF_WEEK) - calendar.get(Calendar.DAY_OF_WEEK);
-                calendar.add(Calendar.DAY_OF_WEEK, delta);
+                calendar.add(Calendar.DAY_OF_WEEK, calendar.getActualMinimum(Calendar.DAY_OF_WEEK) - calendar.get(Calendar.DAY_OF_WEEK));
                 calendar.set(Calendar.HOUR_OF_DAY, calendar.getMinimum(Calendar.HOUR_OF_DAY));
                 break;
             case Calendar.DATE:
-                delta = calendar.getActualMinimum(Calendar.HOUR_OF_DAY) - calendar.get(Calendar.HOUR_OF_DAY);
-                calendar.add(Calendar.HOUR_OF_DAY, delta);
+                calendar.add(Calendar.HOUR_OF_DAY, calendar.getActualMinimum(Calendar.HOUR_OF_DAY) - calendar.get(Calendar.HOUR_OF_DAY));
                 break;
             case Calendar.HOUR_OF_DAY:
                 calendar.add(Calendar.HOUR_OF_DAY, - (calendar.get(Calendar.HOUR_OF_DAY) % stepSize.amount));
@@ -178,14 +188,14 @@ public class TimestampGrid extends Grid {
     }
 
 
-    private StepSize determineStepSize(Calendar low, Calendar high) {
+    private StepSize primaryStepSize(long min, long max) {
         Calendar test = Calendar.getInstance();
         StepSize[] sizes = getStepSizes();
         StepSize stepSize = sizes[0];
         for (StepSize size : sizes) {
-            test.setTimeInMillis(low.getTimeInMillis());
+            test.setTimeInMillis(min);
             test.add(size.field, size.amount * MAX_GRID_AREAS);
-            if (! test.after(high)) {
+            if (test.getTimeInMillis() <= max) {
                 return stepSize;
             }
             stepSize = size;

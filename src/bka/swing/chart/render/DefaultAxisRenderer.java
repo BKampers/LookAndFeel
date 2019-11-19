@@ -54,10 +54,10 @@ public class DefaultAxisRenderer extends AxisRenderer {
                     if (label.endsWith(">")) {
                         // draw label between two markers
                         if (i < count - 1) {
-                            label = label.substring(0, label.length() - 1);
-                            int width = fontMetrics.stringWidth(label);
                             int xNext = xPixel(values.get(i + 1));
                             if (xNext <= xMax) {
+                                label = label.substring(0, label.length() - 1);
+                                int width = fontMetrics.stringWidth(label);
                                 g2d.drawString(label, x + (xNext - x) / 2 - width / 2, yLabel);
                             }
                         }
