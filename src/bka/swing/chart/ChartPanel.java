@@ -176,8 +176,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     public void setYWindow(Number min, Number max) {
         if (! rangeEquals(yRanges.getDefault(), min, max)) {
             synchronized (geometry) {
-                yRanges.getDefault().setMin(min);
-                yRanges.getDefault().setMax(max);
+                yRanges.getDefault().set(min, max);
                 initializeGeometry();
             }
             repaint();
@@ -338,6 +337,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     public void paint(Graphics g) {
         super.paint(g);
         synchronized (geometry) {
+            geometry.updateRenderers();
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -502,7 +502,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             geometry.setData(data, renderers);
             initializeGeometry();
         }
-        repaint();
+        invalidate();
     }
     
     
@@ -740,7 +740,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
                
         private Cursor defaultCursor;
         
-    };
+    }
 
     
     private final ChartGeometry geometry = new ChartGeometry();

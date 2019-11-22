@@ -11,29 +11,53 @@ import java.util.*;
 public class Grid {
 
     
+    public class MarkerList {
+
+        protected MarkerList(List<Number> values, String format) {
+            this.values = values;
+            this.format = format;
+        }
+
+        public List<Number> getValues() {
+            return values;
+        }
+
+        public String getLabel(Number value) {
+            return label(format, value);
+        }
+
+        private final List<Number> values;
+        private final String format;
+    }
+
+
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
     
     
     public void initialize(Number min, Number max) {
-        values.clear();
-        format = null;
+        markerLists.clear();
         if (min != null && max != null) {
             compute(min, max);
         }
     }
-    
-    
-    public String label(Number value) {
+
+
+    public String label(String format, Number value) {
         Formatter formatter = new Formatter(locale);
         formatter.format(format, value);
         return formatter.toString();
     }
 
 
+    public List<MarkerList> getMarkerLists() {
+        return markerLists;
+    }
+
+
     public List<Number> getValues() {
-        return values;
+        return markerLists.get(0).getValues();
     }
 
     
@@ -62,22 +86,23 @@ public class Grid {
         step *= range.factor();
         double start = Math.floor(low / step) * step;
         double markerValue = start;
-        values.add(markerValue);
+        List<Number> markerValues = new ArrayList<>();
+        markerValues.add(markerValue);
         boolean ready = false;
         while (! ready) {
             markerValue += step;
-            values.add(markerValue);
+            markerValues.add(markerValue);
             ready = markerValue > high;
         }
         short exponent = new bka.numeric.Scientific(step).getExponent();
-        digits += (exponent < 0) ? -exponent : 0;
-        format = "%." + digits + "f";
+        if (exponent < 0) {
+            digits -= exponent;
+        }
+        markerLists.add(new MarkerList(markerValues, "%." + digits + "f"));
     }
 
-    
-    protected final ArrayList<Number> values = new ArrayList<>();
 
-    protected String format;
+    protected final List<MarkerList> markerLists = new ArrayList<>();
     protected Locale locale;
     
 }

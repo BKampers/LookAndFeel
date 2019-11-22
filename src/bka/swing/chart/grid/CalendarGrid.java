@@ -9,8 +9,8 @@ public class CalendarGrid extends TimestampGrid {
 
     
     @Override
-    protected Step[] steps() {
-        return new Step[] { Step.ONE_YEAR, Step.ONE_MONTH, Step.ONE_WEEK, Step.ONE_DAY };
+    protected StepSize[] getStepSizes() {
+        return new StepSize[] { StepSize.ONE_YEAR, StepSize.ONE_MONTH, StepSize.ONE_WEEK, StepSize.ONE_DAY };
     }
     
         

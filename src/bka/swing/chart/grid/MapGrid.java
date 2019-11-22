@@ -30,24 +30,20 @@ public class MapGrid extends Grid{
     
     
     @Override
-    public String label(Number value) {
-        return map.get(value);
-    }
-    
-    
-    @Override
     protected void compute(Number min, Number max) {
         double minValue = min.doubleValue();
         double maxValue = max.doubleValue();
+        List<Number> values = new ArrayList<>();
         for (Number number : map.keySet()) {
             double value = number.doubleValue();
             if (minValue <= value && value <= maxValue) {
                 values.add(number);
             }
         }
+        markerLists.add(new MarkerList(values, null));
     }
     
     
-    private Map<Number, String> map;
+    private final Map<Number, String> map;
     
 }

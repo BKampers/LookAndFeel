@@ -5,6 +5,7 @@
 package bka.swing.chart.grid;
 
 import bka.numeric.*;
+import java.util.*;
 
 
 public class IntegerGrid extends Grid {
@@ -17,6 +18,7 @@ public class IntegerGrid extends Grid {
         long step = computeStep(high, low);
         long start = (long) (low / step) * step;
         long markerValue = start;
+        List<Number> values = new ArrayList<>();
         values.add(markerValue);
         boolean ready = false;
         while (! ready) {
@@ -24,12 +26,13 @@ public class IntegerGrid extends Grid {
             values.add(markerValue);
             ready = markerValue > high;
         }
-        format = "%d";
+        markerLists.add(new MarkerList(values, "%d"));
+
     }
 
 
     private long computeStep(double high, double low) {
-        bka.numeric.Scientific range = new bka.numeric.Scientific(high - low);
+        Scientific range = new Scientific(high - low);
         long step = (long) (computeNormalizedStep(range) * range.factor() / 10);
         if (step == 0) {
             return 1;
