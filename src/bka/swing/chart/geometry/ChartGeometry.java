@@ -239,13 +239,17 @@ public final class ChartGeometry {
         if (xGrid == null) {
             xGrid = new Grid();
         }
-        xGrid.setLocale(locale);
-        xGrid.initialize(xDataRange.getMin(), xDataRange.getMax());
+        initializeGrid(xGrid, xDataRange, locale);
         if (yGrid == null) {
             yGrid = new Grid();
         }
-        yGrid.setLocale(locale);
-        yGrid.initialize(yDataRanges.getDefault().getMin(), yDataRanges.getDefault().getMax());
+        initializeGrid(yGrid, yDataRanges.getDefault(), locale);
+    }
+
+
+    private static void initializeGrid(Grid grid, Range range, Locale locale) {
+        grid.setLocale(locale);
+        grid.initialize(range.getMin(), range.getMax());
     }
 
     
@@ -330,11 +334,11 @@ public final class ChartGeometry {
     }
 
     
-    private Grid xGrid = null;
-    private Grid yGrid = null;
+    private Grid xGrid;
+    private Grid yGrid;
 
     
-    private Rectangle area = null;
+    private Rectangle area;
     
     private Map<Object, ChartData<Number, Number>> dataMap;
     private Map<Object, AbstractDataAreaRenderer> renderers;
