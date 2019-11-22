@@ -502,7 +502,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
             geometry.setData(data, renderers);
             initializeGeometry();
         }
-        repaint();
+        invalidate();
     }
     
     
