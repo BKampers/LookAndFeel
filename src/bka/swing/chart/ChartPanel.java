@@ -438,9 +438,20 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
 
     private void drawData(Graphics2D g2d) {
-        for (Map.Entry<Object, GraphGeometry<AreaGeometry>> entry : geometry.getGraphs().entrySet()) {
-            AbstractDataAreaRenderer renderer = getRenderer(entry.getKey());
-            renderer.draw(g2d, entry.getValue());
+        for (AbstractDataAreaRenderer.Layer layer : AbstractDataAreaRenderer.Layer.values()) {
+            drawData(g2d, layer);
+        }
+    }
+
+    
+    private void drawData(Graphics2D g2d, AbstractDataAreaRenderer.Layer layer) {
+        Map<Object, GraphGeometry<AreaGeometry>> graphs = geometry.getGraphs();
+        LinkedList<Object> keyList = new LinkedList<>(graphs.keySet());
+        Iterator it = keyList.descendingIterator(); // Descending iterator to draw first graph on top
+        while (it.hasNext()) {
+            Object key = it.next();
+            AbstractDataAreaRenderer renderer = getRenderer(key);
+            renderer.draw(g2d, layer, graphs.get(key));
         }
     }
 

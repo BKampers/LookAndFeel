@@ -93,7 +93,7 @@ public class TimestampGrid extends Grid {
         Calendar calendar = getCalendar(min, stepSize);
         List<Number> markerValues = new ArrayList<>();
         markerValues.add(calendar.getTimeInMillis());
-        addMarkerValues(calendar, max, stepSize, markerValues);
+        addMarkerValues(calendar, max, stepSize, markerValues, true);
         markerLists.add(new MarkerList(markerValues, stepSize.format));
     }
     
@@ -104,7 +104,7 @@ public class TimestampGrid extends Grid {
             Calendar calendar = getCalendar(min, secondaryStepSize);
             List<Number> markerValues = new ArrayList<>();
             markerValues.add(min);
-            addMarkerValues(calendar, max, secondaryStepSize, markerValues);
+            addMarkerValues(calendar, max, secondaryStepSize, markerValues, false);
             markerValues.add(max);
             String format = secondaryStepSize.format;
             if (! format.endsWith(">")) {
@@ -115,12 +115,12 @@ public class TimestampGrid extends Grid {
     }
 
     
-    private void addMarkerValues(Calendar calendar, long max, StepSize stepSize, List<Number> markerValues) {
+    private void addMarkerValues(Calendar calendar, long max, StepSize stepSize, List<Number> markerValues, boolean including) {
         boolean ready = false;
         while (! ready) {
             calendar.add(stepSize.field, stepSize.amount);
             ready = calendar.getTimeInMillis() > max;
-            if (! ready) {
+            if (including || ! ready) {
                 markerValues.add(calendar.getTimeInMillis());
             }
         }

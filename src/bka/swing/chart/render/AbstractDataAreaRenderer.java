@@ -14,6 +14,9 @@ import java.awt.*;
 
 public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
 
+    
+    public enum Layer { BACKGROUND, FOREGROUND }
+
 
     AbstractDataAreaRenderer(AreaDrawStyle drawStyle) {
         this.areaDrawStyle = drawStyle;
@@ -48,9 +51,11 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     }
 
 
-    public void draw(Graphics2D g2d, GraphGeometry<G> graphGeometry) {
-        for (G dataAreaGeometry : graphGeometry.getDataPoints()) {
-            draw(g2d, dataAreaGeometry);
+    public void draw(Graphics2D g2d, Layer layer, GraphGeometry<G> graphGeometry) {
+        if (layer == Layer.FOREGROUND) {
+            for (G dataAreaGeometry : graphGeometry.getDataPoints()) {
+                draw(g2d, dataAreaGeometry);
+            }
         }
     }
 

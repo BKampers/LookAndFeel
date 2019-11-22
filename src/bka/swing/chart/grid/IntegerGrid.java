@@ -13,12 +13,24 @@ public class IntegerGrid extends Grid {
 
     @Override
     protected void compute(Number min, Number max) {
+        List<Number> values = new ArrayList<>();
         double low = min.doubleValue();
         double high = max.doubleValue();
+        if (low == high) {
+            values.add(min.longValue());
+        }
+        else {
+            addValues(low, high, values);
+        }
+        markerLists.add(new MarkerList(values, "%d"));
+
+    }
+
+    
+    private void addValues(double low, double high, List<Number> values) {
         long step = computeStep(high, low);
         long start = (long) (low / step) * step;
         long markerValue = start;
-        List<Number> values = new ArrayList<>();
         values.add(markerValue);
         boolean ready = false;
         while (! ready) {
@@ -26,18 +38,12 @@ public class IntegerGrid extends Grid {
             values.add(markerValue);
             ready = markerValue > high;
         }
-        markerLists.add(new MarkerList(values, "%d"));
-
     }
 
 
     private long computeStep(double high, double low) {
         Scientific range = new Scientific(high - low);
-        long step = (long) (computeNormalizedStep(range) * range.factor() / 10);
-        if (step == 0) {
-            return 1;
-        }
-        return step;
+        return (long) (computeNormalizedStep(range) * range.factor() / 10);
     }
 
 
@@ -46,10 +52,10 @@ public class IntegerGrid extends Grid {
         if (coefficient < 15) {
             return 1;
         }
-        else if (coefficient < 20) {
+        if (coefficient < 20) {
             return 2;
         }
-        else if (coefficient < 50) {
+        if (coefficient < 50) {
             return 5;
         }
         return 10;

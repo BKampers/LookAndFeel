@@ -178,7 +178,8 @@ public class Demo extends javax.swing.JFrame {
                 configureDefaultChart(graphs);
             }
         }
-        chartPanel.revalidate();
+        chartPanel.invalidate();
+        chartPanel.repaint();
     }//GEN-LAST:event_styleComboBox_actionPerformed
 
 

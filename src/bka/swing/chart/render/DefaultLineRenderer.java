@@ -30,7 +30,37 @@ public class DefaultLineRenderer extends LineRenderer {
 
 
     @Override
-    public void draw(Graphics2D g2d, GraphGeometry<PixelAreaGeometry> graphGeometry) {
+    public void draw(Graphics2D g2d, Layer layer, GraphGeometry<PixelAreaGeometry> graphGeometry) {
+        switch (layer) {
+            case BACKGROUND:
+                drawBackground(g2d, graphGeometry);
+                break;
+            case FOREGROUND:
+                drawForeground(g2d, graphGeometry);
+                break;
+        }
+    }
+
+
+    private void drawForeground(Graphics2D g2d, GraphGeometry<PixelAreaGeometry> graphGeometry) {
+        Polygon polyline = createPolyline(graphGeometry);
+        if (polyline.npoints > 0) {
+            Shape restoreShape = g2d.getClip();
+            g2d.clip(getWindow().getChartArea());
+            if (lineDrawStyle.getLinePaint() != null && lineDrawStyle.getLineStroke() != null) {
+                g2d.setPaint(lineDrawStyle.getLinePaint());
+                g2d.setStroke(lineDrawStyle.getLineStroke());
+                g2d.drawPolyline(polyline.xpoints, polyline.ypoints, polyline.npoints);
+            }
+            g2d.setClip(restoreShape);
+            if (lineDrawStyle.getAreaDrawStyle() != null) {
+                super.draw(g2d, Layer.FOREGROUND, graphGeometry);
+            }
+        }
+    }
+
+
+    private void drawBackground(Graphics2D g2d, GraphGeometry<PixelAreaGeometry> graphGeometry) {
         Polygon polyline = createPolyline(graphGeometry);
         if (polyline.npoints > 0) {
             Shape restoreShape = g2d.getClip();
@@ -41,15 +71,7 @@ public class DefaultLineRenderer extends LineRenderer {
             if (lineDrawStyle.getTopAreaPaint() != null) {
                 fillTopArea(g2d, polyline);
             }
-            if (lineDrawStyle.getLinePaint() != null && lineDrawStyle.getLineStroke() != null) {
-                g2d.setPaint(lineDrawStyle.getLinePaint());
-                g2d.setStroke(lineDrawStyle.getLineStroke());
-                g2d.drawPolyline(polyline.xpoints, polyline.ypoints, polyline.npoints);
-            }
             g2d.setClip(restoreShape);
-            if (lineDrawStyle.getAreaDrawStyle() != null) {
-                super.draw(g2d, graphGeometry);
-            }
         }
     }
 
