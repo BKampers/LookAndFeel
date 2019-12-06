@@ -22,8 +22,8 @@ public class Grid {
             return values;
         }
 
-        public String getLabel(Number value) {
-            return label(format, value);
+        public String getLabel(Locale locale, Number value) {
+            return label(format, locale, value);
         }
 
         private final List<Number> values;
@@ -31,11 +31,6 @@ public class Grid {
     }
 
 
-    public void setLocale(Locale locale) {
-        this.locale = locale;
-    }
-    
-    
     public void initialize(Number min, Number max) {
         markerLists.clear();
         if (min != null && max != null) {
@@ -44,7 +39,7 @@ public class Grid {
     }
 
 
-    public String label(String format, Number value) {
+    public String label(String format, Locale locale, Number value) {
         Formatter formatter = new Formatter(locale);
         formatter.format(format, value);
         return formatter.toString();
@@ -57,6 +52,9 @@ public class Grid {
 
 
     public List<Number> getValues() {
+        if (markerLists.isEmpty()) {
+            return Collections.emptyList();
+        }
         return markerLists.get(0).getValues();
     }
 
@@ -100,9 +98,8 @@ public class Grid {
         }
         markerLists.add(new MarkerList(markerValues, "%." + digits + "f"));
     }
-
+    
 
     protected final List<MarkerList> markerLists = new ArrayList<>();
-    protected Locale locale;
     
 }

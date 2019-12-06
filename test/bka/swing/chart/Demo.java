@@ -55,7 +55,14 @@ public class Demo extends javax.swing.JFrame {
         Demo demo = new Demo();
         java.awt.EventQueue.invokeLater(() -> {
             demo.setVisible(true);
+            demo.startTimer();
         });
+    }
+
+
+    private void startTimer() {
+        timer = new Timer("Graph data miner");
+        timer.schedule(new DataMiner(), 1000, 1000);
     }
 
 
@@ -74,12 +81,12 @@ public class Demo extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Chart Demo");
-        setPreferredSize(new java.awt.Dimension(800, 600));
+        setPreferredSize(new java.awt.Dimension(1000, 600));
 
         displayPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        displayPanel.setMaximumSize(new java.awt.Dimension(500, 500));
-        displayPanel.setPreferredSize(new java.awt.Dimension(500, 500));
-        displayPanel.setSize(new java.awt.Dimension(500, 500));
+        displayPanel.setMaximumSize(new java.awt.Dimension(1500, 500));
+        displayPanel.setPreferredSize(new java.awt.Dimension(1500, 500));
+        displayPanel.setSize(new java.awt.Dimension(1500, 500));
         displayPanel.setLayout(new javax.swing.BoxLayout(displayPanel, javax.swing.BoxLayout.LINE_AXIS));
         getContentPane().add(displayPanel, java.awt.BorderLayout.CENTER);
 
@@ -97,12 +104,12 @@ public class Demo extends javax.swing.JFrame {
         controlPanel.setLayout(controlPanelLayout);
         controlPanelLayout.setHorizontalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 410, Short.MAX_VALUE)
+            .addGap(0, 670, Short.MAX_VALUE)
             .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlPanelLayout.createSequentialGroup()
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap(136, Short.MAX_VALUE)
                     .addComponent(styleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addContainerGap(136, Short.MAX_VALUE)))
         );
         controlPanelLayout.setVerticalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -178,7 +185,6 @@ public class Demo extends javax.swing.JFrame {
                 configureDefaultChart(graphs);
             }
         }
-        chartPanel.invalidate();
         chartPanel.repaint();
     }//GEN-LAST:event_styleComboBox_actionPerformed
 
@@ -340,6 +346,26 @@ public class Demo extends javax.swing.JFrame {
     }
 
 
+    private class DataMiner extends TimerTask {
+
+        @Override
+        public void run() {
+            if (styleComboBox.getSelectedItem() == GraphStyle.DOT) {
+                Object last = new LinkedList(months.keySet()).getLast();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis((Long) last);
+                calendar.add(Calendar.MONTH, 1);
+                months.put(calendar.getTimeInMillis(), calendar.get(Calendar.MONTH));
+                Map<Object, Map<Number, Number>> graphs = new LinkedHashMap<>();
+                graphs.put(MONTHS, months);
+                chartPanel.setGraphs(graphs);
+                chartPanel.repaint();
+            }
+        }
+
+    }
+
+
     private final ChartPanel chartPanel = new ChartPanel(100, 125, 50, 50);
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -363,8 +389,8 @@ public class Demo extends javax.swing.JFrame {
     }
 
 
-    private static RectangleDotRenderer createRectangleDotRenderer() {
-        return new RectangleDotRenderer(RECTANGLE_DOT_SIZE, DefaultDrawStyle.createSolid(Color.BLACK));
+    private static PointRenderer createRectangleDotRenderer() {
+        return new OvalDotRenderer(DOT_SIZE, DefaultDrawStyle.createSolid(Color.BLACK));
     }
 
 
@@ -387,6 +413,8 @@ public class Demo extends javax.swing.JFrame {
     private final Map<Number, Number> months = new TreeMap<>();
     private final ChartData<Number, Number> scatter = new ChartData<>();
 
+    private Timer timer;
+
 
     private enum GraphStyle { PIE, LINE, DOT, POLYGON, BAR, SCATTER };
 
@@ -408,6 +436,7 @@ public class Demo extends javax.swing.JFrame {
     private static final GridStyle WHITE_GRADIENT_GRID_STYLE = GridStyle.createGradient(
         new Color[] { Color.WHITE });
 
+
     private static final String LINE = "y = x";
     private static final String CURVE = "y = 25 \u00f7 x";
     private static final String SINE = "y = sin(x)";
@@ -415,9 +444,8 @@ public class Demo extends javax.swing.JFrame {
     private static final String YEARS = "Random per year";
     private static final String MONTHS = "Per month";
 
-
     private static final int PIE_COLOR_COUNT = 7;
     private static final int LINE_MARKER_SIZE = 9;
-    private static final int RECTANGLE_DOT_SIZE = 2;
+    private static final int DOT_SIZE = 4;
 
 }

@@ -24,24 +24,16 @@ public final class ChartGeometry {
 
     public void setRenderers(Map<Object, AbstractDataAreaRenderer> renderers) {
         this.renderers = renderers;
-        updateRenderers();
     }
 
 
-    public void updateRenderers() {
-        if (initialized()) {
-            for (Map.Entry<Object, AbstractDataAreaRenderer> entry : renderers.entrySet()) {
-                Window window = getWindow(entry.getKey());
-                entry.getValue().setWindow(window);
-            }
-        }
+    /**
+     * Mark as invalid so geometry will be recomputed when initializing.
+     */
+    public void invalidate() {
+        graphs.clear();
     }
 
-
-    private boolean initialized() {
-        return area != null;
-    }
-    
 
     /**
      * Calculates pixels for all points in the data map. This method must be called whenever
@@ -50,22 +42,31 @@ public final class ChartGeometry {
      * @param area: area to draw on
      * @param xRange: range of the x-axis
      * @param yRanges: ranges of the y-axis(es)
-     * @param yWindowBase: x location where the y-axis is drawn, null means origin
-     * @param locale: to convert numbers and dates to strings
+     * @param yWindowBase: y location where the y-axis is drawn, null means origin
      */
-    public void initialize(Rectangle area, Range xRange ,RangeMap yRanges, Number yWindowBase, Locale locale) {
-        if (! area.isEmpty()) {
+    public void initialize(Rectangle area, Range xRange ,RangeMap yRanges, Number yWindowBase) {
+        if (graphs.isEmpty()) {
             this.area = area;
-            graphs.clear();
             xWindowRange = new Range(xRange);
             yWindowRanges = new RangeMap(yRanges);
             xDataRange = new Range(xRange);
             yDataRanges = new RangeMap(yRanges);
-            if (dataMap != null) {
-                computeWindows();
-                computeRanges(yWindowBase);
-                computeDataPoints();
-                initializeGrids(locale);
+            computeWindows();
+            computeRanges(yWindowBase);
+            computeDataPoints();
+            initializeGrids();
+        }
+    }
+
+
+    private void computeWindows() {
+        windows.clear();
+        for (Map.Entry<Object, ChartData<Number, Number>> dataGraph : dataMap.entrySet()) {
+            Object key = dataGraph.getKey();
+            AbstractDataAreaRenderer renderer = renderers.get(key);
+            if (renderer != null) {
+                renderer.setWindow(getWindow(key));
+                renderer.addPointsInWindow(key, dataGraph.getValue());
             }
         }
     }
@@ -85,6 +86,37 @@ public final class ChartGeometry {
     }
 
     
+    /**
+     * Compute render data for points in window
+     */
+    private void computeDataPoints() {
+        for (Object key : dataMap.keySet()) {
+            AbstractDataAreaRenderer renderer = renderers.get(key);
+            if (renderer != null) {
+                Window window = getWindow(key);
+                graphs.put(key, renderer.createGraphGeomerty(window.getPoints(key)));
+            }
+        }
+    }
+
+
+    private void initializeGrids() {
+        if (xGrid == null) {
+            xGrid = new Grid();
+        }
+        initializeGrid(xGrid, xDataRange);
+        if (yGrid == null) {
+            yGrid = new Grid();
+        }
+        initializeGrid(yGrid, yDataRanges.getDefault());
+    }
+
+
+    private static void initializeGrid(Grid grid, Range range) {
+        grid.initialize(range.getMin(), range.getMax());
+    }
+
+
     public Map<Object, GraphGeometry<AreaGeometry>> getGraphs() {
         return graphs;
     }
@@ -110,20 +142,14 @@ public final class ChartGeometry {
     }
 
     
-    public void clear() {
-        graphs.clear();
-        dataMap = null;
-    }
-
-
-    public boolean isEmpty() {
-        return dataMap == null && graphs.isEmpty();
-    }
-    
-    
     public double xValue(int pixelX) {
         double ratio = xRange() / area.width;
         return (pixelX - area.x) * ratio + xDataRange.getMin().doubleValue();
+    }
+
+
+    public double yValue(int pixelY) {
+        return yValue(null, pixelY);
     }
 
     
@@ -205,22 +231,6 @@ public final class ChartGeometry {
     }
 
 
-    /**
-     * Collect all points in x,y range and determine their min and max values.
-     * return everything in a Dataset.Window object 
-     */
-    private void computeWindows() {
-        windows.clear();
-        for (Map.Entry<Object, ChartData<Number, Number>> dataGraph : dataMap.entrySet()) {
-            Object key = dataGraph.getKey();
-            AbstractDataAreaRenderer renderer = renderers.get(key);
-            if (renderer != null) {
-                renderer.addPointsInWindow(key, dataGraph.getValue(), getWindow(key));
-            }
-        }
-    }
-
-
     private Window getWindow(Object key) {
         if (! yWindowRanges.containsKey(key)) {
             return getFromWindows(null);
@@ -238,38 +248,6 @@ public final class ChartGeometry {
         return window;
     }
     
-    
-    /**
-     * Compute render data for points in window
-     */
-    private void computeDataPoints() {
-        for (Object key : dataMap.keySet()) {
-            AbstractDataAreaRenderer renderer = renderers.get(key);
-            if (renderer != null) {
-                Window window = getWindow(key);
-                graphs.put(key, renderer.createGraphGeomerty(window.getPoints(key)));
-            }
-        }
-    }
-
-
-    private void initializeGrids(Locale locale) {
-        if (xGrid == null) {
-            xGrid = new Grid();
-        }
-        initializeGrid(xGrid, xDataRange, locale);
-        if (yGrid == null) {
-            yGrid = new Grid();
-        }
-        initializeGrid(yGrid, yDataRanges.getDefault(), locale);
-    }
-
-
-    private static void initializeGrid(Grid grid, Range range, Locale locale) {
-        grid.setLocale(locale);
-        grid.initialize(range.getMin(), range.getMax());
-    }
-
     
     private double xRange() {
         return xDataRange.getMax().doubleValue() - xDataRange.getMin().doubleValue();
@@ -296,7 +274,7 @@ public final class ChartGeometry {
             points.put(key, graphPointsInWindow);
         }
 
-        public void setBounds(Number x, Number y) {
+        public void adjustBounds(Number x, Number y) {
             if (xDataRange.getMin() == null || x.doubleValue() < xDataRange.getMin().doubleValue()) {
                 xDataRange.setMin(x);
             }

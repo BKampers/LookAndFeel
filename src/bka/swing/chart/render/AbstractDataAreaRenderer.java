@@ -32,19 +32,31 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     }
 
 
+    /**
+     * Set the ChartGeometry.Window object that will hold the computed coorrdinates needed to
+     * draw graphs.
+     * @param window
+     */
     public void setWindow(ChartGeometry.Window window) {
         this.window = window;
     }
 
 
-    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData, ChartGeometry.Window window) {
+    /**
+     * Collect all points that are contained in this renderer's window and adjust
+     * data bounds of the window.
+     * 
+     * @param key
+     * @param chartData
+     */
+    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData) {
         ChartData<Number, Number> graphPointsInWindow = new ChartData<>();
         for (ChartDataElement<Number, Number> element : chartData) {
             Number x = element.getKey();
             Number y = element.getValue();
             if (window.inXRange(x) && window.inYRange(y)) {
                 graphPointsInWindow.add(x, y);
-                window.setBounds(x, y);
+                window.adjustBounds(x, y);
             }
         }
         window.putPoints(key, graphPointsInWindow);
@@ -92,11 +104,6 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     }
 
 
-    protected ChartGeometry.Window getWindow() {
-        return window;
-    }
-
-
     protected AreaDrawStyle<G> getAreaDrawStyle() {
         return areaDrawStyle;
     }
@@ -104,6 +111,11 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
 
     protected ChartPanel getChartPanel() {
         return chartPanel;
+    }
+
+
+    protected ChartGeometry.Window getWindow() {
+        return window;
     }
 
 

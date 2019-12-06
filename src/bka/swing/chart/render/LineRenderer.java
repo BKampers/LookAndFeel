@@ -37,7 +37,8 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
 
 
     @Override
-    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData, ChartGeometry.Window window) {
+    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData) {
+        ChartGeometry.Window window = getWindow();
         ChartDataElement<Number, Number>[] elements = new ChartDataElement[chartData.size()];
         int i = 0;
         for (ChartDataElement<Number, Number> element : chartData) {
@@ -59,7 +60,7 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
                 if (i == start || i == end || ! element.isOutsideWindow() || ! elements[i - 1].isOutsideWindow() || ! elements[i + 1].isOutsideWindow()) {
                     graphPointsInWindow.add(element);
                     if (! element.isOutsideWindow()) {
-                        window.setBounds(element.getKey(), element.getValue());
+                        window.adjustBounds(element.getKey(), element.getValue());
                     }
                 }
             }

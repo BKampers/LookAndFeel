@@ -43,19 +43,20 @@ public class IntegerGrid extends Grid {
 
     private long computeStep(double high, double low) {
         Scientific range = new Scientific(high - low);
-        return (long) (computeNormalizedStep(range) * range.factor() / 10);
+        long step = (long) (computeNormalizedStep(range) * range.factor() / 10);
+        return Math.max(1, step);
     }
 
 
     private long computeNormalizedStep(Scientific range) {
-        double coefficient = range.getCoefficient() * 10;
-        if (coefficient < 15) {
+        double coefficient = range.getCoefficient();
+        if (coefficient < 1.5) {
             return 1;
         }
-        if (coefficient < 20) {
+        if (coefficient < 2.0) {
             return 2;
         }
-        if (coefficient < 50) {
+        if (coefficient < 5.0) {
             return 5;
         }
         return 10;

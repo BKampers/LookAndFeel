@@ -10,13 +10,14 @@ import bka.swing.chart.geometry.*;
 import bka.swing.chart.grid.*;
 import bka.swing.chart.render.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.print.*;
 import java.util.*;
 import java.util.logging.*;
 import javax.swing.*;
 
 
-public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Printable {
+public final class ChartPanel extends javax.swing.JPanel implements java.awt.print.Printable {
 
 
     public enum AxisPosition { ORIGIN, MINIMUM, MAXIMUM }
@@ -68,17 +69,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         getLogger().log(Level.FINE, "setGraphs {0}", charts);
         setData(charts);
     }
-    
-    
-    public void clearGraphs() {
-        getLogger().log(Level.FINE, "clearGraphs");
-        if (! geometry.isEmpty()) {
-            synchronized (geometry) {
-                geometry.clear();
-            }
-            repaint();
-        }
-    }
 
     
     public void setTitle(String title) {
@@ -93,11 +83,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     public void setXWindowMinimum(Number min) {
         if (! minEquals(xRange, min)) {
-            synchronized (geometry) {
-                xRange.setMin(min);
-                initializeGeometry();
-            }
-            repaint();
+            xRange.setMin(min);
+            invalidate();
             notifyZoomListeners(min, null, null, null);
         }
     }
@@ -105,11 +92,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     public void setXWindowMaximum(Number max) {
         if (! maxEquals(xRange, max)) {
-            synchronized (geometry) {
-                xRange.setMax(max);
-                initializeGeometry();
-            }
-            repaint();
+            xRange.setMax(max);
+            invalidate();
             notifyZoomListeners(null, max, null, null);
         }
     }
@@ -117,11 +101,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     public void setXWindow(Number min, Number max) {
         if (! rangeEquals(xRange, min, max)) {
-            synchronized (geometry) {
-                xRange.set(min, max);
-                initializeGeometry();
-            }
-            repaint();
+            xRange.set(min, max);
+            invalidate();
             notifyZoomListeners(min, max, null, null);
         }
     }
@@ -129,11 +110,8 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     public void setYWindowMinimum(Number min) {
         if (! minEquals(yRanges.getDefault(), min)) {
-            synchronized (geometry) {
-                yRanges.getDefault().setMin(min);
-                initializeGeometry();
-            }
-            repaint();
+            yRanges.getDefault().setMin(min);
+            invalidate();
             notifyZoomListeners(null, null, min, null);
         }
     }
@@ -141,45 +119,25 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
     public void setYWindowMaximum(Number max) {
         if (! maxEquals(yRanges.getDefault(), max)) {
-            synchronized (geometry) {
-                yRanges.getDefault().setMax(max);
-                initializeGeometry();
-            }
-            repaint();
+            yRanges.getDefault().setMax(max);
+            invalidate();
             notifyZoomListeners(null, null, null, max);
         }
     }
     
     
     public void setYWindowBase(Number base) {
-        Number min = null;
-        Number max = null;
-        synchronized (geometry) {
-            Number oldMin = geometry.getYMin();
-            Number oldMax = geometry.getYMax();
+        if (! Objects.equals(yWindowBase, base)) {
             yWindowBase = base;
-            initializeGeometry();
-            Number newMin = geometry.getYMin();
-            Number newMax = geometry.getYMax();
-            if (oldMin != null && ! oldMin.equals(newMin)) {
-                min = newMin;
-            }
-            if (oldMax != null && ! oldMax.equals(newMax)) { max = newMax; }
-        }
-        if (min != null || max != null) {
-            repaint();
-            notifyZoomListeners(null, null, min, max);        
+            invalidate();
         }
     }
     
     
     public void setYWindow(Number min, Number max) {
         if (! rangeEquals(yRanges.getDefault(), min, max)) {
-            synchronized (geometry) {
-                yRanges.getDefault().set(min, max);
-                initializeGeometry();
-            }
-            repaint();
+            yRanges.getDefault().set(min, max);
+            invalidate();
             notifyZoomListeners(null, null, min, max);
         }
     }
@@ -187,24 +145,15 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
     public void setYWindow(Object key, Number min, Number max) {
         yRanges.put(key, min, max);
-        synchronized (geometry) {
-            initializeGeometry();
-            if (renderers.containsKey(key)) {
-                geometry.updateRenderers();
-            }
-        }
-        repaint();
+        invalidate();
     }
 
     
     public void setWindow(Number xMin, Number xMax, Number yMin, Number yMax) {
         if (! rangeEquals(xRange, xMin, xMax) || ! rangeEquals(yRanges.getDefault(), yMin, yMax)) {
-            synchronized (geometry) {
-                xRange.set(xMin, xMax);
-                yRanges.getDefault().set(yMin, yMax);
-                initializeGeometry();
-            }
-            repaint();
+            xRange.set(xMin, xMax);
+            yRanges.getDefault().set(yMin, yMax);
+            invalidate();
             notifyZoomListeners(xMin, xMax, yMin, yMax);
         }
     }
@@ -243,8 +192,7 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         else {
             renderers.remove(key);
         }
-        geometry.setRenderers(renderers);
-        initializeGeometry();
+        invalidate();
     }
     
 
@@ -328,16 +276,18 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     @Override
     public void invalidate() {
-        initializeGeometry();
+        synchronized (geometry) {
+            geometry.invalidate();
+        }
         super.invalidate();
     }
     
     
     @Override
-    public void paint(Graphics g) {
-        super.paint(g);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         synchronized (geometry) {
-            geometry.updateRenderers();
+            initializeGeometry();
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -459,10 +409,10 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     private void drawAxises(Graphics2D g2d) {
         if (axisRenderer != null) {
             if (geometry.getXMin() != null && geometry.getXMax() != null) {
-                axisRenderer.drawXAxis(g2d);
+                axisRenderer.drawXAxis(g2d, getLocale());
             }
             if (geometry.getYMin() != null && geometry.getYMax() != null) {
-                axisRenderer.drawYAxis(g2d);
+                axisRenderer.drawYAxis(g2d, getLocale());
             }
         }
     }
@@ -508,17 +458,16 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     }
 
     
-    private synchronized void setData(Map<Object, ChartData<Number, Number>> data) {
+    private void setData(Map<Object, ChartData<Number, Number>> data) {
         synchronized (geometry) {
             geometry.setData(data, renderers);
-            initializeGeometry();
+            invalidate();
         }
-        invalidate();
     }
     
     
     private void initializeGeometry() {
-        geometry.initialize(chartArea(), xRange, yRanges, yWindowBase, getLocale());
+        geometry.initialize(chartArea(), xRange, yRanges, yWindowBase);
     }
 
     
@@ -552,7 +501,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
     
     
     private void addListeners() {
-        addComponentListener(new ComponentAdapter());
         MouseAdapter mouseAdapter = new MouseAdapter();
         addMouseMotionListener(mouseAdapter);
         addMouseListener(mouseAdapter);
@@ -566,18 +514,6 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
 
     private static Logger getLogger() {
         return Logger.getLogger(ChartPanel.class.getName());
-    }
-
-
-    private class ComponentAdapter extends java.awt.event.ComponentAdapter {
-        
-        @Override
-        public void componentResized(java.awt.event.ComponentEvent evt) {
-            synchronized (geometry) {
-                initializeGeometry();
-            }
-        }
-        
     }
 
 
@@ -602,73 +538,63 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         @Override
         public void mousePressed(java.awt.event.MouseEvent evt) {
             if (dragZoomMode != DragZoomMode.NONE && evt.getButton() == java.awt.event.MouseEvent.BUTTON1) {
-                dragStartPoint = new Point(evt.getX(), evt.getY());
-                switch (dragZoomMode) {
-                    case X: 
-                        dragStartPoint.x = Math.max(areaLeft(), dragStartPoint.x);
-                        dragStartPoint.x = Math.min(areaRight(), dragStartPoint.x);
-                        dragStartPoint.y = areaTop();
-                        break;
-                    case Y:
-                        dragStartPoint.x = areaLeft();
-                        dragStartPoint.y = Math.max(areaTop(), dragStartPoint.y);
-                        dragStartPoint.y = Math.min(areaBottom(), dragStartPoint.y);
-                        break;
-                    case XY:
-                        dragStartPoint.x = Math.max(areaLeft(), dragStartPoint.x);
-                        dragStartPoint.x = Math.min(areaRight(), dragStartPoint.x);
-                        dragStartPoint.y = Math.max(areaTop(), dragStartPoint.y);
-                        dragStartPoint.y = Math.min(areaBottom(), dragStartPoint.y);
-                        break;
-                }
+                dragStartPoint = getZoomPoint(evt);
                 repaint();
             }
         }
-        
+
         @Override
         public void mouseDragged(java.awt.event.MouseEvent evt) {
-            if (dragZoomMode != DragZoomMode.NONE && dragStartPoint != null) {
-                dragEndPoint = new Point(evt.getX(), evt.getY());
-                switch (dragZoomMode) {
-                    case X: 
-                        dragEndPoint.x = Math.max(areaLeft(), dragEndPoint.x);
-                        dragEndPoint.x = Math.min(areaRight(), dragEndPoint.x);
-                        dragEndPoint.y = areaBottom();
-                        break;
-                    case Y:
-                        dragEndPoint.x = areaRight();
-                        dragEndPoint.y = Math.max(areaTop(), dragEndPoint.y);
-                        dragEndPoint.y = Math.min(areaBottom(), dragEndPoint.y);
-                        break;
-                    case XY:
-                        dragEndPoint.x = Math.max(areaLeft(), dragEndPoint.x);
-                        dragEndPoint.x = Math.min(areaRight(), dragEndPoint.x);
-                        dragEndPoint.y = Math.max(areaTop(), dragEndPoint.y);
-                        dragEndPoint.y = Math.min(areaBottom(), dragEndPoint.y);
-                        break;
-                }
+           if (dragZoomMode != DragZoomMode.NONE && dragStartPoint != null) {
+                dragEndPoint = getZoomPoint(evt);
                 repaint();
             }
         }
         
+        private Point getZoomPoint(MouseEvent evt) {
+            switch (dragZoomMode) {
+                case X:
+                    return new Point(getZoomX(evt), areaTop());
+                case Y:
+                    return new Point(areaLeft(), getZoomY(evt));
+                case XY:
+                    return new Point(getZoomX(evt), getZoomY(evt));
+                default:
+                    throw new IllegalStateException(dragZoomMode.name());
+            }
+        }
+
+        private int getZoomX(MouseEvent evt) {
+            return Math.min(Math.max(areaLeft(), evt.getX()), areaRight());
+        }
+
+        private int getZoomY(MouseEvent evt) {
+            return Math.min(Math.max(areaTop(), evt.getY()), areaBottom());
+        }
+
         @Override
         public void mouseReleased(java.awt.event.MouseEvent evt) {
             if (dragStartPoint != null && dragEndPoint != null) {
                 if (evt.getButton() == java.awt.event.MouseEvent.BUTTON1) {
-                    switch (dragZoomMode) {
-                        case X:
-                            setXWindow(xMin(), xMax());
-                            break;
-                        case Y:
-                            setYWindow(yMin(), yMax());
-                            break;
-                        case XY:
-                            setWindow(xMin(), xMax(), yMin(), yMax());
-                            break;
-                    }
+                    adjustWindow();
                 }
                 dragStartPoint = null;
                 dragEndPoint = null;
+                repaint();
+            }
+        }
+
+        private void adjustWindow() {
+            switch (dragZoomMode) {
+                case X:
+                    setXWindow(xMin(), xMax());
+                    break;
+                case Y:
+                    setYWindow(yMin(), yMax());
+                    break;
+                case XY:
+                    setWindow(xMin(), xMax(), yMin(), yMax());
+                    break;
             }
         }
 
@@ -681,11 +607,11 @@ public class ChartPanel extends javax.swing.JPanel implements java.awt.print.Pri
         }
 
         private Number yMin(){
-            return geometry.yValue(null, Math.max(dragStartPoint.y, dragEndPoint.y));
+            return geometry.yValue(Math.max(dragStartPoint.y, dragEndPoint.y));
         }
 
         private Number yMax() {
-            return geometry.yValue(null, Math.min(dragStartPoint.y, dragEndPoint.y));
+            return geometry.yValue(Math.min(dragStartPoint.y, dragEndPoint.y));
         }
 
         @Override

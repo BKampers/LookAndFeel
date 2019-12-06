@@ -48,8 +48,8 @@ public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcArea
 
 
     @Override
-    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData, ChartGeometry.Window window) {
-        window.putPoints(key, chartData);
+    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData) {
+        getWindow().putPoints(key, chartData);
     }
 
 

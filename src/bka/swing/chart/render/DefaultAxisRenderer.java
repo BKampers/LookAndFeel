@@ -7,6 +7,7 @@ package bka.swing.chart.render;
 
 import bka.swing.chart.grid.*;
 import java.awt.*;
+import java.util.*;
 
 
 public class DefaultAxisRenderer extends AxisRenderer {
@@ -29,7 +30,7 @@ public class DefaultAxisRenderer extends AxisRenderer {
 
     
     @Override
-    public void drawXAxis(Graphics2D g2d) {
+    public void drawXAxis(Graphics2D g2d, Locale locale) {
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int xMin = xMin();
         int xMax = xMax();
@@ -50,7 +51,7 @@ public class DefaultAxisRenderer extends AxisRenderer {
                     if (drawMarker) {
                         g2d.drawLine(x, y - 2, x, y + 2);
                     }
-                    String label = markerSet.getLabel(value);
+                    String label = markerSet.getLabel(locale, value);
                     if (label.endsWith(">")) {
                         // draw label between two markers
                         if (i < count - 1) {
@@ -87,7 +88,7 @@ public class DefaultAxisRenderer extends AxisRenderer {
 
     
     @Override
-    public void drawYAxis(Graphics2D g2d) {
+    public void drawYAxis(Graphics2D g2d, Locale locale) {
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int x = xAxisPixelPosition();
         g2d.setColor(yAxisColor);
@@ -104,7 +105,7 @@ public class DefaultAxisRenderer extends AxisRenderer {
                     if (drawMarker) {
                         g2d.drawLine(x - 2, y, x + 2, y);
                     }
-                    String label = markerSet.getLabel(value);
+                    String label = markerSet.getLabel(locale, value);
                     int width = fontMetrics.stringWidth(label);
                     columnWidth = Math.max(width, columnWidth);
                     int labelPosition = x - width - labelOffset;

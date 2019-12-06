@@ -14,8 +14,8 @@ import java.util.*;
 public abstract class AxisRenderer {
     
     
-    public abstract void drawXAxis(java.awt.Graphics2D g2d);
-    public abstract void drawYAxis(java.awt.Graphics2D g2d);
+    public abstract void drawXAxis(java.awt.Graphics2D g2d, Locale locale);
+    public abstract void drawYAxis(java.awt.Graphics2D g2d, Locale locale);
 
 
     public void setPanel(ChartPanel panel) {

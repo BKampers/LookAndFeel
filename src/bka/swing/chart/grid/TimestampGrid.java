@@ -75,7 +75,7 @@ public class TimestampGrid extends Grid {
 
 
     @Override
-    public String label(String format, Number value) {
+    public String label(String format, Locale locale, Number value) {
         java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat(format, locale);
         return dateFormat.format(new Date(value.longValue()));
     }
