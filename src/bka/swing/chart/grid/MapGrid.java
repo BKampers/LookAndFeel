@@ -40,7 +40,13 @@ public class MapGrid extends Grid{
                 values.add(number);
             }
         }
-        markerLists.add(new MarkerList(values, null));
+        addMarkerList(new MarkerList(values, null));
+    }
+
+
+    @Override
+    protected String label(String format, Locale locale, Number value) {
+        return map.get(value);
     }
     
     

@@ -6,6 +6,7 @@ package bka.swing.chart.grid;
 
 
 import java.util.*;
+import java.util.concurrent.*;
 
 
 public class TimestampGrid extends Grid {
@@ -94,7 +95,7 @@ public class TimestampGrid extends Grid {
         List<Number> markerValues = new ArrayList<>();
         markerValues.add(calendar.getTimeInMillis());
         addMarkerValues(calendar, max, stepSize, markerValues, true);
-        markerLists.add(new MarkerList(markerValues, stepSize.format));
+        addMarkerList(new MarkerList(markerValues, stepSize.format));
     }
     
     
@@ -110,7 +111,7 @@ public class TimestampGrid extends Grid {
             if (! format.endsWith(">")) {
                 format += ">";
             }
-            markerLists.add(new MarkerList(markerValues, format));
+            addMarkerList(new MarkerList(markerValues, format));
         }
     }
 
@@ -172,12 +173,12 @@ public class TimestampGrid extends Grid {
                 break;
             case Calendar.MINUTE:
                 //low.clear(Calendar.SECOND); <- This affects DST offset, do not use it
-                long round = stepSize.amount * bka.numeric.Time.MILLIS_PER_MINUTE;
+                long round = TimeUnit.MINUTES.toMillis(stepSize.amount);
                 calendar.setTimeInMillis((calendar.getTimeInMillis() / round) * round);
                 break;
             case Calendar.SECOND:
                 //low.clear(Calendar.MILLISECOND); <- This affects DST offset, do not use it
-                round = stepSize.amount * bka.numeric.Time.MILLIS_PER_SECOND;
+                round = TimeUnit.SECONDS.toMillis(stepSize.amount);
                 calendar.setTimeInMillis((calendar.getTimeInMillis() / round) * round);
                 break;
             case Calendar.MILLISECOND:
