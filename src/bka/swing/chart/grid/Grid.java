@@ -32,17 +32,24 @@ public class Grid {
     }
 
 
-    public Grid() {
-        stepSizeMap.put(BigDecimal.valueOf(15, 1), BigDecimal.valueOf(1, 0));
-        stepSizeMap.put(BigDecimal.valueOf(2, 0), BigDecimal.valueOf(2, 0));
-        stepSizeMap.put(BigDecimal.valueOf(3, 0), BigDecimal.valueOf(25, 1));
-        stepSizeMap.put(BigDecimal.valueOf(5, 0), BigDecimal.valueOf(5, 0));
-        stepSizeMap.put(BigDecimal.valueOf(10, 0), BigDecimal.valueOf(10, 0));
+    public Grid(SortedMap<BigDecimal, BigDecimal> map) {
+        stepSizeMap.putAll(map);
     }
 
 
-    public Grid(SortedMap<BigDecimal, BigDecimal> map) {
-        stepSizeMap.putAll(map);
+     public Grid() {
+        this(createDefualtMap());
+    }
+
+
+   private static SortedMap<BigDecimal, BigDecimal> createDefualtMap() {
+        SortedMap<BigDecimal, BigDecimal> map =  new TreeMap<>();
+        map.put(BigDecimal.valueOf(15, 1), BigDecimal.valueOf(1, 0));
+        map.put(BigDecimal.valueOf(2, 0), BigDecimal.valueOf(2, 0));
+        map.put(BigDecimal.valueOf(3, 0), BigDecimal.valueOf(25, 1));
+        map.put(BigDecimal.valueOf(5, 0), BigDecimal.valueOf(5, 0));
+        map.put(BigDecimal.valueOf(10, 0), BigDecimal.valueOf(10, 0));
+        return map;
     }
 
 
@@ -117,14 +124,9 @@ public class Grid {
     }
 
 
-    protected final SortedMap<BigDecimal, BigDecimal> stepSizeMap = new TreeMap<>();
+    private final SortedMap<BigDecimal, BigDecimal> stepSizeMap = new TreeMap<>();
 
     private final List<MarkerList> markerLists = new ArrayList<>();
-
-    protected static final BigDecimal ONE_AND_A_HALF = new BigDecimal(1.5);
-    protected static final BigDecimal TWO = BigDecimal.valueOf(2);
-    protected static final BigDecimal THREE = BigDecimal.valueOf(3);
-    protected static final BigDecimal FIVE = BigDecimal.valueOf(5);
 
     private static final String FORMAT = "%%.%df";
 

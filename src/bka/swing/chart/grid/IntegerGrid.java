@@ -11,12 +11,17 @@ import java.util.*;
 public class IntegerGrid extends Grid {
 
 
-    public IntegerGrid() {
-        super(createMap());
+    public IntegerGrid(SortedMap<BigDecimal, BigDecimal> map) {
+        super(map);
     }
 
 
-    private static SortedMap<BigDecimal, BigDecimal> createMap() {
+    public IntegerGrid() {
+        super(createDefaultMap());
+    }
+
+
+    private static SortedMap<BigDecimal, BigDecimal> createDefaultMap() {
         SortedMap<BigDecimal, BigDecimal> map =  new TreeMap<>();
         map.put(BigDecimal.valueOf(15, 1), BigDecimal.valueOf(1, 0));
         map.put(BigDecimal.valueOf(2, 0), BigDecimal.valueOf(2, 0));
