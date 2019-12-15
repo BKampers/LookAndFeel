@@ -194,7 +194,7 @@ public class Demo extends javax.swing.JFrame {
         chartPanel.setRenderer(CURVE, createPolygonDotRenderer());
         chartPanel.setWindow(null, null, null, null);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
-        chartPanel.setXGrid(new Grid());
+        chartPanel.setXGrid(new NumberGrid());
         chartPanel.setGridRenderer(new DefaultGridRenderer(DEFAULT_GRID_STYLE), ChartPanel.GridMode.X);
     }
 
@@ -207,7 +207,7 @@ public class Demo extends javax.swing.JFrame {
         chartPanel.setWindow(null, null, 0, 25);
         chartPanel.setYWindow(LINE, 1, 20);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
-        chartPanel.setXGrid(new Grid());
+        chartPanel.setXGrid(new NumberGrid());
         chartPanel.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartPanel.GridMode.X);
     }
 
@@ -240,8 +240,8 @@ public class Demo extends javax.swing.JFrame {
         chartPanel.setRenderer(SCATTER, new ScatterRenderer<>(createPointDrawStyle()));
         chartPanel.setWindow(xWindowMinimum, xWindowMaximum, 0, yWindowMaximum);
         chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
-        chartPanel.setXGrid(new Grid());
-        chartPanel.setYGrid(new Grid());
+        chartPanel.setXGrid(new NumberGrid());
+        chartPanel.setYGrid(new NumberGrid());
         chartPanel.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartPanel.GridMode.X);
     }
 

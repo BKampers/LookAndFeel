@@ -8,7 +8,7 @@ import java.math.*;
 import java.util.*;
 
 
-public class IntegerGrid extends Grid {
+public class IntegerGrid extends NumberGrid {
 
 
     public IntegerGrid(SortedMap<BigDecimal, BigDecimal> map) {
@@ -21,8 +21,8 @@ public class IntegerGrid extends Grid {
     }
 
 
-    private static SortedMap<BigDecimal, BigDecimal> createDefaultMap() {
-        SortedMap<BigDecimal, BigDecimal> map =  new TreeMap<>();
+    private static Map<BigDecimal, BigDecimal> createDefaultMap() {
+        Map<BigDecimal, BigDecimal> map =  new TreeMap<>();
         map.put(BigDecimal.valueOf(15, 1), BigDecimal.valueOf(1, 0));
         map.put(BigDecimal.valueOf(2, 0), BigDecimal.valueOf(2, 0));
         map.put(BigDecimal.valueOf(5, 0), BigDecimal.valueOf(5, 0));

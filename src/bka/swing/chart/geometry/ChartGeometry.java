@@ -102,11 +102,11 @@ public final class ChartGeometry {
 
     private void initializeGrids() {
         if (xGrid == null) {
-            xGrid = new Grid();
+            xGrid = new NumberGrid();
         }
         initializeGrid(xGrid, xDataRange);
         if (yGrid == null) {
-            yGrid = new Grid();
+            yGrid = new NumberGrid();
         }
         initializeGrid(yGrid, yDataRanges.getDefault());
     }

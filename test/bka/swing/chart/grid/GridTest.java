@@ -14,7 +14,7 @@ public class GridTest {
 
 
     @Test
-    public void gridTest() {
+    public void numberGridTest() {
         final TestRange[] testRanges = {
             new TestRange(1, 20, new String[] { "0", "2", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22" }),
             new TestRange(0.0, 250.0, new String[] { "0", "25", "50", "75", "100", "125", "150", "175", "200", "225", "250", "275" }),
@@ -22,7 +22,7 @@ public class GridTest {
             new TestRange(0.0, 2.5, new String[] { "0.00", "0.25", "0.50", "0.75", "1.00", "1.25", "1.50", "1.75", "2.00", "2.25", "2.50", "2.75" }),
             new TestRange(0.0, 0.25, new String[] { "0.000", "0.025", "0.050", "0.075", "0.100", "0.125", "0.150", "0.175", "0.200", "0.225", "0.250", "0.275" })
         };
-        Grid grid = new Grid();
+        NumberGrid grid = new NumberGrid();
         testGrid(grid, testRanges);
     }
 

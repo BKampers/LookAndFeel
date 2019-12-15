@@ -8,7 +8,7 @@ package bka.swing.chart.grid;
 import java.util.*;
 
 
-public class MapGrid extends Grid{
+public class MapGrid extends Grid {
 
     
     public MapGrid(Map<Number, String> map) {
