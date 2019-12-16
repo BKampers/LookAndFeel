@@ -13,65 +13,75 @@ import static org.junit.Assert.*;
 public class GridTest {
 
 
+    @After
+    public void cleanup() {
+        grid = null;
+    }
+
+
     @Test
     public void numberGridTest() {
-        final TestRange[] testRanges = {
-            new TestRange(1, 20, new String[] { "0", "2", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22" }),
-            new TestRange(0.0, 250.0, new String[] { "0", "25", "50", "75", "100", "125", "150", "175", "200", "225", "250", "275" }),
-            new TestRange(0.0, 25.0, new String[] { "0.0", "2.5", "5.0", "7.5", "10.0", "12.5", "15.0", "17.5", "20.0", "22.5", "25.0", "27.5" }),
-            new TestRange(0.0, 2.5, new String[] { "0.00", "0.25", "0.50", "0.75", "1.00", "1.25", "1.50", "1.75", "2.00", "2.25", "2.50", "2.75" }),
-            new TestRange(0.0, 0.25, new String[] { "0.000", "0.025", "0.050", "0.075", "0.100", "0.125", "0.150", "0.175", "0.200", "0.225", "0.250", "0.275" })
-        };
-        NumberGrid grid = new NumberGrid();
-        testGrid(grid, testRanges);
+        grid = new NumberGrid();
+        testGrid(1, 20, new String[] { "0", "2", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22" });
+        testGrid(0.0, 250.0, new String[] { "0", "25", "50", "75", "100", "125", "150", "175", "200", "225", "250", "275" });
+        testGrid(0.0, 25.0, new String[] { "0.0", "2.5", "5.0", "7.5", "10.0", "12.5", "15.0", "17.5", "20.0", "22.5", "25.0", "27.5" });
+        testGrid(0.0, 2.5, new String[] { "0.00", "0.25", "0.50", "0.75", "1.00", "1.25", "1.50", "1.75", "2.00", "2.25", "2.50", "2.75" });
+        testGrid(0.0, 0.25, new String[] { "0.000", "0.025", "0.050", "0.075", "0.100", "0.125", "0.150", "0.175", "0.200", "0.225", "0.250", "0.275" });
+        testGrid(0.0, 0.1, new String[] { "0.00", "0.01", "0.02", "0.03", "0.04", "0.05", "0.06", "0.07", "0.08", "0.09", "0.10", "0.11" });
+        testGrid(0.0, 0.2, new String[] { "0.000", "0.025", "0.050", "0.075", "0.100", "0.125", "0.150", "0.175", "0.200", "0.225" });
+        testGrid(0.0, 0.3, new String[] { "0.000", "0.025", "0.050", "0.075", "0.100", "0.125", "0.150", "0.175", "0.200", "0.225", "0.250", "0.275", "0.300", "0.325" });
+        testGrid(0.0, 0.4, new String[] { "0.00", "0.05", "0.10", "0.15", "0.20", "0.25", "0.30", "0.35", "0.40", "0.45" });
+        testGrid(0.0, 0.5, new String[] { "0.00", "0.10", "0.20", "0.30", "0.40", "0.50", "0.60" });
+        testGrid(0.0, 0.6, new String[] { "0.00", "0.10", "0.20", "0.30", "0.40", "0.50", "0.60", "0.70" });
+        testGrid(0.0, 0.7, new String[] { "0.00", "0.10", "0.20", "0.30", "0.40", "0.50", "0.60", "0.70", "0.80" });
+        testGrid(0.0, 0.8, new String[] { "0.00", "0.10", "0.20", "0.30", "0.40", "0.50", "0.60", "0.70", "0.80", "0.90" });
+        testGrid(0.0, 0.9, new String[] { "0.00", "0.10", "0.20", "0.30", "0.40", "0.50", "0.60", "0.70", "0.80", "0.90", "1.00" });
+        testGrid(0.0, 1.0, new String[] { "0.0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0", "1.1" });
+        testGrid(0.0, 1.1, new String[] { "0.0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0", "1.1", "1.2" });
+        testGrid(0.0, 1.2, new String[] { "0.0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0", "1.1", "1.2", "1.3" });
+        testGrid(0.0, 1.3, new String[] { "0.0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0", "1.1", "1.2", "1.3", "1.4" });
+        testGrid(0.0, 1.4, new String[] { "0.0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0", "1.1", "1.2", "1.3", "1.4" });
+        testGrid(0.0, 1.5, new String[] { "0.0", "0.2", "0.4", "0.6", "0.8", "1.0", "1.2", "1.4", "1.6" });
     }
 
 
     @Test
     public void integerGridTest() {
-        final TestRange[] testRanges = {
-            new TestRange(1, 20, new String[] { "0", "2", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22" }),
-            new TestRange(0, 20, new String[] { "0", "5", "10", "15", "20", "25" }),
-            new TestRange(0, 200, new String[] { "0", "50", "100", "150", "200", "250" })
-        };
-        IntegerGrid grid = new IntegerGrid();
-        testGrid(grid, testRanges);
+        grid = new IntegerGrid();
+        testGrid(1, 20, new String[] { "0", "2", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22" });
+        testGrid(0, 20, new String[] { "0", "5", "10", "15", "20", "25" });
+        testGrid(0, 200, new String[] { "0", "50", "100", "150", "200", "250" });
+
     }
 
 
     @Test
     public void timestampGridTest() {
-        final TestRange[] testRanges = {
-            new TestRange(timestamp(1970, 0, 1), timestamp(1970, 11, 31), new String[] { "1 Jan 1970", "1 Apr 1970", "1 Jul 1970", "1 Oct 1970", "1 Jan 1971" }),
-            new TestRange(TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(4), new String[][] {
-                { "01.000", "01.500", "02.000", "02.500", "03.000", "03.500", "04.000", "04.500" },
-                { "1:00>" , "1:00>"}
-            }),
-            new TestRange(TimeUnit.MINUTES.toMillis(1), TimeUnit.MINUTES.toMillis(10), new String[][] {
-                { "1:01", "1:02", "1:03", "1:04", "1:05", "1:06", "1:07", "1:08", "1:09", "1:10", "1:11" },
-                { "1 Jan>" , "1 Jan>"}
-            }),
-            new TestRange(0, 1000, new String[][] {
-                { "00.000", "00.100", "00.200", "00.300", "00.400", "00.500", "00.600", "00.700", "00.800", "00.900", "01.000", "01.100" },
-                { "1:00>", "1:00>" }
-            })
-        };
-        TimestampGrid grid = new TimestampGrid();
-        testGrid(grid, testRanges);
+        grid = new TimestampGrid();
+        testGrid(timestamp(1970, 0, 1), timestamp(1970, 11, 31), new String[] { "1 Jan 1970", "1 Apr 1970", "1 Jul 1970", "1 Oct 1970", "1 Jan 1971" });
+        testGrid(TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(4), new String[][] {
+            { "01.000", "01.500", "02.000", "02.500", "03.000", "03.500", "04.000", "04.500" },
+            { "1:00>" , "1:00>"}
+        });
+        testGrid(TimeUnit.MINUTES.toMillis(1), TimeUnit.MINUTES.toMillis(10), new String[][] {
+            { "1:01", "1:02", "1:03", "1:04", "1:05", "1:06", "1:07", "1:08", "1:09", "1:10", "1:11" },
+            { "1 Jan>" , "1 Jan>"}
+        });
+        testGrid(0, 1000, new String[][] {
+            { "00.000", "00.100", "00.200", "00.300", "00.400", "00.500", "00.600", "00.700", "00.800", "00.900", "01.000", "01.100" },
+            { "1:00>", "1:00>" }
+        });
     }
 
 
     @Test
     public void mapGridTest() {
-        final TestRange[] testRanges = {
-            new TestRange(1, 3, new String[] { "one", "two", "three" })
-        };
         Map<Number, String> map = new HashMap<>();
         map.put(1, "one");
         map.put(2, "two");
         map.put(3, "three");
-        MapGrid grid = new MapGrid(map);
-        testGrid(grid, testRanges);
+        grid = new MapGrid(map);
+        testGrid(1, 3, new String[] { "one", "two", "three" });
     }
 
 
@@ -82,14 +92,17 @@ public class GridTest {
     }
 
 
-    private void testGrid(Grid grid, TestRange[] testRanges) {
-        for (TestRange range : testRanges) {
-            grid.initialize(range.getMin(), range.getMax());
-            assertLabelsEqual(range.getExpectedLabels(), grid.getMarkerLists());
-        }
+    private void testGrid(Number min, Number max, String[] expectedLabels) {
+        testGrid(min, max, new String[][] { expectedLabels });
     }
 
-    
+
+    private void testGrid(Number min, Number max, String[][] expectedLabels) {
+        grid.initialize(min, max);
+        assertLabelsEqual(expectedLabels, grid.getMarkerLists());
+    }
+
+
     private void assertLabelsEqual(String[][] expectedLabels, List<Grid.MarkerList> markerLists) {
         assertEquals(expectedLabels.length, markerLists.size());
         for (int row = 0; row < markerLists.size(); ++row) {
@@ -106,37 +119,6 @@ public class GridTest {
     }
 
 
-    private class TestRange {
-
-        public TestRange(Number min, Number max, String[] expectedLabels) {
-            this(min, max, new String[][] { expectedLabels });
-        }
-
-        public TestRange(Number min, Number max, String[][] expectedLabels) {
-            this.min = min;
-            this.max = max;
-            this.expectedLabels = expectedLabels;
-        }
-
-        public TestRange(Date min, Date max, String[] expectedLabels) {
-            this(min.getTime(), max.getTime(), expectedLabels);
-        }
-
-        public Number getMin() {
-            return min;
-        }
-
-        public Number getMax() {
-            return max;
-        }
-
-        public String[][] getExpectedLabels() {
-            return expectedLabels;
-        }
-
-        private final Number min;
-        private final Number max;
-        private final String[][] expectedLabels;
-    }
+    private Grid grid;
 
 }
