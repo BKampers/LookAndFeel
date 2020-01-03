@@ -19,7 +19,7 @@ public class DefaultGridRenderer extends GridRenderer {
     
     @Override
     public void draw(Graphics2D g2d) {
-        switch (chartPanel.getGridMode()) {
+        switch (getChartRenderer().getGridMode()) {
             case X:
                 drawVerticalGridAreas(g2d);
                 drawHorizontalLines(g2d);
@@ -40,10 +40,10 @@ public class DefaultGridRenderer extends GridRenderer {
         if (stroke != null && paint != null) {
             g2d.setPaint(paint);
             g2d.setStroke(stroke);
-            int areaTop = chartPanel.areaTop();
-            int areaHeight = chartPanel.areaHeight();
-            int areaLeft = chartPanel.areaLeft();
-            ChartGeometry chartGeometry = chartPanel.getChartGeometry();
+            int areaTop = getChartRenderer().areaTop();
+            int areaHeight = getChartRenderer().areaHeight();
+            int areaLeft = getChartRenderer().areaLeft();
+            ChartGeometry chartGeometry = getChartRenderer().getChartGeometry();
             java.util.List<Number> values = chartGeometry.getXGrid().getValues();
             int count = values.size();
             for (int i = 1; i < count; ++i) {
@@ -60,10 +60,10 @@ public class DefaultGridRenderer extends GridRenderer {
         if (stroke != null && paint != null) {
             g2d.setPaint(paint);
             g2d.setStroke(stroke);
-            int areaTop = chartPanel.areaTop();
-            int areaLeft = chartPanel.areaLeft();
-            int areaRight = chartPanel.areaRight();
-            ChartGeometry chartGeometry = chartPanel.getChartGeometry();
+            int areaTop = getChartRenderer().areaTop();
+            int areaLeft = getChartRenderer().areaLeft();
+            int areaRight = getChartRenderer().areaRight();
+            ChartGeometry chartGeometry = getChartRenderer().getChartGeometry();
             java.util.List<Number> values = chartGeometry.getYGrid().getValues();
             int count = values.size();
             for (int i = 1; i < count; ++i) {
@@ -75,11 +75,11 @@ public class DefaultGridRenderer extends GridRenderer {
 
 
     private void drawVerticalGridAreas(Graphics2D g2d) {
-        int areaTop = chartPanel.areaTop();
-        int areaHeight = chartPanel.areaHeight();
-        int areaLeft = chartPanel.areaLeft();
-        int areaRight = chartPanel.areaRight();
-        ChartGeometry chartGeometry = chartPanel.getChartGeometry();
+        int areaTop = getChartRenderer().areaTop();
+        int areaHeight = getChartRenderer().areaHeight();
+        int areaLeft = getChartRenderer().areaLeft();
+        int areaRight = getChartRenderer().areaRight();
+        ChartGeometry chartGeometry = getChartRenderer().getChartGeometry();
         java.util.List<Number> values = chartGeometry.getXGrid().getValues();
         int count = values.size();
         for (int i = 1; i < count; ++i) {
@@ -99,11 +99,11 @@ public class DefaultGridRenderer extends GridRenderer {
     
     
     private void drawHorizontalGridAreas(Graphics2D g2d) {
-        int areaTop = chartPanel.areaTop();
-        int areaBottom = chartPanel.areaBottom();
-        int areaLeft = chartPanel.areaLeft();
-        int areaWidth = chartPanel.areaWidth();
-        ChartGeometry chartGeometry = chartPanel.getChartGeometry();
+        int areaTop = getChartRenderer().areaTop();
+        int areaBottom = getChartRenderer().areaBottom();
+        int areaLeft = getChartRenderer().areaLeft();
+        int areaWidth = getChartRenderer().areaWidth();
+        ChartGeometry chartGeometry = getChartRenderer().getChartGeometry();
         java.util.List<Number> values = chartGeometry.getYGrid().getValues();
         int count = values.size();
         for (int i = 1; i < count; ++i) {

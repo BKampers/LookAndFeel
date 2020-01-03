@@ -5,11 +5,11 @@
 package bka.swing.chart.render;
 
 
-import bka.swing.chart.geometry.AreaGeometry;
+import bka.swing.chart.geometry.*;
 import java.awt.*;
+import java.util.Formatter;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 
 public class DefaultPointHighlightRenderer {
@@ -35,13 +35,14 @@ public class DefaultPointHighlightRenderer {
     }
 
     
-    public void draw(Graphics2D g2d, AreaGeometry geometry, Point labelLocation) {
-        String xLabel = xLabel(geometry);
-        String yLabel = yLabel(geometry);
+    public void draw(Graphics2D g2d, HighlightGeometry geometry) {
+        String xLabel = xLabel(geometry.getAreaGeometry());
+        String yLabel = yLabel(geometry.getAreaGeometry());
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int xWidth = fontMetrics.stringWidth(xLabel);
         int yWidth = fontMetrics.stringWidth(yLabel);
         int labelWidth = Math.max(xWidth, yWidth);
+        Point labelLocation = geometry.getLabelLocation();
         int labelBase = labelLocation.y - fontMetrics.getHeight();
         Composite originalComposite = g2d.getComposite();
         g2d.setPaint(background);

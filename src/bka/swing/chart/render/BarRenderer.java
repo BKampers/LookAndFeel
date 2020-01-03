@@ -47,7 +47,7 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
     @Override
     protected Rectangle createArea(int x, int y) {
         int left = x - width / 2 + shift;
-        int barHeight = getChartPanel().areaBottom() - y;
+        int barHeight = getChartRenderer().areaBottom() - y;
         return new Rectangle(left, y, width, barHeight);
 
     }

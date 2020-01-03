@@ -8,8 +8,12 @@ import bka.swing.chart.custom.*;
 import bka.swing.chart.grid.*;
 import bka.swing.chart.render.*;
 import java.awt.*;
+import java.awt.image.*;
+import java.awt.print.*;
+import java.io.*;
 import java.util.*;
 import java.util.logging.*;
+import javax.imageio.*;
 
 
 public class Demo extends javax.swing.JFrame {
@@ -17,6 +21,8 @@ public class Demo extends javax.swing.JFrame {
 
     public Demo() {
         populateDataSets();
+        chartRenderer = new ChartRenderer(100, 125, 50, 50);
+        chartPanel = new ChartPanel(chartRenderer);
         initComponents();
         initChartPanel();
         displayPanel.add(chartPanel);
@@ -47,7 +53,7 @@ public class Demo extends javax.swing.JFrame {
             }
         }
         catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Demo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            getLogger().log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -78,6 +84,7 @@ public class Demo extends javax.swing.JFrame {
         displayPanel = new javax.swing.JPanel();
         controlPanel = new javax.swing.JPanel();
         styleComboBox = new javax.swing.JComboBox();
+        printButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Chart Demo");
@@ -100,11 +107,21 @@ public class Demo extends javax.swing.JFrame {
             }
         });
 
+        printButton.setText("Print");
+        printButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printButton_actionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout controlPanelLayout = new javax.swing.GroupLayout(controlPanel);
         controlPanel.setLayout(controlPanelLayout);
         controlPanelLayout.setHorizontalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 670, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlPanelLayout.createSequentialGroup()
+                .addContainerGap(589, Short.MAX_VALUE)
+                .addComponent(printButton)
+                .addContainerGap())
             .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlPanelLayout.createSequentialGroup()
                     .addContainerGap(136, Short.MAX_VALUE)
@@ -113,11 +130,13 @@ public class Demo extends javax.swing.JFrame {
         );
         controlPanelLayout.setVerticalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 30, Short.MAX_VALUE)
+            .addGroup(controlPanelLayout.createSequentialGroup()
+                .addComponent(printButton)
+                .addGap(0, 6, Short.MAX_VALUE))
             .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(controlPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(styleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 18, Short.MAX_VALUE)
+                    .addComponent(styleComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 23, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -138,12 +157,12 @@ public class Demo extends javax.swing.JFrame {
 
 
     private void initChartPanel() {
-        chartPanel.setHighlightFormat(SINE, "x = %.3f", "y = %.3f");
-        chartPanel.setHighlightFormat(CURVE, "x = %d", "y = %.2f");
-        chartPanel.setHighlightFormat(LINE, "x = %d", "y = %d");
-        chartPanel.setHighlightFormat(YEARS, "x = %d", "y = %f");
-        chartPanel.setHighlightFormat(MONTHS, "yyyy-MM-dd", "y = %d");
-        chartPanel.setShowLegend(true);
+        chartRenderer.setHighlightFormat(SINE, "x = %.3f", "y = %.3f");
+        chartRenderer.setHighlightFormat(CURVE, "x = %d", "y = %.2f");
+        chartRenderer.setHighlightFormat(LINE, "x = %d", "y = %d");
+        chartRenderer.setHighlightFormat(YEARS, "year = %d", "value = %f");
+        chartRenderer.setHighlightFormat(MONTHS, "yyyy-MM-dd", "y = %d");
+        chartRenderer.setShowLegend(true);
     }
 
 
@@ -155,7 +174,7 @@ public class Demo extends javax.swing.JFrame {
             configurePieChart(graphs);
         }
         else {
-            chartPanel.setAxisRenderer(new DefaultAxisRenderer());
+            chartRenderer.setAxisRenderer(new DefaultAxisRenderer());
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_GRID_AREA);
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
             if (GraphStyle.BAR.equals(selectedItem)) {
@@ -189,26 +208,56 @@ public class Demo extends javax.swing.JFrame {
     }//GEN-LAST:event_styleComboBox_actionPerformed
 
 
+    private void printButton_actionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButton_actionPerformed
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPrintable(chartRenderer);
+        if (job.printDialog()) {
+            try {
+                job.print();
+            }
+            catch (PrinterException ex) {
+                getLogger().log(Level.SEVERE, "printButton", ex);
+            }
+            finally {
+                chartPanel.invalidate();
+            }
+        }
+    }//GEN-LAST:event_printButton_actionPerformed
+
+
+    private void saveImage() {
+        BufferedImage image = new BufferedImage(chartPanel.getWidth(), chartPanel.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        chartRenderer.paint((Graphics2D) image.getGraphics(), chartPanel.getBounds());
+        java.io.File outputfile = new java.io.File("saved.png");
+        try {
+            ImageIO.write(image, "png", outputfile);
+        }
+        catch (IOException ex) {
+            getLogger().log(Level.WARNING, "Save PNG", ex);
+        }
+    }
+
+
     private void configureDefaultChart(Map<Object, Map<Number, Number>> graphs) {
-        chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer(CURVE, createPolygonDotRenderer());
-        chartPanel.setWindow(null, null, null, null);
-        chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
-        chartPanel.setXGrid(new NumberGrid());
-        chartPanel.setGridRenderer(new DefaultGridRenderer(DEFAULT_GRID_STYLE), ChartPanel.GridMode.X);
+        chartRenderer.setGraphs(graphs);
+        chartRenderer.setRenderer(CURVE, createPolygonDotRenderer());
+        chartRenderer.setWindow(null, null, null, null);
+        chartRenderer.setAxisPositions(ChartRenderer.AxisPosition.MINIMUM, ChartRenderer.AxisPosition.MINIMUM);
+        chartRenderer.setXGrid(new NumberGrid());
+        chartRenderer.setGridRenderer(new DefaultGridRenderer(DEFAULT_GRID_STYLE), ChartRenderer.GridMode.X);
     }
 
 
     private void configureLineChart(Map<Object, Map<Number, Number>> graphs) {
-        chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer(CURVE, new DefaultLineRenderer(createLineDrawStyle(Color.GREEN), LINE_MARKER_SIZE));
-        chartPanel.setRenderer(LINE, new DefaultLineRenderer(createLineDrawStyle(Color.RED), LINE_MARKER_SIZE));
-        chartPanel.setRenderer(SINE, new DefaultLineRenderer(createLineDrawStyle(Color.BLUE), LINE_MARKER_SIZE));
-        chartPanel.setWindow(null, null, 0, 25);
-        chartPanel.setYWindow(LINE, 1, 20);
-        chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
-        chartPanel.setXGrid(new NumberGrid());
-        chartPanel.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartPanel.GridMode.X);
+        chartRenderer.setGraphs(graphs);
+        chartRenderer.setRenderer(CURVE, new DefaultLineRenderer(createLineDrawStyle(Color.GREEN), LINE_MARKER_SIZE));
+        chartRenderer.setRenderer(LINE, new DefaultLineRenderer(createLineDrawStyle(Color.RED), LINE_MARKER_SIZE));
+        chartRenderer.setRenderer(SINE, new DefaultLineRenderer(createLineDrawStyle(Color.BLUE), LINE_MARKER_SIZE));
+        chartRenderer.setWindow(null, null, 0, 25);
+        chartRenderer.setYWindow(LINE, 1, 20);
+        chartRenderer.setAxisPositions(ChartRenderer.AxisPosition.MINIMUM, ChartRenderer.AxisPosition.MINIMUM);
+        chartRenderer.setXGrid(new NumberGrid());
+        chartRenderer.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartRenderer.GridMode.X);
     }
 
 
@@ -236,24 +285,24 @@ public class Demo extends javax.swing.JFrame {
         if (yWindowMaximum != null) {
             yWindowMaximum = Math.ceil(yWindowMaximum.doubleValue() + 0.001);
         }
-        chartPanel.setChart(SCATTER, scatter);
-        chartPanel.setRenderer(SCATTER, new ScatterRenderer<>(createPointDrawStyle()));
-        chartPanel.setWindow(xWindowMinimum, xWindowMaximum, 0, yWindowMaximum);
-        chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
-        chartPanel.setXGrid(new NumberGrid());
-        chartPanel.setYGrid(new NumberGrid());
-        chartPanel.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartPanel.GridMode.X);
+        chartRenderer.setChart(SCATTER, scatter);
+        chartRenderer.setRenderer(SCATTER, new ScatterRenderer<>(createPointDrawStyle()));
+        chartRenderer.setWindow(xWindowMinimum, xWindowMaximum, 0, yWindowMaximum);
+        chartRenderer.setAxisPositions(ChartRenderer.AxisPosition.ORIGIN, ChartRenderer.AxisPosition.ORIGIN);
+        chartRenderer.setXGrid(new NumberGrid());
+        chartRenderer.setYGrid(new NumberGrid());
+        chartRenderer.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartRenderer.GridMode.X);
     }
 
 
     private void configureDotChart(Map<Object, Map<Number, Number>> graphs) {
-        chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer(MONTHS, createRectangleDotRenderer());
-        chartPanel.setWindow(null, null, null, null);
-        chartPanel.setAxisPositions(ChartPanel.AxisPosition.MINIMUM, ChartPanel.AxisPosition.MINIMUM);
-        chartPanel.setXGrid(new TimestampGrid());
-        chartPanel.setYGrid(new IntegerGrid());
-        chartPanel.setGridRenderer(new DefaultGridRenderer(ZEBRA_GRID_STYLE), ChartPanel.GridMode.X);
+        chartRenderer.setGraphs(graphs);
+        chartRenderer.setRenderer(MONTHS, createRectangleDotRenderer());
+        chartRenderer.setWindow(null, null, null, null);
+        chartRenderer.setAxisPositions(ChartRenderer.AxisPosition.MINIMUM, ChartRenderer.AxisPosition.MINIMUM);
+        chartRenderer.setXGrid(new TimestampGrid());
+        chartRenderer.setYGrid(new IntegerGrid());
+        chartRenderer.setGridRenderer(new DefaultGridRenderer(ZEBRA_GRID_STYLE), ChartRenderer.GridMode.X);
     }
 
 
@@ -276,26 +325,26 @@ public class Demo extends javax.swing.JFrame {
         if (xMax != null) {
             xMax = xMax.intValue() + 1;
         }
-        chartPanel.setGraphs(graphs);
-        chartPanel.setRenderer(CURVE, b1);
-        chartPanel.setRenderer(LINE, b2);
-        chartPanel.setWindow(0, xMax, 0, null);
-        chartPanel.setXGrid(new IntegerGrid());
-        chartPanel.setGridRenderer(new DefaultGridRenderer(WHITE_GRADIENT_GRID_STYLE), ChartPanel.GridMode.Y);
-        chartPanel.setAxisPositions(ChartPanel.AxisPosition.ORIGIN, ChartPanel.AxisPosition.ORIGIN);
+        chartRenderer.setGraphs(graphs);
+        chartRenderer.setRenderer(CURVE, b1);
+        chartRenderer.setRenderer(LINE, b2);
+        chartRenderer.setWindow(0, xMax, 0, null);
+        chartRenderer.setXGrid(new IntegerGrid());
+        chartRenderer.setGridRenderer(new DefaultGridRenderer(WHITE_GRADIENT_GRID_STYLE), ChartRenderer.GridMode.Y);
+        chartRenderer.setAxisPositions(ChartRenderer.AxisPosition.ORIGIN, ChartRenderer.AxisPosition.ORIGIN);
     }
 
 
     private void configurePieChart(Map<Object, Map<Number, Number>> graphs) {
-        chartPanel.setXWindowMinimum(null);
-        chartPanel.setXWindowMaximum(null);
-        chartPanel.setGraphs(graphs);
-        chartPanel.setAxisRenderer(null);
-        chartPanel.setAxisPositions(null, null);
-        chartPanel.setGridRenderer(null, ChartPanel.GridMode.NONE);
+        chartRenderer.setXWindowMinimum(null);
+        chartRenderer.setXWindowMaximum(null);
+        chartRenderer.setGraphs(graphs);
+        chartRenderer.setAxisRenderer(null);
+        chartRenderer.setAxisPositions(null, null);
+        chartRenderer.setGridRenderer(null, ChartRenderer.GridMode.NONE);
         chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.NONE);
         chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.NONE);
-        chartPanel.setRenderer(YEARS, new DefaultPieSectorRenderer(createPieDrawStyle()));
+        chartRenderer.setRenderer(YEARS, new DefaultPieSectorRenderer(createPieDrawStyle()));
     }
 
     
@@ -358,7 +407,7 @@ public class Demo extends javax.swing.JFrame {
                 months.put(calendar.getTimeInMillis(), calendar.get(Calendar.MONTH));
                 Map<Object, Map<Number, Number>> graphs = new LinkedHashMap<>();
                 graphs.put(MONTHS, months);
-                chartPanel.setGraphs(graphs);
+                chartRenderer.setGraphs(graphs);
                 chartPanel.repaint();
             }
         }
@@ -366,11 +415,13 @@ public class Demo extends javax.swing.JFrame {
     }
 
 
-    private final ChartPanel chartPanel = new ChartPanel(100, 125, 50, 50);
+    private final ChartRenderer chartRenderer;
+    private final ChartPanel chartPanel;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel controlPanel;
     private javax.swing.JPanel displayPanel;
+    private javax.swing.JButton printButton;
     private javax.swing.JComboBox styleComboBox;
     // End of variables declaration//GEN-END:variables
 
@@ -403,6 +454,11 @@ public class Demo extends javax.swing.JFrame {
         PointDrawStyle pointDrawStyle = PointDrawStyle.createLinear(new Color[] { Color.RED, Color.WHITE, Color.BLUE });
         pointDrawStyle.setBorder(Color.GREEN.darker());
         return pointDrawStyle;
+    }
+
+
+    private static Logger getLogger() {
+        return Logger.getLogger(Demo.class.getName());
     }
 
 

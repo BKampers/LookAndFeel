@@ -14,15 +14,15 @@ import java.util.*;
 public class DefaultLegendRenderer {
 
     
-    public DefaultLegendRenderer(ChartPanel chartPanel, int top) {
-        this.chartPanel = chartPanel;
+    public DefaultLegendRenderer(ChartRenderer chartRenderer, int top) {
+        this.chartRenderer = chartRenderer;
         this.top = top;
     }
 
 
     public void drawLegend(Graphics2D g2d, ChartGeometry geometry, Map<Object, AbstractDataAreaRenderer> renderers) {
         LegendGeometry legendGeometry = new LegendGeometry();
-        legendGeometry.setX(chartPanel.areaRight() + SPACE);
+        legendGeometry.setX(chartRenderer.areaRight() + SPACE);
         legendGeometry.setY(top);
         legendGeometry.setSpace(SPACE);
         legendGeometry.setFeed(FEED);
@@ -38,7 +38,7 @@ public class DefaultLegendRenderer {
     }
 
 
-    private final ChartPanel chartPanel;
+    private final ChartRenderer chartRenderer;
     private final int top;
 
     private static final int SPACE = 15;

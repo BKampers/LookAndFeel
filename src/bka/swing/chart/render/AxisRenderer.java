@@ -18,9 +18,9 @@ public abstract class AxisRenderer {
     public abstract void drawYAxis(java.awt.Graphics2D g2d, Locale locale);
 
 
-    public void setPanel(ChartPanel panel) {
-        this.panel = panel;
-        chartGeometry = panel.getChartGeometry();
+    public void setChartRenderer(ChartRenderer renderer) {
+        chartRenderer = renderer;
+        chartGeometry = chartRenderer.getChartGeometry();
     }
 
 
@@ -44,13 +44,13 @@ public abstract class AxisRenderer {
     }
 
 
-    protected ChartPanel.AxisPosition getXAxisPosition() {
-        return panel.getXAxisPosition();
+    protected ChartRenderer.AxisPosition getXAxisPosition() {
+        return chartRenderer.getXAxisPosition();
     }
 
 
-    protected ChartPanel.AxisPosition getYAxisPosition() {
-        return panel.getYAxisPosition();
+    protected ChartRenderer.AxisPosition getYAxisPosition() {
+        return chartRenderer.getYAxisPosition();
     }
 
 
@@ -73,50 +73,50 @@ public abstract class AxisRenderer {
 
 
     protected int xPixel(Number value) {
-        return panel.getChartGeometry().xPixel(value);
+        return chartRenderer.getChartGeometry().xPixel(value);
     }
     
     
     protected int xMin() {
-        return panel.areaLeft();
+        return chartRenderer.areaLeft();
     }
 
     
     protected int xMax() {
-        return panel.areaRight();
+        return chartRenderer.areaRight();
     }
 
     
     protected int x0() {
         int x = xPixel(0);
-        if (panel.areaLeft() <= x && x <= panel.areaRight()) {
+        if (chartRenderer.areaLeft() <= x && x <= chartRenderer.areaRight()) {
             return x;
         }
-        return panel.areaLeft();
+        return chartRenderer.areaLeft();
     }
 
     
     protected int yPixel(Number value) {
-        return panel.getChartGeometry().yPixel(value);
+        return chartRenderer.getChartGeometry().yPixel(value);
     }
 
 
     protected int yMin() {
-        return panel.areaBottom();
+        return chartRenderer.areaBottom();
     }
 
     
     protected int yMax() {
-        return panel.areaTop();
+        return chartRenderer.areaTop();
     }
 
     
     protected int y0() {
         int y = yPixel(0);
-        if (panel.areaTop() <= y && y <= panel.areaBottom()) {
+        if (chartRenderer.areaTop() <= y && y <= chartRenderer.areaBottom()) {
             return y;
         }
-        return panel.areaBottom();
+        return chartRenderer.areaBottom();
     }
     
     
@@ -127,7 +127,7 @@ public abstract class AxisRenderer {
     protected String yUnit;
 
     // Private attributes must be initialized by a ChartPanel.
-    private ChartPanel panel; 
+    private ChartRenderer chartRenderer;
     private ChartGeometry chartGeometry;
     
 }
