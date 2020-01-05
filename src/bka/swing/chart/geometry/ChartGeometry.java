@@ -44,7 +44,7 @@ public final class ChartGeometry {
      * @param yRanges: ranges of the y-axis(es)
      * @param yWindowBase: y location where the y-axis is drawn, null means origin
      */
-    public void initialize(Rectangle area, Range xRange ,RangeMap yRanges, Number yWindowBase) {
+    public void initialize(Rectangle area, Range xRange, RangeMap yRanges, Number yWindowBase) {
         if (graphs.isEmpty()) {
             this.area = area;
             xWindowRange = new Range(xRange);
@@ -154,8 +154,15 @@ public final class ChartGeometry {
 
     
     public double yValue(Object key, int pixelY) {
-        double ratio = yRange(key) / area.height;
-        return (area.height - pixelY + area.y) * ratio + yDataRanges.get(key).getMin().doubleValue();
+//        double ratio = yRange(key) / area.height;
+//        return (area.height - pixelY + area.y) * ratio + yDataRanges.get(key).getMin().doubleValue();
+        return yValueByRange(yDataRanges.get(key), pixelY);
+    }
+
+
+    public double yValueByRange(Range range, int pixelY) {
+        double ratio = size(range) / area.height;
+        return (area.height - pixelY + area.y) * ratio + range.getMin().doubleValue();
     }
     
     
@@ -179,6 +186,11 @@ public final class ChartGeometry {
             return area.y + area.height / 2;
         }
         return area.height + area.y - pixel(y, yDataRanges.get(key).getMin(), range, area.height);
+    }
+
+
+    public RangeMap getYDataRanges() {
+        return new RangeMap(yDataRanges);
     }
 
 
@@ -250,12 +262,17 @@ public final class ChartGeometry {
     
     
     private double xRange() {
-        return xDataRange.getMax().doubleValue() - xDataRange.getMin().doubleValue();
+        return size(xDataRange);
     }
 
     
     private double yRange(Object key) {
-        return yDataRanges.get(key).getMax().doubleValue() - yDataRanges.get(key).getMin().doubleValue();
+        return size(yDataRanges.get(key));
+    }
+
+
+    private static double size(Range range) {
+        return range.getMax().doubleValue() - range.getMin().doubleValue();
     }
 
     

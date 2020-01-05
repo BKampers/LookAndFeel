@@ -73,7 +73,7 @@ public abstract class AxisRenderer {
 
 
     protected int xPixel(Number value) {
-        return chartRenderer.getChartGeometry().xPixel(value);
+        return chartRenderer.xPixel(value);
     }
     
     
@@ -97,7 +97,7 @@ public abstract class AxisRenderer {
 
     
     protected int yPixel(Number value) {
-        return chartRenderer.getChartGeometry().yPixel(value);
+        return chartRenderer.yPixel(value);
     }
 
 

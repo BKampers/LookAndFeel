@@ -23,7 +23,7 @@ public class RangeMap {
 
 
     public void put(Object key, Number min, Number max) {
-        ranges.put(Objects.requireNonNull(key), new Range(min, max));
+        ranges.put(key, new Range(min, max));
     }
 
 
@@ -47,6 +47,11 @@ public class RangeMap {
 
     public Collection<Range> values() {
         return ranges.values();
+    }
+
+
+    public Map<Object, Range> getRanges() {
+        return Collections.unmodifiableMap(ranges);
     }
 
 

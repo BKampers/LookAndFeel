@@ -5,7 +5,6 @@
 package bka.swing.chart.render;
 
 import bka.swing.chart.custom.*;
-import bka.swing.chart.geometry.*;
 import java.awt.*;
 
 
@@ -43,11 +42,10 @@ public class DefaultGridRenderer extends GridRenderer {
             int areaTop = getChartRenderer().areaTop();
             int areaHeight = getChartRenderer().areaHeight();
             int areaLeft = getChartRenderer().areaLeft();
-            ChartGeometry chartGeometry = getChartRenderer().getChartGeometry();
-            java.util.List<Number> values = chartGeometry.getXGrid().getValues();
+            java.util.List<Number> values = getChartRenderer().xGridValues();
             int count = values.size();
             for (int i = 1; i < count; ++i) {
-                int x = Math.max(chartGeometry.xPixel(values.get(i-1)), areaLeft);
+                int x = Math.max(getChartRenderer().xPixel(values.get(i - 1)), areaLeft);
                 g2d.drawLine(x, areaTop, x, areaTop + areaHeight);
             }
         }
@@ -63,11 +61,10 @@ public class DefaultGridRenderer extends GridRenderer {
             int areaTop = getChartRenderer().areaTop();
             int areaLeft = getChartRenderer().areaLeft();
             int areaRight = getChartRenderer().areaRight();
-            ChartGeometry chartGeometry = getChartRenderer().getChartGeometry();
-            java.util.List<Number> values = chartGeometry.getYGrid().getValues();
+            java.util.List<Number> values = getChartRenderer().yGridValues();
             int count = values.size();
             for (int i = 1; i < count; ++i) {
-                int y = Math.max(chartGeometry.yPixel(values.get(i)), areaTop);
+                int y = Math.max(getChartRenderer().yPixel(values.get(i)), areaTop);
                 g2d.drawLine(areaLeft, y, areaRight, y);
             }
         }
@@ -79,12 +76,11 @@ public class DefaultGridRenderer extends GridRenderer {
         int areaHeight = getChartRenderer().areaHeight();
         int areaLeft = getChartRenderer().areaLeft();
         int areaRight = getChartRenderer().areaRight();
-        ChartGeometry chartGeometry = getChartRenderer().getChartGeometry();
-        java.util.List<Number> values = chartGeometry.getXGrid().getValues();
+        java.util.List<Number> values = getChartRenderer().xGridValues();
         int count = values.size();
         for (int i = 1; i < count; ++i) {
-            int paintLeft = chartGeometry.xPixel(values.get(i-1));
-            int paintRight = chartGeometry.xPixel(values.get(i));
+            int paintLeft = getChartRenderer().xPixel(values.get(i - 1));
+            int paintRight = getChartRenderer().xPixel(values.get(i));
             int left = Math.max(paintLeft, areaLeft);
             int right = Math.min(paintRight, areaRight);
             int width = right - left;
@@ -103,12 +99,11 @@ public class DefaultGridRenderer extends GridRenderer {
         int areaBottom = getChartRenderer().areaBottom();
         int areaLeft = getChartRenderer().areaLeft();
         int areaWidth = getChartRenderer().areaWidth();
-        ChartGeometry chartGeometry = getChartRenderer().getChartGeometry();
-        java.util.List<Number> values = chartGeometry.getYGrid().getValues();
+        java.util.List<Number> values = getChartRenderer().yGridValues();
         int count = values.size();
         for (int i = 1; i < count; ++i) {
-            int paintBottom = chartGeometry.yPixel(values.get(i - 1));
-            int paintTop = chartGeometry.yPixel(values.get(i));
+            int paintBottom = getChartRenderer().yPixel(values.get(i - 1));
+            int paintTop = getChartRenderer().yPixel(values.get(i));
             int bottom = Math.min(paintBottom, areaBottom);
             int top = Math.max(paintTop, areaTop);
             int height = bottom - top;

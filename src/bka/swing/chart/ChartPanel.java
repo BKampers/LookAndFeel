@@ -5,8 +5,10 @@
 package bka.swing.chart;
 
 
+import bka.swing.chart.geometry.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
 
 
@@ -17,38 +19,28 @@ public final class ChartPanel extends javax.swing.JPanel {
     public enum ClickZoomMode { NONE, DOUBLE_CLICK_GRID_AREA }
 
     
-    public ChartPanel() {
-        this(100, 100, 50, 50);
-    }
-
-
-    ChartPanel(ChartRenderer renderer) {
-        this.renderer = renderer;
-        selectionRectangleColor = UIManager.getColor("Chart.selectionRectangleColor");
-        if (selectionRectangleColor == null) {
-            selectionRectangleColor = Color.GRAY;
-        }
-        addListeners();
-    }
-
-    
     public ChartPanel(int leftMargin, int rightMargin, int topMargin, int bottomMargin) {
-        renderer =  new ChartRenderer(leftMargin, rightMargin, topMargin, bottomMargin);
-        selectionRectangleColor = UIManager.getColor("Chart.selectionRectangleColor");
-        if (selectionRectangleColor == null) {
-            selectionRectangleColor = Color.GRAY;
-        }
-        addListeners();
+        this(new ChartRenderer(leftMargin, rightMargin, topMargin, bottomMargin));
     }
 
    
+    ChartPanel(ChartRenderer renderer) {
+        this.renderer = Objects.requireNonNull(renderer);
+        selectionRectangleColor = UIManager.getColor("Chart.selectionRectangleColor");
+        if (selectionRectangleColor == null) {
+            selectionRectangleColor = Color.GRAY;
+        }
+        addListeners();
+    }
+
+
     public void setDragZoomMode(DragZoomMode dragZoomMode) {
-        this.dragZoomMode = dragZoomMode;
+        this.dragZoomMode = Objects.requireNonNull(dragZoomMode);
     }
    
    
    public void setClickZoomMode(ClickZoomMode clickZoomMode) {
-       this.clickZoomMode = clickZoomMode;
+       this.clickZoomMode = Objects.requireNonNull(clickZoomMode);
    }
     
     
@@ -166,11 +158,25 @@ public final class ChartPanel extends javax.swing.JPanel {
                     renderer.setXWindow(xMin(), xMax());
                     break;
                 case Y:
-                    renderer.setYWindow(yMin(), yMax());
+                    setYWindows();
                     break;
                 case XY:
-                    renderer.setWindow(xMin(), xMax(), yMin(), yMax());
+                    setYWindows();
+                    renderer.setXWindow(xMin(), xMax());
                     break;
+            }
+        }
+
+        private void setYWindows() {
+            ChartGeometry geometry = renderer.getChartGeometry();
+            int minPixel = geometry.yPixel(yMin());
+            int maxPixel = geometry.yPixel(yMax());
+            RangeMap rangeMap = renderer.getChartGeometry().getYDataRanges();
+            for (Map.Entry<Object, Range> entry : rangeMap.getRanges().entrySet()) {
+                Range range = entry.getValue();
+                double min = geometry.yValueByRange(range, minPixel);
+                double max = geometry.yValueByRange(range, maxPixel);
+                renderer.setYWindow(entry.getKey(), min, max);
             }
         }
 
@@ -198,6 +204,7 @@ public final class ChartPanel extends javax.swing.JPanel {
                     ChartRenderer.GridMode gridMode = renderer.getGridMode();
                     if (gridMode == ChartRenderer.GridMode.X || gridMode == ChartRenderer.GridMode.Y) {
                         zoom(point);
+                        repaint();
                     }
                 }
             }
