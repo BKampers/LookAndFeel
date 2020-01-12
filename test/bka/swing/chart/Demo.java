@@ -297,7 +297,7 @@ public class Demo extends javax.swing.JFrame {
 
     private void configureDotChart(Map<Object, Map<Number, Number>> graphs) {
         chartRenderer.setGraphs(graphs);
-        chartRenderer.setRenderer(MONTHS, createRectangleDotRenderer());
+        chartRenderer.setRenderer(MONTHS, createDotRenderer());
         chartRenderer.setWindow(null, null, null, null);
         chartRenderer.setAxisPositions(ChartRenderer.AxisPosition.MINIMUM, ChartRenderer.AxisPosition.MINIMUM);
         chartRenderer.setXGrid(new TimestampGrid());
@@ -440,7 +440,7 @@ public class Demo extends javax.swing.JFrame {
     }
 
 
-    private static PointRenderer createRectangleDotRenderer() {
+    private static PointRenderer createDotRenderer() {
         return new OvalDotRenderer(DOT_SIZE, DefaultDrawStyle.createSolid(Color.BLACK));
     }
 

@@ -29,6 +29,8 @@ public class DefaultGridRenderer extends GridRenderer {
                 drawHorizontalLines(g2d);
                 drawVerticalLines(g2d);
                 break;
+            case NONE:
+                break;
         }
     }
 

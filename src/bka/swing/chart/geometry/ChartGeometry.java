@@ -154,8 +154,6 @@ public final class ChartGeometry {
 
     
     public double yValue(Object key, int pixelY) {
-//        double ratio = yRange(key) / area.height;
-//        return (area.height - pixelY + area.y) * ratio + yDataRanges.get(key).getMin().doubleValue();
         return yValueByRange(yDataRanges.get(key), pixelY);
     }
 

@@ -379,13 +379,22 @@ public final class ChartRenderer implements java.awt.print.Printable {
     private void draw(Graphics2D g2d, Rectangle bounds) {
         synchronized (geometry) {
             setBounds(bounds);
-            initializeGeometry();
+            geometry.initialize(chartArea(), xRange, yRanges, yWindowBase);;
             draw(g2d);
         }
     }
 
 
-    private void setBounds(Rectangle bounds) {
+    public Rectangle chartArea() {
+        return new Rectangle(
+            bounds.x + leftMargin,
+            bounds.y + topMargin,
+            bounds.width - leftMargin - rightMargin,
+            bounds.height - topMargin - bottomMargin);
+    }
+
+
+   private void setBounds(Rectangle bounds) {
         if (! bounds.equals(this.bounds)) {
             this.bounds = new Rectangle(bounds);
             geometry.invalidate();
@@ -477,20 +486,6 @@ public final class ChartRenderer implements java.awt.print.Printable {
     }
     
     
-    private void initializeGeometry() {
-        geometry.initialize(chartArea(), xRange, yRanges, yWindowBase);
-    }
-
-    
-    public Rectangle chartArea() {
-        return new Rectangle(
-            bounds.x + leftMargin, 
-            bounds.y + topMargin, 
-            bounds.width - leftMargin - rightMargin, 
-            bounds.height - topMargin - bottomMargin);
-    }
-
-
     private static Logger getLogger() {
         return Logger.getLogger(ChartRenderer.class.getName());
     }
