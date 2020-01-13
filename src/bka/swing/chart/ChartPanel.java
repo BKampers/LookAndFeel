@@ -6,6 +6,7 @@ package bka.swing.chart;
 
 
 import bka.swing.chart.geometry.*;
+import bka.swing.chart.render.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -17,11 +18,6 @@ public final class ChartPanel extends javax.swing.JPanel {
 
     public enum DragZoomMode { NONE, X, Y, XY }
     public enum ClickZoomMode { NONE, DOUBLE_CLICK_GRID_AREA }
-
-    
-    public ChartPanel(int leftMargin, int rightMargin, int topMargin, int bottomMargin) {
-        this(new ChartRenderer(leftMargin, rightMargin, topMargin, bottomMargin));
-    }
 
    
     ChartPanel(ChartRenderer renderer) {

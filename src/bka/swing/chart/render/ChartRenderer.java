@@ -2,13 +2,13 @@
 ** Copyright © Bart Kampers
 */
 
-package bka.swing.chart;
+package bka.swing.chart.render;
 
 
+import bka.swing.chart.*;
 import bka.swing.chart.custom.*;
 import bka.swing.chart.geometry.*;
 import bka.swing.chart.grid.*;
-import bka.swing.chart.render.*;
 import java.awt.*;
 import java.awt.print.*;
 import java.util.*;
@@ -22,7 +22,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
     public enum GridMode { NONE, X, Y }
 
 
-    public ChartRenderer(int leftMargin, int rightMargin, int topMargin, int bottomMargin) {
+    public void setMargins(int leftMargin, int rightMargin, int topMargin, int bottomMargin) {
         this.leftMargin = leftMargin;
         this.rightMargin = rightMargin;
         this.topMargin = topMargin;
@@ -528,9 +528,9 @@ public final class ChartRenderer implements java.awt.print.Printable {
     private Rectangle bounds;
 
     // Margins in pixels
-    private final int leftMargin;
-    private final int rightMargin;
-    private final int topMargin;
-    private final int bottomMargin;
+    private int leftMargin;
+    private int rightMargin;
+    private int topMargin;
+    private int bottomMargin;
     
 }

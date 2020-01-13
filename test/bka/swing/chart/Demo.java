@@ -21,7 +21,8 @@ public class Demo extends javax.swing.JFrame {
 
     public Demo() {
         populateDataSets();
-        chartRenderer = new ChartRenderer(100, 125, 50, 50);
+        chartRenderer = new ChartRenderer();
+        chartRenderer.setMargins(100, 125, 50, 50);
         chartPanel = new ChartPanel(chartRenderer);
         initComponents();
         initChartPanel();
