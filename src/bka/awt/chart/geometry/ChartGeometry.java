@@ -5,9 +5,10 @@
 package bka.awt.chart.geometry;
 
 
+import bka.awt.chart.*;
 import bka.awt.chart.render.*;
+import bka.chart.*;
 import bka.chart.grid.*;
-import bka.swing.chart.*;
 import java.awt.*;
 import java.util.*;
 import java.util.logging.*;

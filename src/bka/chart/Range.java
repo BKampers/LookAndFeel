@@ -2,7 +2,7 @@
 ** © Bart Kampers
 */
 
-package bka.swing.chart;
+package bka.chart;
 
 
 public class Range {

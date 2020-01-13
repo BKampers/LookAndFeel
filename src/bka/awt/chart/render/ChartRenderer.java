@@ -5,10 +5,11 @@
 package bka.awt.chart.render;
 
 
+import bka.awt.chart.*;
 import bka.awt.chart.custom.*;
 import bka.awt.chart.geometry.*;
+import bka.chart.*;
 import bka.chart.grid.*;
-import bka.swing.chart.*;
 import java.awt.*;
 import java.awt.print.*;
 import java.util.*;

@@ -5,9 +5,9 @@
 package bka.awt.chart.render;
 
 
+import bka.awt.chart.*;
 import bka.awt.chart.custom.*;
 import bka.awt.chart.geometry.*;
-import bka.swing.chart.*;
 import java.awt.*;
 
 
