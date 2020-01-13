@@ -5,7 +5,6 @@
 package bka.swing.chart.render;
 
 
-import bka.swing.chart.*;
 import bka.swing.chart.geometry.*;
 import bka.swing.chart.grid.*;
 import java.util.*;

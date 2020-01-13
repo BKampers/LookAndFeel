@@ -20,7 +20,7 @@ public final class ChartPanel extends javax.swing.JPanel {
     public enum ClickZoomMode { NONE, DOUBLE_CLICK_GRID_AREA }
 
    
-    ChartPanel(ChartRenderer renderer) {
+    public ChartPanel(ChartRenderer renderer) {
         this.renderer = Objects.requireNonNull(renderer);
         selectionRectangleColor = UIManager.getColor("Chart.selectionRectangleColor");
         if (selectionRectangleColor == null) {

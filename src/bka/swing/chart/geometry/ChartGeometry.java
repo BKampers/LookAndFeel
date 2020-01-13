@@ -61,12 +61,14 @@ public final class ChartGeometry {
 
     private void computeWindows() {
         windows.clear();
-        for (Map.Entry<Object, ChartData<Number, Number>> dataGraph : dataMap.entrySet()) {
-            Object key = dataGraph.getKey();
-            AbstractDataAreaRenderer renderer = renderers.get(key);
-            if (renderer != null) {
-                renderer.setWindow(getWindow(key));
-                renderer.addPointsInWindow(key, dataGraph.getValue());
+        if (dataMap != null) {
+            for (Map.Entry<Object, ChartData<Number, Number>> dataGraph : dataMap.entrySet()) {
+                Object key = dataGraph.getKey();
+                AbstractDataAreaRenderer renderer = renderers.get(key);
+                if (renderer != null) {
+                    renderer.setWindow(getWindow(key));
+                    renderer.addPointsInWindow(key, dataGraph.getValue());
+                }
             }
         }
     }
@@ -90,11 +92,13 @@ public final class ChartGeometry {
      * Compute render data for points in window
      */
     private void computeDataPoints() {
-        for (Object key : dataMap.keySet()) {
-            AbstractDataAreaRenderer renderer = renderers.get(key);
-            if (renderer != null) {
-                Window window = getWindow(key);
-                graphs.put(key, renderer.createGraphGeomerty(window.getPoints(key)));
+        if (dataMap != null) {
+            for (Object key : dataMap.keySet()) {
+                AbstractDataAreaRenderer renderer = renderers.get(key);
+                if (renderer != null) {
+                    Window window = getWindow(key);
+                    graphs.put(key, renderer.createGraphGeomerty(window.getPoints(key)));
+                }
             }
         }
     }
