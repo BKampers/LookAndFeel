@@ -5,8 +5,8 @@
 package bka.swing.chart;
 
 
-import bka.swing.chart.geometry.*;
-import bka.swing.chart.render.*;
+import bka.awt.chart.render.ChartRenderer;
+import bka.awt.chart.geometry.ChartGeometry;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;

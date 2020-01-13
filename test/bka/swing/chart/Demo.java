@@ -3,10 +3,27 @@
 */
 package bka.swing.chart;
 
+import bka.awt.chart.render.PointRenderer;
+import bka.awt.chart.render.DefaultPieSectorRenderer;
+import bka.awt.chart.render.BarRenderer;
+import bka.awt.chart.render.DefaultLineRenderer;
+import bka.awt.chart.render.ChartRenderer;
+import bka.awt.chart.render.OvalDotRenderer;
+import bka.awt.chart.render.ScatterRenderer;
+import bka.awt.chart.render.DefaultAxisRenderer;
+import bka.awt.chart.render.DefaultGridRenderer;
+import bka.awt.chart.render.PolygonDotRenderer;
+import bka.awt.chart.custom.DefaultDrawStyle;
+import bka.awt.chart.custom.PieDrawStyle;
+import bka.awt.chart.custom.AreaDrawStyle;
+import bka.awt.chart.custom.BarDrawStyle;
+import bka.awt.chart.custom.GridStyle;
+import bka.awt.chart.custom.LineDrawStyle;
+import bka.awt.chart.custom.PointDrawStyle;
+import bka.chart.grid.NumberGrid;
+import bka.chart.grid.IntegerGrid;
+import bka.chart.grid.TimestampGrid;
 import bka.awt.*;
-import bka.swing.chart.custom.*;
-import bka.swing.chart.grid.*;
-import bka.swing.chart.render.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.awt.print.*;
