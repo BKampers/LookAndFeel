@@ -47,7 +47,7 @@ public abstract class Grid {
         if (markerLists.isEmpty()) {
             return Collections.emptyList();
         }
-        return markerLists.get(0).getValues();
+        return Collections.unmodifiableList(markerLists.get(0).getValues());
     }
 
 

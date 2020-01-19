@@ -285,48 +285,6 @@ public final class ChartRenderer implements java.awt.print.Printable {
     }
 
 
-    public Number xValue(int xPixel) {
-        synchronized (geometry) {
-            return geometry.xValue(xPixel);
-        }
-    }
-
-
-    public Number yValue(int yPixel) {
-        synchronized (geometry) {
-            return geometry.yValue(yPixel);
-        }
-    }
-
-
-    public int xPixel(Number xValue) {
-        synchronized (geometry) {
-            return geometry.xPixel(xValue);
-        }
-    }
-
-
-    public int yPixel(Number yValue) {
-        synchronized (geometry) {
-            return geometry.yPixel(yValue);
-        }
-    }
-
-
-    public java.util.List<Number> xGridValues() {
-        synchronized (geometry) {
-            return Collections.unmodifiableList(geometry.getXGrid().getValues());
-        }
-    }
-
-
-    public java.util.List<Number> yGridValues() {
-        synchronized (geometry) {
-            return Collections.unmodifiableList(geometry.getYGrid().getValues());
-        }
-    }
-
-
     public ChartGeometry getChartGeometry() {
         return geometry;
     }
@@ -348,9 +306,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
 
     public void invalidate() {
-        synchronized (geometry) {
-            geometry.invalidate();
-        }
+        geometry.invalidate();
     }
     
 
@@ -378,11 +334,9 @@ public final class ChartRenderer implements java.awt.print.Printable {
     
 
     private void draw(Graphics2D g2d, Rectangle bounds) {
-        synchronized (geometry) {
-            setBounds(bounds);
-            geometry.initialize(chartArea(), xRange, yRanges, yWindowBase);;
-            draw(g2d);
-        }
+        setBounds(bounds);
+        geometry.initialize(chartArea(), xRange, yRanges, yWindowBase);;
+        draw(g2d);
     }
 
 
@@ -480,10 +434,8 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
     
     private void setData(Map<Object, ChartData<Number, Number>> data) {
-        synchronized (geometry) {
-            geometry.setData(data, renderers);
-            invalidate();
-        }
+        geometry.setData(data, renderers);
+        invalidate();
     }
     
     

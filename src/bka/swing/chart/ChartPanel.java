@@ -43,7 +43,9 @@ public final class ChartPanel extends javax.swing.JPanel {
     
     @Override
     public void invalidate() {
-        renderer.invalidate();
+        synchronized (renderer) {
+            renderer.invalidate();
+        }
         super.invalidate();
     }
     
@@ -51,8 +53,10 @@ public final class ChartPanel extends javax.swing.JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        renderer.setLocale(getLocale());
-        renderer.paint((Graphics2D) g, getBounds());
+        synchronized (renderer) {
+            renderer.setLocale(getLocale());
+            renderer.paint((Graphics2D) g, getBounds());
+        }
         drawSelectionRectangle((Graphics2D) g);
     }
 
@@ -86,17 +90,19 @@ public final class ChartPanel extends javax.swing.JPanel {
         @Override
         public void mouseMoved(java.awt.event.MouseEvent evt) {
             Point mousePoint = evt.getPoint();
-            if (renderer.chartArea().contains(mousePoint)) {
-                if (defaultCursor == null && zoomEnabled()) {
-                    defaultCursor = getCursor();
-                    setCursor(new Cursor(ZOOM_CURSOR));
+            synchronized (renderer) {
+                if (renderer.chartArea().contains(mousePoint)) {
+                    if (defaultCursor == null && zoomEnabled()) {
+                        defaultCursor = getCursor();
+                        setCursor(new Cursor(ZOOM_CURSOR));
+                    }
+                    renderer.highlight(mousePoint);
+                    repaint();
                 }
-                renderer.highlight(mousePoint);
-                repaint();
-            }
-            else if (defaultCursor != null) {
-                setCursor(defaultCursor);
-                defaultCursor = null;
+                else if (defaultCursor != null) {
+                    setCursor(defaultCursor);
+                    defaultCursor = null;
+                }
             }
         }
 
@@ -117,15 +123,17 @@ public final class ChartPanel extends javax.swing.JPanel {
         }
         
         private Point getZoomPoint(MouseEvent evt) {
-            switch (dragZoomMode) {
-                case X:
-                    return new Point(getZoomX(evt), renderer.areaTop());
-                case Y:
-                    return new Point(renderer.areaLeft(), getZoomY(evt));
-                case XY:
-                    return new Point(getZoomX(evt), getZoomY(evt));
-                default:
-                    throw new IllegalStateException(dragZoomMode.name());
+            synchronized (renderer) {
+                switch (dragZoomMode) {
+                    case X:
+                        return new Point(getZoomX(evt), renderer.areaTop());
+                    case Y:
+                        return new Point(renderer.areaLeft(), getZoomY(evt));
+                    case XY:
+                        return new Point(getZoomX(evt), getZoomY(evt));
+                    default:
+                        throw new IllegalStateException(dragZoomMode.name());
+                }
             }
         }
 
@@ -140,7 +148,7 @@ public final class ChartPanel extends javax.swing.JPanel {
         @Override
         public void mouseReleased(java.awt.event.MouseEvent evt) {
             if (dragStartPoint != null && dragEndPoint != null) {
-                if (evt.getButton() == java.awt.event.MouseEvent.BUTTON1) {
+                if (dragZoomMode != DragZoomMode.NONE && evt.getButton() == java.awt.event.MouseEvent.BUTTON1) {
                     adjustWindow();
                 }
                 dragStartPoint = null;
@@ -150,17 +158,19 @@ public final class ChartPanel extends javax.swing.JPanel {
         }
 
         private void adjustWindow() {
-            switch (dragZoomMode) {
-                case X:
-                    renderer.setXWindow(xMin(), xMax());
-                    break;
-                case Y:
-                    setYWindows();
-                    break;
-                case XY:
-                    setYWindows();
-                    renderer.setXWindow(xMin(), xMax());
-                    break;
+            synchronized (renderer) {
+                switch (dragZoomMode) {
+                    case X:
+                        renderer.setXWindow(xMin(), xMax());
+                        break;
+                    case Y:
+                        setYWindows();
+                        break;
+                    case XY:
+                        setYWindows();
+                        renderer.setXWindow(xMin(), xMax());
+                        break;
+                }
             }
         }
 
@@ -168,7 +178,7 @@ public final class ChartPanel extends javax.swing.JPanel {
             ChartGeometry geometry = renderer.getChartGeometry();
             int minPixel = geometry.yPixel(yMin());
             int maxPixel = geometry.yPixel(yMax());
-            RangeMap rangeMap = renderer.getChartGeometry().getYDataRanges();
+            RangeMap rangeMap = geometry.getYDataRanges();
             for (Map.Entry<Object, Range> entry : rangeMap.getRanges().entrySet()) {
                 Range range = entry.getValue();
                 double min = geometry.yValueByRange(range, minPixel);
@@ -178,30 +188,32 @@ public final class ChartPanel extends javax.swing.JPanel {
         }
 
         private Number xMin() {
-            return renderer.xValue(Math.min(dragStartPoint.x, dragEndPoint.x));
+            return renderer.getChartGeometry().xValue(Math.min(dragStartPoint.x, dragEndPoint.x));
         }
 
         private Number xMax() {
-            return renderer.xValue(Math.max(dragStartPoint.x, dragEndPoint.x));
+            return renderer.getChartGeometry().xValue(Math.max(dragStartPoint.x, dragEndPoint.x));
         }
 
         private Number yMin(){
-            return renderer.yValue(Math.max(dragStartPoint.y, dragEndPoint.y));
+            return renderer.getChartGeometry().yValue(Math.max(dragStartPoint.y, dragEndPoint.y));
         }
 
         private Number yMax() {
-            return renderer.yValue(Math.min(dragStartPoint.y, dragEndPoint.y));
+            return renderer.getChartGeometry().yValue(Math.min(dragStartPoint.y, dragEndPoint.y));
         }
 
         @Override
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             Point point = evt.getPoint();
-            if (clickZoomMode == ClickZoomMode.DOUBLE_CLICK_GRID_AREA && renderer.chartArea().contains(point)) {
-                if (evt.getButton() == java.awt.event.MouseEvent.BUTTON1 && evt.getClickCount() == 1) {
-                    ChartRenderer.GridMode gridMode = renderer.getGridMode();
-                    if (gridMode == ChartRenderer.GridMode.X || gridMode == ChartRenderer.GridMode.Y) {
-                        zoom(point);
-                        repaint();
+            synchronized (renderer) {
+                if (clickZoomMode == ClickZoomMode.DOUBLE_CLICK_GRID_AREA && renderer.chartArea().contains(point)) {
+                    if (evt.getButton() == java.awt.event.MouseEvent.BUTTON1 && evt.getClickCount() == 1) {
+                        ChartRenderer.GridMode gridMode = renderer.getGridMode();
+                        if (gridMode == ChartRenderer.GridMode.X || gridMode == ChartRenderer.GridMode.Y) {
+                            zoom(point);
+                            repaint();
+                        }
                     }
                 }
             }
@@ -209,18 +221,19 @@ public final class ChartPanel extends javax.swing.JPanel {
 
         private void zoom(Point point) {
             boolean xMode = renderer.getGridMode() == ChartRenderer.GridMode.X;
-            java.util.List<Number> values = (xMode) ? renderer.xGridValues() : renderer.yGridValues();
+            ChartGeometry geometry = renderer.getChartGeometry();
+            java.util.List<Number> values = (xMode) ? geometry.getXGrid().getValues() : geometry.getYGrid().getValues();
             if (values.size() >= 2) {
                 Number min = values.get(0);
                 boolean zoomed = false;
                 int i = 1;
                 while (! zoomed && i < values.size()) {
                     Number max = values.get(i);
-                    if (xMode && renderer.xPixel(min) <= point.x && point.x <= renderer.xPixel(max)) {
+                    if (xMode && geometry.xPixel(min) <= point.x && point.x <= geometry.xPixel(max)) {
                         renderer.setXWindow(min, max);
                         zoomed = true;
                     }
-                    else if (! xMode && renderer.yPixel(min) <= point.y && point.y <= renderer.yPixel(max)) {
+                    else if (! xMode && geometry.yPixel(min) <= point.y && point.y <= geometry.yPixel(max)) {
                         renderer.setYWindow(min, max);
                         zoomed = true;
                     }
