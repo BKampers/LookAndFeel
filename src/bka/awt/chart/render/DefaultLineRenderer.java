@@ -14,8 +14,8 @@ import java.awt.geom.*;
 public class DefaultLineRenderer extends LineRenderer {
 
 
-    public DefaultLineRenderer(LineDrawStyle lineStyle, int markerWidth, int markerHeight) {
-        super(lineStyle, markerWidth, markerHeight);
+    public DefaultLineRenderer(LineDrawStyle lineDrawStyle, int markerWidth, int markerHeight) {
+        super(lineDrawStyle, markerWidth, markerHeight);
     }
 
 

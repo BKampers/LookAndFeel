@@ -9,12 +9,9 @@ import bka.awt.chart.custom.*;
 import bka.awt.chart.render.*;
 import bka.chart.grid.*;
 import java.awt.*;
-import java.awt.image.*;
 import java.awt.print.*;
-import java.io.*;
 import java.util.*;
 import java.util.logging.*;
-import javax.imageio.*;
 
 
 public class Demo extends javax.swing.JFrame {
@@ -225,19 +222,6 @@ public class Demo extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_printButton_actionPerformed
-
-
-    private void saveImage() {
-        BufferedImage image = new BufferedImage(chartPanel.getWidth(), chartPanel.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        chartRenderer.paint((Graphics2D) image.getGraphics(), chartPanel.getBounds());
-        java.io.File outputfile = new java.io.File("saved.png");
-        try {
-            ImageIO.write(image, "png", outputfile);
-        }
-        catch (IOException ex) {
-            getLogger().log(Level.WARNING, "Save PNG", ex);
-        }
-    }
 
 
     private void configureDefaultChart(Map<Object, Map<Number, Number>> graphs) {

@@ -88,18 +88,20 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
 
 
     protected void draw(Graphics2D g2d, G geometry) {
-        Shape area = geometry.getArea();
-        Paint paint = areaDrawStyle.getPaint(geometry);
-        if (paint != null) {
-            g2d.setPaint(paint);
-            g2d.fill(area);
-        }
-        Paint borderPaint = areaDrawStyle.getBorderPaint(geometry);
-        Stroke borderStroke = areaDrawStyle.getBorderStroke(geometry);
-        if (borderPaint != null && borderStroke != null) {
-            g2d.setPaint(borderPaint);
-            g2d.setStroke(borderStroke);
-            g2d.draw(area);
+        if (areaDrawStyle != null) {
+            Shape area = geometry.getArea();
+            Paint paint = areaDrawStyle.getPaint(geometry);
+            if (paint != null) {
+                g2d.setPaint(paint);
+                g2d.fill(area);
+            }
+            Paint borderPaint = areaDrawStyle.getBorderPaint(geometry);
+            Stroke borderStroke = areaDrawStyle.getBorderStroke(geometry);
+            if (borderPaint != null && borderStroke != null) {
+                g2d.setPaint(borderPaint);
+                g2d.setStroke(borderStroke);
+                g2d.draw(area);
+            }
         }
     }
 
