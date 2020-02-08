@@ -5,6 +5,7 @@
 
 package bka.awt.chart.render;
 
+import bka.awt.chart.*;
 import bka.awt.chart.custom.*;
 import bka.awt.chart.geometry.*;
 import java.awt.*;
@@ -35,6 +36,24 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
      */
     public void setShift(int shift) {
         this.shift = shift;
+    }
+
+
+    @Override
+    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData) {
+        ChartData<Number, Number> graphPointsInWindow = new ChartData<>();
+        for (ChartDataElement<Number, Number> element : chartData) {
+            Number x = element.getKey();
+            if (getWindow().inXRange(x)) {
+                Number y = element.getValue();
+                graphPointsInWindow.add(x, y);
+                getWindow().adjustXBounds(x);
+                if (getWindow().inYRange(y)) {
+                    getWindow().adjustYBounds(y);
+                }
+            }
+        }
+        getWindow().putPoints(key, graphPointsInWindow);
     }
 
 

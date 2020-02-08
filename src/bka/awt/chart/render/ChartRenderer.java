@@ -395,12 +395,8 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
     private void drawAxises(Graphics2D g2d) {
         if (axisRenderer != null) {
-            if (geometry.getXMin() != null && geometry.getXMax() != null) {
-                axisRenderer.drawXAxis(g2d, locale);
-            }
-            if (geometry.getYMin() != null && geometry.getYMax() != null) {
-                axisRenderer.drawYAxis(g2d, locale);
-            }
+            axisRenderer.drawXAxis(g2d, locale);
+            axisRenderer.drawYAxis(g2d, locale);
         }
     }
 

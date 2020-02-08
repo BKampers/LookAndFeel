@@ -275,6 +275,9 @@ public final class ChartGeometry {
 
 
     private static double size(Range range) {
+        if (range.getMin() == null || range.getMax() == null) {
+            return Double.POSITIVE_INFINITY;
+        }
         return range.getMax().doubleValue() - range.getMin().doubleValue();
     }
 
@@ -295,17 +298,24 @@ public final class ChartGeometry {
         }
 
         public void adjustBounds(Number x, Number y) {
-            if (xDataRange.getMin() == null || x.doubleValue() < xDataRange.getMin().doubleValue()) {
-                xDataRange.setMin(x);
+            adjustXBounds(x);
+            adjustYBounds(y);
+        }
+
+        public void adjustXBounds(Number x) {
+            adjustBounds(xDataRange, x);
+        }
+
+        public void adjustYBounds(Number y) {
+            adjustBounds(yDataRanges.get(key), y);
+        }
+
+        private void adjustBounds(Range range, Number value) {
+            if (range.getMin() == null || value.doubleValue() < range.getMin().doubleValue()) {
+                range.setMin(value);
             }
-            if (xDataRange.getMax() == null || xDataRange.getMax().doubleValue() < x.doubleValue()) {
-                xDataRange.setMax(x);
-            }
-            if (yDataRanges.get(key).getMin() == null || y.doubleValue() < yDataRanges.get(key).getMin().doubleValue()) {
-                yDataRanges.get(key).setMin(y);
-            }
-            if (yDataRanges.get(key).getMax() == null || yDataRanges.get(key).getMax().doubleValue() < y.doubleValue()) {
-                yDataRanges.get(key).setMax(y);
+            if (range.getMax() == null || range.getMax().doubleValue() < value.doubleValue()) {
+                range.setMax(value);
             }
         }
 
@@ -350,18 +360,17 @@ public final class ChartGeometry {
     }
 
     
-    private Grid xGrid;
-    private Grid yGrid;
-
-    
-    private Rectangle area;
-    
-    private Map<Object, ChartData<Number, Number>> dataMap;
-    private Map<Object, AbstractDataAreaRenderer> renderers;
-
     private final Map<Object, GraphGeometry<AreaGeometry>> graphs = new LinkedHashMap<>();
     private final Map<Object, Window> windows = new HashMap<>();
 
+    private Map<Object, ChartData<Number, Number>> dataMap;
+    private Map<Object, AbstractDataAreaRenderer> renderers;
+
+    private Grid xGrid;
+    private Grid yGrid;
+
+    private Rectangle area;
+    
     private Range xDataRange;
     private RangeMap yDataRanges;
 
