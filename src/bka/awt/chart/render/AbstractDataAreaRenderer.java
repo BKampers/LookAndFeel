@@ -33,7 +33,7 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
 
 
     /**
-     * Set the ChartGeometry.Window object that will hold the computed coorrdinates needed to
+     * Set the ChartGeometry.Window object that will hold the computed coordinates needed to
      * draw graphs.
      * @param window
      */

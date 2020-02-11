@@ -45,15 +45,13 @@ public final class ChartGeometry {
      * @param yRanges: ranges of the y-axis(es)
      * @param yWindowBase: y location where the y-axis is drawn, null means origin
      */
-    public void initialize(Rectangle area, Range xRange, RangeMap yRanges, Number yWindowBase) {
+    public void initialize(Layout layout) {
         if (graphs.isEmpty()) {
-            this.area = area;
-            xWindowRange = new Range(xRange);
-            yWindowRanges = new RangeMap(yRanges);
-            xDataRange = new Range(xRange);
-            yDataRanges = new RangeMap(yRanges);
+            this.layout = Objects.requireNonNull(layout);
+            xDataRange = new Range(layout.xWindowRange);
+            yDataRanges = new RangeMap(layout.yWindowRanges);
             computeWindows();
-            computeRanges(yWindowBase);
+            computeRanges();
             computeDataPoints();
             initializeGrids();
         }
@@ -75,14 +73,14 @@ public final class ChartGeometry {
     }
 
 
-    private void computeRanges(Number yWindowBase) {
-        if (yWindowBase != null) {
+    private void computeRanges() {
+        if (layout.yWindowBase != null) {
             for (Range range : yDataRanges.values()) {
-                if (range.getMin() != null && range.getMin().doubleValue() > yWindowBase.doubleValue()) {
-                    range.setMin(yWindowBase);
+                if (range.getMin() != null && range.getMin().doubleValue() > layout.yWindowBase.doubleValue()) {
+                    range.setMin(layout.yWindowBase);
                 }
-                if (range.getMax() != null && range.getMax().doubleValue() < yWindowBase.doubleValue()) {
-                    range.setMax(yWindowBase);
+                if (range.getMax() != null && range.getMax().doubleValue() < layout.yWindowBase.doubleValue()) {
+                    range.setMax(layout.yWindowBase);
                 }
             }
         }
@@ -148,8 +146,8 @@ public final class ChartGeometry {
 
     
     public double xValue(int pixelX) {
-        double ratio = xRange() / area.width;
-        return (pixelX - area.x) * ratio + xDataRange.getMin().doubleValue();
+        double ratio = xRange() / (layout.area.width - offsetSum());
+        return (pixelX - layout.area.x - leftOffset()) * ratio + xDataRange.getMin().doubleValue();
     }
 
 
@@ -164,17 +162,17 @@ public final class ChartGeometry {
 
 
     public double yValueByRange(Range range, int pixelY) {
-        double ratio = size(range) / area.height;
-        return (area.height - pixelY + area.y) * ratio + range.getMin().doubleValue();
+        double ratio = size(range) / layout.area.height;
+        return (layout.area.height - pixelY + layout.area.y) * ratio + range.getMin().doubleValue();
     }
-    
+
     
     public int xPixel(Number x) {
         double range = xRange();
         if (range == 0.0) {
-            return area.x + area.width / 2;
+            return layout.area.x + layout.area.width / 2;
         }
-        return area.x + pixel(x, xDataRange.getMin(), range, area.width);
+        return layout.area.x + leftOffset() + pixel(x, xDataRange.getMin(), range, layout.area.width - offsetSum());
     }
 
 
@@ -186,9 +184,9 @@ public final class ChartGeometry {
     private int yPixel(Object key, Number y) {
         double range = yRange(key);
         if (range == 0.0) {
-            return area.y + area.height / 2;
+            return layout.area.y + layout.area.height / 2;
         }
-        return area.height + area.y - pixel(y, yDataRanges.get(key).getMin(), range, area.height);
+        return layout.area.height + layout.area.y - pixel(y, yDataRanges.get(key).getMin(), range, layout.area.height);
     }
 
 
@@ -218,22 +216,22 @@ public final class ChartGeometry {
 
 
     public Number getXWindowMin() {
-        return xWindowRange.getMin();
+        return layout.xWindowRange.getMin();
     }
 
 
     public Number getXWindowMax() {
-        return xWindowRange.getMax();
+        return layout.xWindowRange.getMax();
     }
 
 
     public Number getYWindowMin(Object key) {
-        return yWindowRanges.get(key).getMin();
+        return layout.yWindowRanges.get(key).getMin();
     }
 
 
     public Number getYWindowMax(Object key) {
-        return yWindowRanges.get(key).getMax();
+        return layout.yWindowRanges.get(key).getMax();
     }
 
 
@@ -247,7 +245,7 @@ public final class ChartGeometry {
 
 
     private Window getWindow(Object key) {
-        if (! yWindowRanges.containsKey(key)) {
+        if (! layout.yWindowRanges.containsKey(key)) {
             return getFromWindows(null);
         }
         return getFromWindows(key);
@@ -255,12 +253,7 @@ public final class ChartGeometry {
 
     
     private Window getFromWindows(Object key) {
-        Window window = windows.get(key);
-        if (window == null) {
-            window = new Window(key);
-            windows.put(key, window);
-        }
-        return window;
+        return windows.computeIfAbsent(key, k -> new Window(k));
     }
     
     
@@ -284,6 +277,21 @@ public final class ChartGeometry {
     
     private static Logger getLogger() {
         return Logger.getLogger(ChartGeometry.class.getName());
+    }
+
+
+    private int offsetSum() {
+        return leftOffset() + rightOffset();
+    }
+
+
+    private int leftOffset() {
+        return (layout.xWindowRange.getMin() == null) ? layout.leftOffset : 0;
+    }
+
+
+    private int rightOffset() {
+        return (layout.xWindowRange.getMax() == null) ? layout.rightOffset : 0;
     }
 
 
@@ -320,15 +328,15 @@ public final class ChartGeometry {
         }
 
         public Rectangle getChartArea() {
-            return area;
+            return layout.area;
         }
 
         public int getYPixelBottom() {
-            return yPixel(yWindowRanges.get(key).getMin());
+            return yPixel(layout.yWindowRanges.get(key).getMin());
         }
 
         public int getYPixelTop() {
-            return yPixel(yWindowRanges.get(key).getMax());
+            return yPixel(layout.yWindowRanges.get(key).getMax());
         }
 
         public int xPixel(Number x) {
@@ -340,11 +348,11 @@ public final class ChartGeometry {
         }
 
         public boolean inXRange(Number x) {
-            return inRange(x, xWindowRange.getMin(), xWindowRange.getMax());
+            return inRange(x, layout.xWindowRange.getMin(), layout.xWindowRange.getMax());
         }
 
         public boolean inYRange(Number y) {
-            return inRange(y, yWindowRanges.get(key).getMin(), yWindowRanges.get(key).getMax());
+            return inRange(y, layout.yWindowRanges.get(key).getMin(), layout.yWindowRanges.get(key).getMax());
         }
 
         private boolean inRange(Number n, Number min, Number max) {
@@ -359,9 +367,31 @@ public final class ChartGeometry {
         private final Map<Object, ChartData<Number, Number>> points = new LinkedHashMap<>();
     }
 
-    
+
+    public static class Layout {
+
+        public Layout(Rectangle area, int leftOffset, int rightOffset, Range xWindowRange, RangeMap yWindowRanges, Number yWindowBase) {
+            this.area = area;
+            this.leftOffset = leftOffset;
+            this.rightOffset = rightOffset;
+            this.xWindowRange = new Range(xWindowRange);
+            this.yWindowRanges = new RangeMap(yWindowRanges);
+            this.yWindowBase = yWindowBase;
+        }
+
+        private final Rectangle area;
+        private final int leftOffset;
+        private final int rightOffset;
+        private final Range xWindowRange;
+        private final RangeMap yWindowRanges;
+        private final Number yWindowBase;
+    }
+
+
     private final Map<Object, GraphGeometry<AreaGeometry>> graphs = new LinkedHashMap<>();
     private final Map<Object, Window> windows = new HashMap<>();
+
+    private Layout layout;
 
     private Map<Object, ChartData<Number, Number>> dataMap;
     private Map<Object, AbstractDataAreaRenderer> renderers;
@@ -369,12 +399,7 @@ public final class ChartGeometry {
     private Grid xGrid;
     private Grid yGrid;
 
-    private Rectangle area;
-    
     private Range xDataRange;
     private RangeMap yDataRanges;
-
-    private Range xWindowRange;
-    private RangeMap yWindowRanges;
 
 }

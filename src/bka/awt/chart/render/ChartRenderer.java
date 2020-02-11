@@ -15,7 +15,9 @@ import java.awt.print.*;
 import java.util.*;
 import java.util.logging.*;
 
-
+/**
+ * Renders charts of Number Maps on a Graphics2D.
+ */
 public final class ChartRenderer implements java.awt.print.Printable {
 
 
@@ -23,11 +25,29 @@ public final class ChartRenderer implements java.awt.print.Printable {
     public enum GridMode { NONE, X, Y }
 
 
+    /**
+     * Set margins around the graph area.
+     * @param leftMargin
+     * @param rightMargin
+     * @param topMargin
+     * @param bottomMargin
+     */
     public void setMargins(int leftMargin, int rightMargin, int topMargin, int bottomMargin) {
         this.leftMargin = leftMargin;
         this.rightMargin = rightMargin;
         this.topMargin = topMargin;
         this.bottomMargin = bottomMargin;
+    }
+
+
+    /**
+     * Set the minimum distances for data points from edges of the graph area
+     * @param leftOffset
+     * @param rightOffset
+     */
+    public void setOffsets(int leftOffset, int rightOffset) {
+        this.leftOffset = leftOffset;
+        this.rightOffset = rightOffset;
     }
 
 
@@ -335,7 +355,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
     private void draw(Graphics2D g2d, Rectangle bounds) {
         setBounds(bounds);
-        geometry.initialize(chartArea(), xRange, yRanges, yWindowBase);;
+        geometry.initialize(new ChartGeometry.Layout(chartArea(),leftOffset, rightOffset, xRange, yRanges, yWindowBase));
         draw(g2d);
     }
 
@@ -481,5 +501,8 @@ public final class ChartRenderer implements java.awt.print.Printable {
     private int rightMargin;
     private int topMargin;
     private int bottomMargin;
+
+    private int leftOffset;
+    private int rightOffset;
     
 }
