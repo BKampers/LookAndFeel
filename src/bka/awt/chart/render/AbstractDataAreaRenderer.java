@@ -54,7 +54,7 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
         for (ChartDataElement<Number, Number> element : chartData) {
             Number x = element.getKey();
             Number y = element.getValue();
-            if (window.inXRange(x) && window.inYRange(y)) {
+            if (window.inXWindowRange(x) && window.inYWindowRange(y)) {
                 graphPointsInWindow.add(x, y);
                 window.adjustBounds(x, y);
             }

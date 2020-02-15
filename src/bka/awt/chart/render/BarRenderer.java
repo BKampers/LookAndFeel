@@ -44,11 +44,11 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
         ChartData<Number, Number> graphPointsInWindow = new ChartData<>();
         for (ChartDataElement<Number, Number> element : chartData) {
             Number x = element.getKey();
-            if (getWindow().inXRange(x)) {
+            if (getWindow().inXWindowRange(x)) {
                 Number y = element.getValue();
                 graphPointsInWindow.add(x, y);
                 getWindow().adjustXBounds(x);
-                if (getWindow().inYRange(y)) {
+                if (getWindow().inYWindowRange(y)) {
                     getWindow().adjustYBounds(y);
                 }
             }

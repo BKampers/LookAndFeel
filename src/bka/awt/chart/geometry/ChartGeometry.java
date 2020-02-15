@@ -332,11 +332,11 @@ public final class ChartGeometry {
         }
 
         public int getYPixelBottom() {
-            return yPixel(layout.yWindowRanges.get(key).getMin());
+            return yPixel(yDataRanges.get(key).getMin());
         }
 
         public int getYPixelTop() {
-            return yPixel(layout.yWindowRanges.get(key).getMax());
+            return yPixel(yDataRanges.get(key).getMax());
         }
 
         public int xPixel(Number x) {
@@ -347,11 +347,11 @@ public final class ChartGeometry {
             return ChartGeometry.this.yPixel(key, y);
         }
 
-        public boolean inXRange(Number x) {
+        public boolean inXWindowRange(Number x) {
             return inRange(x, layout.xWindowRange.getMin(), layout.xWindowRange.getMax());
         }
 
-        public boolean inYRange(Number y) {
+        public boolean inYWindowRange(Number y) {
             return inRange(y, layout.yWindowRanges.get(key).getMin(), layout.yWindowRanges.get(key).getMax());
         }
 

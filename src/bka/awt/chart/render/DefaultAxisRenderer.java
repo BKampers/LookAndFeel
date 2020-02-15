@@ -26,6 +26,8 @@ public class DefaultAxisRenderer extends AxisRenderer {
     public DefaultAxisRenderer(Color xAxisColor, Color yAxisColor) {
         this.xAxisColor = (xAxisColor != null) ? xAxisColor : Color.BLACK;
         this.yAxisColor = (yAxisColor != null) ? yAxisColor : Color.BLACK;
+        setDrawXValues(true);
+        setDrawYValues(true);
     }
 
     
@@ -46,43 +48,44 @@ public class DefaultAxisRenderer extends AxisRenderer {
             for (int i = 0; i < count; ++i) {
                 Number value = values.get(i);
                 int x = xPixel(value);
-                int yLabel = y + fontMetrics.getHeight() * labelLine;
                 if (xMin <= x && x <= xMax) {
                     if (drawMarker) {
                         g2d.drawLine(x, y - 2, x, y + 2);
                     }
-                    String label = markerSet.getLabel(locale, value);
-                    if (label.endsWith(">")) {
-                        // draw label between two markers
-                        if (i < count - 1) {
-                            int xNext = xPixel(values.get(i + 1));
-                            if (xNext <= xMax) {
-                                label = label.substring(0, label.length() - 1);
-                                int width = fontMetrics.stringWidth(label);
-                                g2d.drawString(label, x + (xNext - x) / 2 - width / 2, yLabel);
+                    if (getDrawXValues()) {
+                        int yLabel = y + fontMetrics.getHeight() * labelLine;
+                        String label = markerSet.getLabel(locale, value);
+                        if (label.endsWith(">")) {
+                            // draw label between two markers
+                            if (i < count - 1) {
+                                int xNext = xPixel(values.get(i + 1));
+                                if (xNext <= xMax) {
+                                    label = label.substring(0, label.length() - 1);
+                                    int width = fontMetrics.stringWidth(label);
+                                    g2d.drawString(label, x + (xNext - x) / 2 - width / 2, yLabel);
+                                }
                             }
                         }
-                    }
-                    else {
-                        // draw label at the marker
-                        int width = fontMetrics.stringWidth(label);
-                        g2d.drawString(label, x - width / 2, yLabel);
+                        else {
+                            // draw label at the marker
+                            int width = fontMetrics.stringWidth(label);
+                            g2d.drawString(label, x - width / 2, yLabel);
+                        }
                     }
                 }
             }
             drawMarker = false;
             labelLine++;
         }
-        if (xTitle != null) {
-            int width = fontMetrics.stringWidth(xTitle);
+        if (getXTitle() != null) {
+            int width = fontMetrics.stringWidth(getXTitle());
             int xPos = xMin() + (xMax() - xMin()) / 2 + width / 2;
             int yPos = yMin() + fontMetrics.getHeight() * 3;
-            g2d.drawString(xTitle, xPos, yPos);
+            g2d.drawString(getXTitle(), xPos, yPos);
             drawArrow(g2d, xPos + width, yPos);
         }
-        if (xUnit != null) {
-            String string = '[' + xUnit + ']';
-            g2d.drawString(string, xMax() + 3, yMin() + fontMetrics.getHeight() / 4);
+        if (getXUnit() != null) {
+            g2d.drawString(getUnitText(getXUnit()), xMax() + 3, yMin() + fontMetrics.getHeight() / 4);
         }
     }
 
@@ -105,31 +108,38 @@ public class DefaultAxisRenderer extends AxisRenderer {
                     if (drawMarker) {
                         g2d.drawLine(x - 2, y, x + 2, y);
                     }
-                    String label = markerSet.getLabel(locale, value);
-                    int width = fontMetrics.stringWidth(label);
-                    columnWidth = Math.max(width, columnWidth);
-                    int labelPosition = x - width - labelOffset;
-                    g2d.drawString(label, labelPosition, y + fontMetrics.getDescent());
-                    titlePosition = Math.min(titlePosition, labelPosition);
+                    if (getDrawYValues()) {
+                        String label = markerSet.getLabel(locale, value);
+                        int width = fontMetrics.stringWidth(label);
+                        columnWidth = Math.max(width, columnWidth);
+                        int labelPosition = x - width - labelOffset;
+                        g2d.drawString(label, labelPosition, y + fontMetrics.getDescent());
+                        titlePosition = Math.min(titlePosition, labelPosition);
+                    }
                 }
             }
             labelOffset = columnWidth;
             drawMarker = false;
         }
-        if (yTitle != null) {
-            int width = fontMetrics.stringWidth(yTitle);
+        if (getYTitle() != null) {
+            int width = fontMetrics.stringWidth(getYTitle());
             int xPos = titlePosition - fontMetrics.getHeight();
             int yPos = yMax() + (yMin() - yMax()) / 2 + width / 2;
             g2d.rotate(-0.5 * Math.PI, xPos, yPos);
-            g2d.drawString(yTitle, xPos, yPos);
+            g2d.drawString(getYTitle(), xPos, yPos);
             drawArrow(g2d, xPos + width, yPos);
             g2d.rotate(+0.5 * Math.PI, xPos, yPos);
         }
-        if (yUnit != null) {
-            String string = '[' + yUnit + ']';
+        if (getYUnit() != null) {
+            String string = getUnitText(getYUnit());
             int width = fontMetrics.stringWidth(string);
             g2d.drawString(string, xMin() - width / 2, yMax() - fontMetrics.getHeight());
         }
+    }
+
+
+    private static String getUnitText(String unit) {
+        return String.format("[%s]", unit);
     }
 
 

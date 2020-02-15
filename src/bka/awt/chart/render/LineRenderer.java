@@ -44,7 +44,7 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
         for (ChartDataElement<Number, Number> element : chartData) {
             Number x = element.getKey();
             Number y = element.getValue();
-            boolean inRange = window.inXRange(x) && window.inYRange(y);
+            boolean inRange = window.inXWindowRange(x) && window.inYWindowRange(y);
             elements[i] = new ChartDataElement<>(x, y, ! inRange);
             i++;
         }
@@ -74,7 +74,7 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
 
     private static int xRangeStartIndex(ChartDataElement<Number, Number>[] elements, ChartGeometry.Window window) {
         for (int i = 0; i < elements.length; ++i) {
-            if (window.inXRange(elements[i].getKey())) {
+            if (window.inXWindowRange(elements[i].getKey())) {
                 return i;
             }
         }
@@ -84,7 +84,7 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
 
     private static int xRangeEndIndex(ChartDataElement<Number, Number>[] elements, ChartGeometry.Window window, int startIndex) {
         for (int i = startIndex; i < elements.length; ++i) {
-            if (! window.inXRange(elements[i].getKey())) {
+            if (! window.inXWindowRange(elements[i].getKey())) {
                 return i - 1;
             }
         }
