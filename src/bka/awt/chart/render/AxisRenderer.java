@@ -159,8 +159,8 @@ public abstract class AxisRenderer {
     }
 
 
-    private boolean drawXValues;
-    private boolean drawYValues;
+    private boolean drawXValues = true;
+    private boolean drawYValues = true;
     
     private String xTitle;
     private String yTitle;
@@ -168,7 +168,6 @@ public abstract class AxisRenderer {
     private String xUnit;
     private String yUnit;
 
-    // Private attributes must be initialized by a ChartPanel.
     private ChartRenderer chartRenderer;
     private ChartGeometry chartGeometry;
     

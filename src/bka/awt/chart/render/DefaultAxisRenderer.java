@@ -14,7 +14,7 @@ public class DefaultAxisRenderer extends AxisRenderer {
     
     
     public DefaultAxisRenderer() {
-        this(javax.swing.UIManager.getColor("Chart.xAxisColor"), javax.swing.UIManager.getColor("Chart.yAxisColor"));
+        this(Color.BLACK);
     }
     
     
@@ -24,10 +24,8 @@ public class DefaultAxisRenderer extends AxisRenderer {
     
     
     public DefaultAxisRenderer(Color xAxisColor, Color yAxisColor) {
-        this.xAxisColor = (xAxisColor != null) ? xAxisColor : Color.BLACK;
-        this.yAxisColor = (yAxisColor != null) ? yAxisColor : Color.BLACK;
-        setDrawXValues(true);
-        setDrawYValues(true);
+        this.xAxisColor = Objects.requireNonNull(xAxisColor);
+        this.yAxisColor = Objects.requireNonNull(yAxisColor);
     }
 
     

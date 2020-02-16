@@ -31,6 +31,11 @@ public final class ChartPanel extends javax.swing.JPanel {
     }
 
 
+    public static AxisRenderer createDefaultAxisRenderer() {
+        return new DefaultAxisRenderer(javax.swing.UIManager.getColor("Chart.xAxisColor"), javax.swing.UIManager.getColor("Chart.yAxisColor"));
+    }
+
+
     public void setDragZoomMode(DragZoomMode dragZoomMode) {
         this.dragZoomMode = Objects.requireNonNull(dragZoomMode);
     }
