@@ -5,7 +5,7 @@
 package bka.awt.chart.render;
 
 import bka.awt.chart.custom.*;
-import bka.awt.chart.geometry.ChartGeometry;
+import bka.awt.chart.geometry.*;
 import java.awt.*;
 
 
@@ -19,26 +19,17 @@ public class DefaultGridRenderer extends GridRenderer {
     
     @Override
     public void draw(Graphics2D g2d) {
-        switch (getChartRenderer().getGridMode()) {
-            case X:
-                drawVerticalGridAreas(g2d);
-                drawHorizontalLines(g2d);
-                drawVerticalLines(g2d);
-                break;
-            case Y:
-                drawHorizontalGridAreas(g2d);
-                drawHorizontalLines(g2d);
-                drawVerticalLines(g2d);
-                break;
-            case NONE:
-                break;
+        if (getPaintBox() != null) {
+            paintGridAreas(g2d);
         }
+        drawHorizontalLines(g2d);
+        drawVerticalLines(g2d);
     }
 
 
     private void drawVerticalLines(Graphics2D g2d) {
-        Stroke stroke = gridStyle.getStroke();
-        Paint paint = gridStyle.getGridPaint();
+        Stroke stroke = gridStyle.getYStroke();
+        Paint paint = gridStyle.getYPaint();
         if (stroke != null && paint != null) {
             g2d.setPaint(paint);
             g2d.setStroke(stroke);
@@ -57,8 +48,8 @@ public class DefaultGridRenderer extends GridRenderer {
 
 
     private void drawHorizontalLines(Graphics2D g2d) {
-        Stroke stroke = gridStyle.getStroke();
-        Paint paint = gridStyle.getGridPaint();
+        Stroke stroke = gridStyle.getXStroke();
+        Paint paint = gridStyle.getXPaint();
         if (stroke != null && paint != null) {
             g2d.setPaint(paint);
             g2d.setStroke(stroke);
@@ -72,6 +63,20 @@ public class DefaultGridRenderer extends GridRenderer {
                 int y = Math.max(geometry.yPixel(values.get(i)), areaTop);
                 g2d.drawLine(areaLeft, y, areaRight, y);
             }
+        }
+    }
+
+
+    private void paintGridAreas(Graphics2D g2d) {
+        switch (getChartRenderer().getGridMode()) {
+            case X:
+                drawVerticalGridAreas(g2d);
+                break;
+            case Y:
+                drawHorizontalGridAreas(g2d);
+                break;
+            case NONE:
+                break;
         }
     }
 
@@ -92,14 +97,14 @@ public class DefaultGridRenderer extends GridRenderer {
             int width = right - left;
             if (width > 0) {
                 Rectangle area = new Rectangle(paintLeft, areaTop, paintRight - paintLeft, areaHeight);
-                g2d.setPaint(gridStyle.getVerticalPaint(area, i));
+                g2d.setPaint(getPaintBox().getVerticalPaint(area, i));
                 area = new Rectangle(left, areaTop, right - left, areaHeight);
                 g2d.fill(area);
             }
         }
     }
-    
-    
+
+
     private void drawHorizontalGridAreas(Graphics2D g2d) {
         int areaTop = getChartRenderer().areaTop();
         int areaBottom = getChartRenderer().areaBottom();
@@ -116,11 +121,16 @@ public class DefaultGridRenderer extends GridRenderer {
             int height = bottom - top;
             if (height > 0) {
                 Rectangle area = new Rectangle(areaLeft, paintTop, areaWidth, paintBottom - paintTop);
-                g2d.setPaint(gridStyle.getHorizontalPaint(area, i));
+                g2d.setPaint(getPaintBox().getHorizontalPaint(area, i));
                 area = new Rectangle(areaLeft, top, areaWidth, height);
                 g2d.fill(area);
             }
         }
+    }
+
+
+    private GridStyle.PaintBox getPaintBox() {
+        return gridStyle.getPaintBox();
     }
 
 

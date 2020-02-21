@@ -265,7 +265,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
    
    public void setGridMode(GridMode gridMode) {
        if (gridRenderer == null && gridMode != GridMode.NONE) {
-           setGridRenderer(new DefaultGridRenderer(GridStyle.create(Color.WHITE)), gridMode);
+           setGridRenderer(new DefaultGridRenderer(GridStyle.createSolid(Color.WHITE)), gridMode);
        }
        else {
            this.gridMode = gridMode;

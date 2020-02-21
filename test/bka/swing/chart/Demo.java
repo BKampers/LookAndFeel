@@ -461,18 +461,21 @@ public class Demo extends javax.swing.JFrame {
     private enum GraphStyle { PIE, LINE, DOT, POLYGON, BAR, SCATTER };
 
 
-    private static final GridStyle DEFAULT_GRID_STYLE = GridStyle.createGradient(
+    private static final GridStyle DEFAULT_GRID_STYLE = GridStyle.create(
         new BasicStroke(0.5f),
         Color.GRAY,
-        new Color[] { new Color(0x00e68a), new Color(0x009973) },
-        new Color[] { new Color(0xccffcc), new Color(0xccffcc) });
+        GridStyle.createGradientPaintBox(
+            new Color[] { new Color(0x00e68a), new Color(0x009973) },
+            new Color[] { new Color(0xccffcc), new Color(0xccffcc) }
+        ));
+
     
     private static final GridStyle GRAY_GRID_STYLE = GridStyle.create(
         new BasicStroke(2.0f), 
         Color.LIGHT_GRAY, 
-        new Color[] { Color.WHITE });
+        GridStyle.createSolidPaintBox(new Color[] { Color.WHITE }));
 
-    private static final GridStyle ZEBRA_GRID_STYLE = GridStyle.create(
+    private static final GridStyle ZEBRA_GRID_STYLE = GridStyle.createSolid(
         new Color[] { Color.WHITE, Color.LIGHT_GRAY });
     
     private static final GridStyle WHITE_GRADIENT_GRID_STYLE = GridStyle.createGradient(

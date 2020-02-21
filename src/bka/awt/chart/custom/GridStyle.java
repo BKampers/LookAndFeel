@@ -10,47 +10,101 @@ import java.awt.geom.*;
 import java.util.*;
 
 
-public abstract class GridStyle {
+public class GridStyle {
 
 
-    private GridStyle(Stroke stroke, Color gridColor) {
-        this.stroke = stroke;
-        this.gridColor = gridColor;
-    }
-    
-    
-    public static GridStyle create(Stroke stroke, Color gridColor, Color[] colors) {
-        return new DefaultGridStyle(stroke, gridColor, colors);
+    public interface PaintBox {
+        Paint getHorizontalPaint(RectangularShape area, int index);
+        Paint getVerticalPaint(RectangularShape area, int index);
     }
 
 
-    public static GridStyle createGradient(Stroke stroke, Color gridColor, Color[] colors1, Color[] colors2) {
-        return new GradientGridStyle(stroke, gridColor, colors1, colors2);
+    private GridStyle(Stroke xStroke, Paint xPaint, Stroke yStroke, Paint yPaint, PaintBox paintBox) {
+        this.xStroke = xStroke;
+        this.xPaint = xPaint;
+        this.yStroke = yStroke;
+        this.yPaint = yPaint;
+        this.paintBox = paintBox;
+    }
+
+
+    public static GridStyle create(Stroke stroke, Paint paint) {
+        return create(stroke, paint, null);
+    }
+
+
+    public static GridStyle create(Stroke stroke, Paint paint, PaintBox paintBox) {
+        return create(stroke, paint, stroke, paint, paintBox);
+    }
+
+
+    public static GridStyle create(Stroke xStroke, Paint xPaint, Stroke yStroke, Paint yPaint) {
+        return create(xStroke, xPaint, yStroke, yPaint, null);
+    }
+
+
+    public static GridStyle create(PaintBox paintBox) {
+        return create(null, null, null, null, paintBox);
+    }
+
+
+    public static GridStyle create(Stroke xStroke, Paint xPaint, Stroke yStroke, Paint yPaint, PaintBox paintBox) {
+        return new GridStyle(xStroke, xPaint, yStroke, yPaint, paintBox);
+    }
+
+
+    public static GridStyle createSolid(Color color) {
+        return create(createSolidPaintBox(new Color[] { color }));
+    }
+
+
+    public static GridStyle createSolid(Color[] colors) {
+        return create(createSolidPaintBox(colors));
     }
 
 
     public static GridStyle createGradient(Color[] colors) {
-        return new GradientGridStyle(null, null, colors, darker(colors));
+        return createGradient(colors, darker(colors));
     }
 
 
-    public static GridStyle create(Color[] colors) {
-        return new DefaultGridStyle(null, null, colors);
+    public static GridStyle createGradient(Color[] colors1, Color[] colors2) {
+        return create(createGradientPaintBox(colors1, colors2));
     }
 
 
-    public static GridStyle create(Color color) {
-        return create(new Color[] { color });
+    public static PaintBox createSolidPaintBox(Color[] colors) {
+        return new SolidPaintBox(colors);
     }
 
 
-    public Stroke getStroke() {
-        return stroke;
+    public static PaintBox createGradientPaintBox(Color[] colors1, Color[] colors2) {
+        return new GradientPaintBox(colors1, colors2);
     }
 
 
-    public Paint getGridPaint() {
-        return gridColor;
+    public Stroke getXStroke() {
+        return xStroke;
+    }
+
+
+    public Paint getXPaint() {
+        return xPaint;
+    }
+
+
+    public Stroke getYStroke() {
+        return yStroke;
+    }
+
+
+    public Paint getYPaint() {
+        return yPaint;
+    }
+
+
+    public PaintBox getPaintBox() {
+        return paintBox;
     }
     
     
@@ -63,17 +117,23 @@ public abstract class GridStyle {
     }
 
 
-    abstract public Paint getHorizontalPaint(RectangularShape area, int index);
-    abstract public Paint getVerticalPaint(RectangularShape area, int index);
+    public Paint getHorizontalPaint(RectangularShape area, int index) {
+        return null;
+    }
 
-    
-    private static class DefaultGridStyle extends GridStyle {
-    
-        private DefaultGridStyle(Stroke stroke, Color gridColor, Color[] colors) {
-            super(stroke, gridColor);
+
+    public Paint getVerticalPaint(RectangularShape area, int index) {
+        return null;
+    }
+
+
+
+    private static class SolidPaintBox implements PaintBox {
+
+        SolidPaintBox(Color[] colors) {
             this.colors = Objects.requireNonNull(colors);
         }
-        
+
         @Override
         public Paint getHorizontalPaint(RectangularShape area, int index) {
             return colors[index % colors.length];
@@ -89,14 +149,13 @@ public abstract class GridStyle {
     }
     
     
-    private static class GradientGridStyle extends GridStyle {
-        
-        private GradientGridStyle(Stroke stroke, Color gridColor, Color[] colors1, Color[] colors2) {
-            super(stroke, gridColor);
+    private static class GradientPaintBox implements PaintBox {
+
+        private GradientPaintBox(Color[] colors1, Color[] colors2) {
             this.colors1 = Objects.requireNonNull(colors1);
             this.colors2 = Objects.requireNonNull(colors2);
         }
-        
+
         @Override
         public Paint getHorizontalPaint(RectangularShape area, int index) {
             Color color1 = colors1[index % colors1.length];
@@ -113,11 +172,14 @@ public abstract class GridStyle {
 
         private final Color[] colors1;
         private final Color[] colors2;
-        
+
     }
 
 
-    private final Stroke stroke;
-    private final Color gridColor;
+    private final Stroke xStroke;
+    private final Paint xPaint;
+    private final Stroke yStroke;
+    private final Paint yPaint;
+    private final PaintBox paintBox;
 
 }
