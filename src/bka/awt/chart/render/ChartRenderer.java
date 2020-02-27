@@ -33,10 +33,13 @@ public final class ChartRenderer implements java.awt.print.Printable {
      * @param bottomMargin
      */
     public void setMargins(int leftMargin, int rightMargin, int topMargin, int bottomMargin) {
-        this.leftMargin = leftMargin;
-        this.rightMargin = rightMargin;
-        this.topMargin = topMargin;
-        this.bottomMargin = bottomMargin;
+        if (this.leftMargin != leftMargin || this.rightMargin != rightMargin || this.topMargin != topMargin || this.bottomMargin != bottomMargin) {
+            this.leftMargin = leftMargin;
+            this.rightMargin = rightMargin;
+            this.topMargin = topMargin;
+            this.bottomMargin = bottomMargin;
+            chartArea = null;
+        }
     }
 
 
@@ -241,13 +244,26 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
 
    public void setAxisRenderer(AxisRenderer axisRenderer) {
-       this.axisRenderer = axisRenderer;
+       this.xAxisRenderer = axisRenderer;
+       this.yAxisRenderer = axisRenderer;
        if (axisRenderer != null) {
            axisRenderer.setChartRenderer(this);
        }
    }
-   
-   
+
+
+   public void setAxisRenderers(AxisRenderer xAxisRenderer, AxisRenderer yAxisRenderer) {
+       this.xAxisRenderer = xAxisRenderer;
+       if (xAxisRenderer != null) {
+           xAxisRenderer.setChartRenderer(this);
+       }
+       this.yAxisRenderer = yAxisRenderer;
+       if (yAxisRenderer != null) {
+           yAxisRenderer.setChartRenderer(this);
+       }
+   }
+
+
    public void setAxisPositions(AxisPosition xAxisPosition, AxisPosition yAxisPosition) {
        this.xAxisPosition = xAxisPosition;
        this.yAxisPosition = yAxisPosition;
@@ -361,17 +377,21 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
 
     public Rectangle chartArea() {
-        return new Rectangle(
-            bounds.x + leftMargin,
-            bounds.y + topMargin,
-            bounds.width - leftMargin - rightMargin,
-            bounds.height - topMargin - bottomMargin);
+        if (chartArea == null) {
+            chartArea = new Rectangle(
+                bounds.x + leftMargin,
+                bounds.y + topMargin,
+                bounds.width - leftMargin - rightMargin,
+                bounds.height - topMargin - bottomMargin);
+        }
+        return chartArea;
     }
 
 
    private void setBounds(Rectangle bounds) {
         if (! bounds.equals(this.bounds)) {
             this.bounds = new Rectangle(bounds);
+            chartArea = null;
             geometry.invalidate();
         }
     }
@@ -414,9 +434,11 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
 
     private void drawAxises(Graphics2D g2d) {
-        if (axisRenderer != null) {
-            axisRenderer.drawXAxis(g2d, locale);
-            axisRenderer.drawYAxis(g2d, locale);
+        if (xAxisRenderer != null) {
+            xAxisRenderer.drawXAxis(g2d, locale);
+        }
+        if (yAxisRenderer != null) {
+            yAxisRenderer.drawYAxis(g2d, locale);
         }
     }
 
@@ -486,7 +508,8 @@ public final class ChartRenderer implements java.awt.print.Printable {
     private final RangeMap yRanges = new RangeMap(null, null);
     private Number yWindowBase;
     
-    private AxisRenderer axisRenderer;
+    private AxisRenderer xAxisRenderer;
+    private AxisRenderer yAxisRenderer;
     private GridRenderer gridRenderer;
     
     private final Map<Object, AbstractDataAreaRenderer> renderers = new HashMap<>();
@@ -495,6 +518,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
     private Highlight highlight;
     
     private Rectangle bounds;
+    private Rectangle chartArea;
 
     // Margins in pixels
     private int leftMargin;

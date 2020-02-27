@@ -18,26 +18,31 @@ public class DefaultAxisRenderer extends AxisRenderer {
     }
     
     
-    public DefaultAxisRenderer(Color axisColor) {
-        this(axisColor, axisColor);
-    }
-    
-    
-    public DefaultAxisRenderer(Color xAxisColor, Color yAxisColor) {
-        this.xAxisColor = Objects.requireNonNull(xAxisColor);
-        this.yAxisColor = Objects.requireNonNull(yAxisColor);
+    public DefaultAxisRenderer(Color color) {
+        this(color, color, color, color, color);
     }
 
-    
+
+    public DefaultAxisRenderer(Color axisColor, Color markerColor, Color labelColor, Color titleColor, Color unitColor) {
+        this.axisColor = axisColor;
+        this.markerColor = markerColor;
+        this.labelColor = labelColor;
+        this.titleColor = titleColor;
+        this.unitColor = unitColor;
+    }
+
+
     @Override
     public void drawXAxis(Graphics2D g2d, Locale locale) {
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int xMin = xMin();
         int xMax = xMax();
         int y = yAxisPixelPosition();
-        g2d.setColor(xAxisColor);
         g2d.setStroke(new BasicStroke());
-        g2d.drawLine(xMin, y, xMax, y);
+        if (axisColor != null) {
+            g2d.setColor(axisColor);
+            g2d.drawLine(xMin, y, xMax, y);
+        }
         int labelLine = 1;
         boolean drawMarker = true;
         for (Grid.MarkerList markerSet : xMarkerLists()) {
@@ -47,10 +52,12 @@ public class DefaultAxisRenderer extends AxisRenderer {
                 Number value = values.get(i);
                 int x = xPixel(value);
                 if (xMin <= x && x <= xMax) {
-                    if (drawMarker) {
+                    if (drawMarker && markerColor != null) {
+                        g2d.setColor(markerColor);
                         g2d.drawLine(x, y - 2, x, y + 2);
                     }
-                    if (getDrawXValues()) {
+                    if (labelColor != null) {
+                        g2d.setColor(labelColor);
                         int yLabel = y + fontMetrics.getHeight() * labelLine;
                         String label = markerSet.getLabel(locale, value);
                         if (label.endsWith(">")) {
@@ -75,14 +82,16 @@ public class DefaultAxisRenderer extends AxisRenderer {
             drawMarker = false;
             labelLine++;
         }
-        if (getXTitle() != null) {
+        if (getXTitle() != null && titleColor == null) {
             int width = fontMetrics.stringWidth(getXTitle());
-            int xPos = xMin() + (xMax() - xMin()) / 2 + width / 2;
+            int xPos = xMin + (xMax() - xMin) / 2 + width / 2;
             int yPos = yMin() + fontMetrics.getHeight() * 3;
+            g2d.setColor(titleColor);
             g2d.drawString(getXTitle(), xPos, yPos);
             drawArrow(g2d, xPos + width, yPos);
         }
-        if (getXUnit() != null) {
+        if (getXUnit() != null && unitColor != null) {
+            g2d.setColor(unitColor);
             g2d.drawString(getUnitText(getXUnit()), xMax() + 3, yMin() + fontMetrics.getHeight() / 4);
         }
     }
@@ -92,9 +101,14 @@ public class DefaultAxisRenderer extends AxisRenderer {
     public void drawYAxis(Graphics2D g2d, Locale locale) {
         FontMetrics fontMetrics = g2d.getFontMetrics();
         int x = xAxisPixelPosition();
-        g2d.setColor(yAxisColor);
-        g2d.drawLine(x, yMin(), x, yMax());
-        int titlePosition = xMin();
+        int yMin = yMin();
+        int yMax = yMax();
+        int xMin = xMin();
+        if (axisColor != null) {
+            g2d.setColor(axisColor);
+            g2d.drawLine(x, yMin, x, yMax);
+        }
+        int titlePosition = xMin;
         int labelOffset = 4;
         boolean drawMarker = true;
         for (Grid.MarkerList markerSet : yMarkerLists()) {
@@ -102,11 +116,13 @@ public class DefaultAxisRenderer extends AxisRenderer {
             java.util.List<Number> values = markerSet.getValues();
             for (Number value : values) {
                 int y = yPixel(value);
-                if (yMax() <= y && y <= yMin()) {
-                    if (drawMarker) {
+                if (yMax <= y && y <= yMin) {
+                    if (drawMarker && markerColor != null) {
+                        g2d.setColor(markerColor);
                         g2d.drawLine(x - 2, y, x + 2, y);
                     }
-                    if (getDrawYValues()) {
+                    if (labelColor != null) {
+                        g2d.setColor(labelColor);
                         String label = markerSet.getLabel(locale, value);
                         int width = fontMetrics.stringWidth(label);
                         columnWidth = Math.max(width, columnWidth);
@@ -119,19 +135,21 @@ public class DefaultAxisRenderer extends AxisRenderer {
             labelOffset = columnWidth;
             drawMarker = false;
         }
-        if (getYTitle() != null) {
+        if (getYTitle() != null && titleColor != null) {
             int width = fontMetrics.stringWidth(getYTitle());
             int xPos = titlePosition - fontMetrics.getHeight();
-            int yPos = yMax() + (yMin() - yMax()) / 2 + width / 2;
+            int yPos = yMax + (yMin - yMax) / 2 + width / 2;
             g2d.rotate(-0.5 * Math.PI, xPos, yPos);
+            g2d.setColor(titleColor);
             g2d.drawString(getYTitle(), xPos, yPos);
             drawArrow(g2d, xPos + width, yPos);
             g2d.rotate(+0.5 * Math.PI, xPos, yPos);
         }
-        if (getYUnit() != null) {
+        if (getYUnit() != null && unitColor != null) {
             String string = getUnitText(getYUnit());
             int width = fontMetrics.stringWidth(string);
-            g2d.drawString(string, xMin() - width / 2, yMax() - fontMetrics.getHeight());
+            g2d.setColor(unitColor);
+            g2d.drawString(string, xMin - width / 2, yMax - fontMetrics.getHeight());
         }
     }
 
@@ -173,7 +191,10 @@ public class DefaultAxisRenderer extends AxisRenderer {
     }
     
     
-    private final Color xAxisColor;
-    private final Color yAxisColor;
+    private final Color axisColor;
+    private final Color markerColor;
+    private final Color labelColor;
+    private final Color titleColor;
+    private final Color unitColor;
 
 }

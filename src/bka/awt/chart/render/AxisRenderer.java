@@ -23,16 +23,6 @@ public abstract class AxisRenderer {
     }
 
 
-    public final void setDrawXValues(boolean drawXValues) {
-        this.drawXValues = drawXValues;
-    }
-
-
-    public final void setDrawYValues(boolean drawYValues) {
-        this.drawYValues = drawYValues;
-    }
-
-
     public final void setXTitle(String xTitle) {
         this.xTitle = xTitle;
     }
@@ -50,16 +40,6 @@ public abstract class AxisRenderer {
 
     public final void setYUnit(String yUnit) {
         this.yUnit = yUnit;
-    }
-
-
-    protected final boolean getDrawXValues() {
-        return drawXValues;
-    }
-
-
-    protected final boolean getDrawYValues() {
-        return drawYValues;
     }
 
 
@@ -104,10 +84,10 @@ public abstract class AxisRenderer {
 
 
     private List<Grid.MarkerList> getMarketLists(Grid grid) {
-        if (grid != null) {
-            return grid.getMarkerLists();
+        if (grid == null) {
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
+        return grid.getMarkerLists();
     }
 
 
@@ -158,9 +138,6 @@ public abstract class AxisRenderer {
         return chartRenderer.areaBottom();
     }
 
-
-    private boolean drawXValues = true;
-    private boolean drawYValues = true;
     
     private String xTitle;
     private String yTitle;
