@@ -23,43 +23,23 @@ public abstract class AxisRenderer {
     }
 
 
-    public final void setXTitle(String xTitle) {
-        this.xTitle = xTitle;
+    public final void setTitle(String title) {
+        this.title = title;
     }
 
 
-    public final void setYTitle(String yTitle) {
-        this.yTitle = yTitle;
+    public final void setUnit(String unit) {
+        this.unit = unit;
     }
 
 
-    public final void setXUnit(String xUnit) {
-        this.xUnit = xUnit;
+    protected final String getTitle() {
+        return title;
     }
 
 
-    public final void setYUnit(String yUnit) {
-        this.yUnit = yUnit;
-    }
-
-
-    protected final String getXTitle() {
-        return xTitle;
-    }
-
-
-    protected final String getYTitle() {
-        return yTitle;
-    }
-
-
-    protected final String getXUnit() {
-        return xUnit;
-    }
-
-
-    protected final String getYUnit() {
-        return yUnit;
+    protected final String getUnit() {
+        return unit;
     }
 
 
@@ -139,11 +119,8 @@ public abstract class AxisRenderer {
     }
 
     
-    private String xTitle;
-    private String yTitle;
-    
-    private String xUnit;
-    private String yUnit;
+    private String title;
+    private String unit;
 
     private ChartRenderer chartRenderer;
     private ChartGeometry chartGeometry;

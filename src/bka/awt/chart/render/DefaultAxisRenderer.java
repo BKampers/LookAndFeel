@@ -11,7 +11,7 @@ import java.util.*;
 
 
 public class DefaultAxisRenderer extends AxisRenderer {
-    
+
     
     public DefaultAxisRenderer() {
         this(Color.BLACK);
@@ -82,17 +82,17 @@ public class DefaultAxisRenderer extends AxisRenderer {
             drawMarker = false;
             labelLine++;
         }
-        if (getXTitle() != null && titleColor == null) {
-            int width = fontMetrics.stringWidth(getXTitle());
+        if (getTitle() != null && titleColor != null) {
+            int width = fontMetrics.stringWidth(getTitle());
             int xPos = xMin + (xMax() - xMin) / 2 + width / 2;
             int yPos = yMin() + fontMetrics.getHeight() * 3;
             g2d.setColor(titleColor);
-            g2d.drawString(getXTitle(), xPos, yPos);
+            g2d.drawString(getTitle(), xPos, yPos);
             drawArrow(g2d, xPos + width, yPos);
         }
-        if (getXUnit() != null && unitColor != null) {
+        if (getUnit() != null && unitColor != null) {
             g2d.setColor(unitColor);
-            g2d.drawString(getUnitText(getXUnit()), xMax() + 3, yMin() + fontMetrics.getHeight() / 4);
+            g2d.drawString(getUnitText(getUnit()), xMax() + 3, yMin() + fontMetrics.getHeight() / 4);
         }
     }
 
@@ -135,18 +135,18 @@ public class DefaultAxisRenderer extends AxisRenderer {
             labelOffset = columnWidth;
             drawMarker = false;
         }
-        if (getYTitle() != null && titleColor != null) {
-            int width = fontMetrics.stringWidth(getYTitle());
+        if (getTitle() != null && titleColor != null) {
+            int width = fontMetrics.stringWidth(getTitle());
             int xPos = titlePosition - fontMetrics.getHeight();
             int yPos = yMax + (yMin - yMax) / 2 + width / 2;
             g2d.rotate(-0.5 * Math.PI, xPos, yPos);
             g2d.setColor(titleColor);
-            g2d.drawString(getYTitle(), xPos, yPos);
+            g2d.drawString(getTitleText(getTitle()), xPos, yPos);
             drawArrow(g2d, xPos + width, yPos);
             g2d.rotate(+0.5 * Math.PI, xPos, yPos);
         }
-        if (getYUnit() != null && unitColor != null) {
-            String string = getUnitText(getYUnit());
+        if (getUnit() != null && unitColor != null) {
+            String string = getUnitText(getUnit());
             int width = fontMetrics.stringWidth(string);
             g2d.setColor(unitColor);
             g2d.drawString(string, xMin - width / 2, yMax - fontMetrics.getHeight());
@@ -154,8 +154,33 @@ public class DefaultAxisRenderer extends AxisRenderer {
     }
 
 
-    private static String getUnitText(String unit) {
-        return String.format("[%s]", unit);
+    public void setTitleFormat(String titleFormat) {
+        this.titleFormat = titleFormat;
+    }
+
+
+    public void setUnitFormat(String unitFormat) {
+        this.unitFormat = unitFormat;
+    }
+
+
+    protected String getUnitFormat() {
+        return Objects.toString(unitFormat, "%s");
+    }
+
+
+    protected String getTitleFormat() {
+        return Objects.toString(titleFormat, "%s");
+    }
+
+
+    private String getTitleText(String title) {
+        return String.format(getTitleFormat(), title);
+    }
+
+
+    private String getUnitText(String unit) {
+        return String.format(getUnitFormat(), unit);
     }
 
 
@@ -196,5 +221,8 @@ public class DefaultAxisRenderer extends AxisRenderer {
     private final Color labelColor;
     private final Color titleColor;
     private final Color unitColor;
+    
+    private String titleFormat;
+    private String unitFormat;
 
 }
