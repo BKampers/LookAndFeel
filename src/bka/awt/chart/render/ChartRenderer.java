@@ -5,6 +5,7 @@
 package bka.awt.chart.render;
 
 
+import bka.awt.*;
 import bka.awt.chart.*;
 import bka.awt.chart.custom.*;
 import bka.awt.chart.geometry.*;
@@ -23,6 +24,11 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
     public enum AxisPosition { ORIGIN, MINIMUM, MAXIMUM }
     public enum GridMode { NONE, X, Y }
+
+
+    public void setChartDrawStyle(ChartDrawStyle chartDrawStyle) {
+        this.chartDrawStyle = chartDrawStyle;
+    }
 
 
     /**
@@ -206,8 +212,8 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
     public void setPointHighlightRenderer(Object key, DefaultPointHighlightRenderer pointHighlightRenderer) {
         if (pointHighlightRenderer != null) {
-            if (pointHighlightRenderer.setBackground() == null) {
-                pointHighlightRenderer.getBackground(getHighlightColor());
+            if (pointHighlightRenderer.getBackground() == null) {
+                pointHighlightRenderer.setBackground(getChartDrawStyle().getHighlightBackground());
             }
         }
         pointHighlightRenderers.put(key, pointHighlightRenderer);
@@ -281,11 +287,9 @@ public final class ChartRenderer implements java.awt.print.Printable {
    
    public void setGridMode(GridMode gridMode) {
        if (gridRenderer == null && gridMode != GridMode.NONE) {
-           setGridRenderer(new DefaultGridRenderer(GridStyle.createSolid(Color.WHITE)), gridMode);
+           setGridRenderer(new DefaultGridRenderer(GridStyle.createSolid(getChartDrawStyle().getGridBackground())), gridMode);
        }
-       else {
-           this.gridMode = gridMode;
-       }
+       this.gridMode = gridMode;
    }
  
     
@@ -446,7 +450,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
     private void drawTitle(Graphics2D g2d) {
         FontMetrics fontMetrics = g2d.getFontMetrics();
         if (title != null) {
-            g2d.setColor(Color.BLACK);
+            g2d.setColor(getChartDrawStyle().getTitleColor());
             int width = fontMetrics.stringWidth(title);
             int x = areaLeft() + areaWidth() / 2 - width / 2;
             int y = areaTop() - fontMetrics.getAscent();
@@ -464,10 +468,12 @@ public final class ChartRenderer implements java.awt.print.Printable {
         return renderer;
     }
 
-    
-    private Color getHighlightColor() {
-        Color color = javax.swing.UIManager.getColor("Chart.highlightColor");
-        return (color != null) ? color : Color.YELLOW;
+
+    private ChartDrawStyle getChartDrawStyle() {
+        if (chartDrawStyle == null) {
+            chartDrawStyle = new ChartDrawStyle();
+        }
+        return chartDrawStyle;
     }
 
     
@@ -475,8 +481,8 @@ public final class ChartRenderer implements java.awt.print.Printable {
         geometry.setData(data, renderers);
         invalidate();
     }
-    
-    
+
+
     private static Logger getLogger() {
         return Logger.getLogger(ChartRenderer.class.getName());
     }
@@ -493,6 +499,8 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
     
     private final ChartGeometry geometry = new ChartGeometry();
+
+    private ChartDrawStyle chartDrawStyle;
     private Locale locale = Locale.ENGLISH;
 
     private String title;

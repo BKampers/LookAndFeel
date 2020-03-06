@@ -128,7 +128,7 @@ public class DrawStyle {
 
 
     public Map<Object, Color> getColors() {
-        return new HashMap<>(colors);
+        return Collections.unmodifiableMap(colors);
     }
 
 
@@ -138,7 +138,7 @@ public class DrawStyle {
 
 
     public Map<Object, Stroke> getStrokes() {
-        return new HashMap<>(strokes);
+        return Collections.unmodifiableMap(strokes);
     }
 
 
@@ -148,7 +148,7 @@ public class DrawStyle {
 
 
     public Map<Object, Map<TextAttribute, Object>> getFonts() {
-        return new HashMap<>(fonts);
+        return Collections.unmodifiableMap(fonts);
     }
 
 

@@ -15,13 +15,13 @@ import java.util.logging.*;
 public class DefaultPointHighlightRenderer {
 
 
-    public Color setBackground() {
-        return background;
+    public void setBackground(Color color) {
+        this.background = color;
     }
 
 
-    public void getBackground(Color color) {
-        this.background = color;
+    public Color getBackground() {
+        return background;
     }
 
 
