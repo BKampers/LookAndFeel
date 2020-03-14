@@ -12,7 +12,7 @@ import java.awt.*;
 import java.awt.geom.*;
 
 
-public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeometry> {
+public abstract class LineRenderer extends AbstractDataAreaRendererBase<PixelAreaGeometry> {
 
 
     LineRenderer(LineDrawStyle drawStyle, int markerWidth, int markerHeight) {
@@ -43,7 +43,7 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
         int i = 0;
         for (ChartDataElement<Number, Number> element : chartData) {
             Number x = element.getKey();
-            Number y = element.getValue();
+            Number y = getY(element);
             boolean inRange = window.inXWindowRange(x) && window.inYWindowRange(y);
             elements[i] = new ChartDataElement<>(x, y, ! inRange);
             i++;
@@ -60,7 +60,7 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
                 if (i == start || i == end || ! element.isOutsideWindow() || ! elements[i - 1].isOutsideWindow() || ! elements[i + 1].isOutsideWindow()) {
                     graphPointsInWindow.add(element);
                     if (! element.isOutsideWindow()) {
-                        window.adjustBounds(element.getKey(), element.getValue());
+                        window.adjustBounds(element.getKey(), getY(element));
                     }
                 }
             }
@@ -93,7 +93,7 @@ public abstract class LineRenderer extends AbstractDataAreaRenderer<PixelAreaGeo
 
 
     private void add(ChartDataElement<Number, Number> element, GraphGeometry<AreaGeometry> dataGeometry) {
-        add(element.getKey(), element.getValue(), dataGeometry, ! element.isOutsideWindow());
+        add(element.getKey(), getY(element), dataGeometry, ! element.isOutsideWindow());
     }
 
 

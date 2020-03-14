@@ -43,8 +43,7 @@ public class DefaultPieSectorRenderer extends PieSectorRenderer {
     }
 
 
-    @Override
-    protected ArcAreaGeometry createSymbolGeometry(int x, int y, ArcAreaGeometry geometry) {
+    private ArcAreaGeometry createSymbolGeometry(int x, int y, ArcAreaGeometry geometry) {
         Arc2D.Float area = createSymbolArea(x, y);
         return new ArcAreaGeometry(null, null, area, geometry.getIndex());
     }

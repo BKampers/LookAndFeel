@@ -11,7 +11,7 @@ import bka.awt.chart.geometry.*;
 import java.awt.*;
 
 
-public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDataAreaRenderer<AreaGeometry<S>> {
+public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDataAreaRendererBase<AreaGeometry<S>> {
 
 
     CoordinateAreaRenderer(AreaDrawStyle drawStyle) {
@@ -19,7 +19,9 @@ public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDa
     }
 
 
-    protected abstract S createArea(int x, int y);
+    //protected abstract S createArea(int x, int y);
+    protected abstract S createArea(Number x, Number y);
+    protected abstract S createSymbolArea(int x, int y);
 
 
     @Override
@@ -28,7 +30,7 @@ public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDa
         for (ChartDataElement<Number, Number> element : chart) {
             if (! element.isOutsideWindow()) {
                 Number x = element.getKey();
-                Number y = element.getValue();
+                Number y = getY(element);
                 graphGeometry.add(new AreaGeometry<>(x, y, createArea(x, y)));
             }
         }
@@ -37,13 +39,8 @@ public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDa
 
 
     @Override
-    protected AreaGeometry<S> createSymbolGeometry(int x, int y, AreaGeometry<S> geometry) {
-        return new AreaGeometry<>(null, null, createArea(x, y));
-    }
-
-
-    private S createArea(Number x, Number y) {
-        return createArea(getWindow().xPixel(x), getWindow().yPixel(y));
+    protected AreaGeometry<S> createSymbolGeometry(int x, int y) {
+        return new AreaGeometry<>(null, null, createSymbolArea(x, y));
     }
 
 

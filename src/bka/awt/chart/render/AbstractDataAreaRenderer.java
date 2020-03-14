@@ -10,6 +10,7 @@ import bka.awt.chart.*;
 import bka.awt.chart.custom.*;
 import bka.awt.chart.geometry.*;
 import java.awt.*;
+import java.util.*;
 
 
 public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
@@ -22,9 +23,14 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
         this.areaDrawStyle = drawStyle;
     }
 
-    
+
+    public void setStackBase(AbstractDataAreaRenderer stackBase) {
+        this.stackBase = stackBase;
+    }
+
+
     public abstract GraphGeometry<G> createGraphGeomerty(ChartData<Number, Number> chart);
-    protected abstract G createSymbolGeometry(int x, int y, G geometry);
+    public abstract void drawLegend(Graphics2D g2d, Object key, LegendGeometry geometry);
 
 
     public void setChartRenderer(ChartRenderer renderer) {
@@ -53,7 +59,7 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
         ChartData<Number, Number> graphPointsInWindow = new ChartData<>();
         for (ChartDataElement<Number, Number> element : chartData) {
             Number x = element.getKey();
-            Number y = element.getValue();
+            Number y = getY(element);
             if (window.inXWindowRange(x) && window.inYWindowRange(y)) {
                 graphPointsInWindow.add(x, y);
                 window.adjustBounds(x, y);
@@ -63,27 +69,39 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     }
 
 
+    protected Number getY(ChartDataElement<Number, Number> element) {
+        return getY(element.getKey());
+    }
+
+
+    protected Number getY(Number x) {
+        ChartData<Number, Number> chartData = chartRenderer.getChartGeometry().getChartData(this);
+        double y = getY(chartData, x).doubleValue();
+        if (stackBase != null) {
+            y += stackBase.getY(x).doubleValue();
+        }
+        return y;
+    }
+
+
+    private Number getY(ChartData<Number, Number> chartData, Number x) {
+        Iterator<ChartDataElement<Number, Number>> it = chartData.iterator();
+        while (it.hasNext()) {
+            ChartDataElement<Number, Number> next = it.next();
+            if (x.equals(next.getKey())) {
+                return next.getValue();
+            }
+        }
+        throw new NoSuchElementException(String.format("No y value for %s", x.toString()));
+    }
+
+
     public void draw(Graphics2D g2d, Layer layer, GraphGeometry<G> graphGeometry) {
         if (layer == Layer.FOREGROUND) {
             for (G dataAreaGeometry : graphGeometry.getDataPoints()) {
                 draw(g2d, dataAreaGeometry);
             }
         }
-    }
-
-
-    public void drawLegend(Graphics2D g2d, Object key, LegendGeometry geometry) {
-        drawSymbol(g2d, geometry.getX(), geometry.getY());
-        g2d.setColor(geometry.getColor());
-        g2d.setFont(geometry.getFont());
-        FontMetrics fontMetrics = g2d.getFontMetrics();
-        g2d.drawString(key.toString(), geometry.getX() + geometry.getSpace(), geometry.getY() + fontMetrics.getDescent());
-        geometry.setY(geometry.getY() + geometry.getFeed() + fontMetrics.getHeight());
-    }
-
-
-    protected void drawSymbol(Graphics2D g2d, int x, int y) {
-        draw(g2d, createSymbolGeometry(x, y, null));
     }
 
 
@@ -106,6 +124,11 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     }
 
 
+    protected AbstractDataAreaRenderer getStackBase() {
+        return stackBase;
+    }
+
+
     protected AreaDrawStyle<G> getAreaDrawStyle() {
         return areaDrawStyle;
     }
@@ -125,5 +148,6 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     private ChartGeometry.Window window;
 
     private final AreaDrawStyle<G> areaDrawStyle;
+    private AbstractDataAreaRenderer stackBase;
 
 }

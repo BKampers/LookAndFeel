@@ -274,6 +274,20 @@ public final class ChartGeometry {
         return range.getMax().doubleValue() - range.getMin().doubleValue();
     }
 
+
+    public ChartData<Number, Number> getChartData(AbstractDataAreaRenderer renderer) {
+        return dataMap.get(getKey(Objects.requireNonNull(renderer)));
+    }
+
+
+    private Object getKey(AbstractDataAreaRenderer renderer) {
+        for (Map.Entry<Object, AbstractDataAreaRenderer> entry : renderers.entrySet()) {
+            if (renderer.equals(entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        throw new IllegalArgumentException();
+    }
     
     private static Logger getLogger() {
         return Logger.getLogger(ChartGeometry.class.getName());

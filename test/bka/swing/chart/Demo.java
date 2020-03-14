@@ -326,7 +326,7 @@ public class Demo extends javax.swing.JFrame {
         chartRenderer.setXWindowMaximum(null);
         chartRenderer.setGraphs(graphs);
         chartRenderer.setAxisRenderer(null);
-        chartRenderer.setAxisPositions(null, null);
+        chartRenderer.setAxisPositions(ChartRenderer.AxisPosition.ORIGIN, ChartRenderer.AxisPosition.ORIGIN);
         chartRenderer.setGridRenderer(null, ChartRenderer.GridMode.NONE);
         chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.NONE);
         chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.NONE);

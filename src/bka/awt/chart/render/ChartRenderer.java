@@ -5,7 +5,6 @@
 package bka.awt.chart.render;
 
 
-import bka.awt.*;
 import bka.awt.chart.*;
 import bka.awt.chart.custom.*;
 import bka.awt.chart.geometry.*;
@@ -271,8 +270,8 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
 
    public void setAxisPositions(AxisPosition xAxisPosition, AxisPosition yAxisPosition) {
-       this.xAxisPosition = xAxisPosition;
-       this.yAxisPosition = yAxisPosition;
+       this.xAxisPosition = Objects.requireNonNull(xAxisPosition);
+       this.yAxisPosition = Objects.requireNonNull(yAxisPosition);
    }
    
    
@@ -286,10 +285,10 @@ public final class ChartRenderer implements java.awt.print.Printable {
    
    
    public void setGridMode(GridMode gridMode) {
+       this.gridMode = Objects.requireNonNull(gridMode);
        if (gridRenderer == null && gridMode != GridMode.NONE) {
            setGridRenderer(new DefaultGridRenderer(GridStyle.createSolid(getChartDrawStyle().getGridBackground())), gridMode);
        }
-       this.gridMode = gridMode;
    }
  
     

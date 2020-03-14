@@ -19,10 +19,6 @@ public abstract class PointRenderer<S extends Shape> extends CoordinateAreaRende
     }
 
 
-    @Override
-    protected abstract S createArea(int x, int y);
-
-
     protected int width;
     protected int height;
 

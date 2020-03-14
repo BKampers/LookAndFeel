@@ -28,7 +28,18 @@ public class RectangleDotRenderer extends PointRenderer<Rectangle> {
     
 
     @Override
-    protected Rectangle createArea(int x, int y) {
+    protected Rectangle createArea(Number x, Number y) {
+        return createRectangle(getWindow().xPixel(x), getWindow().yPixel(y));
+    }
+
+
+    @Override
+    protected Rectangle createSymbolArea(int x, int y) {
+        return createRectangle(x, y);
+    }
+
+
+    private Rectangle createRectangle(int x, int y) {
         return new Rectangle(x - width / 2, y - height / 2, width, height);
     }
     

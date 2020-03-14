@@ -19,7 +19,18 @@ public class PolygonDotRenderer extends CoordinateAreaRenderer<Polygon> {
     
 
     @Override
-    protected Polygon createArea(int x, int y) {
+    protected Polygon createArea(Number x, Number y) {
+        return createPolygon(getWindow().xPixel(x), getWindow().yPixel(y));
+    }
+
+
+    @Override
+    protected Polygon createSymbolArea(int x, int y) {
+        return createPolygon(x, y);
+    }
+
+
+    private Polygon createPolygon(int x, int y) {
         Polygon area = new Polygon(polygon.xpoints, polygon.ypoints, polygon.npoints);
         area.translate(x, y);
         return area;

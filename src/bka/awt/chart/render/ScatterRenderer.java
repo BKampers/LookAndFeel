@@ -11,7 +11,7 @@ import java.awt.*;
 import java.util.*;
 
 
-public class ScatterRenderer<S extends Shape> extends AbstractDataAreaRenderer<ScatterGeometry<S>> {
+public class ScatterRenderer<S extends Shape> extends AbstractDataAreaRendererBase<ScatterGeometry<S>> {
 
 
     public ScatterRenderer(AreaDrawStyle drawStyle) {
@@ -27,7 +27,7 @@ public class ScatterRenderer<S extends Shape> extends AbstractDataAreaRenderer<S
             Number y = element.getValue();
             ScatterGeometry<S> scaterGeometry = map.get(element);
             int count = (scaterGeometry == null) ? 1 : scaterGeometry.getCount() + 1;
-            Shape area = createShape(getWindow().xPixel(x), getWindow().yPixel(y), count * 3.0f);
+            Shape area = createShape(getWindow().xPixel(x), getWindow().yPixel(y), count * SIZE_FACTOR);
             scaterGeometry = new ScatterGeometry(x, y, area, count);
             map.put(element, scaterGeometry);
         }
@@ -36,8 +36,8 @@ public class ScatterRenderer<S extends Shape> extends AbstractDataAreaRenderer<S
 
 
     @Override
-    protected ScatterGeometry<S> createSymbolGeometry(int x, int y, ScatterGeometry<S> geometry) {
-        Shape shape = createShape(x, y, 3.0f);
+    protected ScatterGeometry<S> createSymbolGeometry(int x, int y) {
+        Shape shape = createShape(x, y, SYMBOL_SIZE);
         return new ScatterGeometry(x, y, shape);
     }
 
@@ -47,5 +47,8 @@ public class ScatterRenderer<S extends Shape> extends AbstractDataAreaRenderer<S
         return new java.awt.geom.Ellipse2D.Float(x - radius, y - radius, diameter, diameter);
     }
 
+    
+    private static final float SIZE_FACTOR = 3.0f;
+    private static final float SYMBOL_SIZE = 10.0f;
 
 }

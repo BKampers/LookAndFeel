@@ -45,7 +45,7 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
         for (ChartDataElement<Number, Number> element : chartData) {
             Number x = element.getKey();
             if (getWindow().inXWindowRange(x)) {
-                Number y = element.getValue();
+                Number y = getY(element);
                 graphPointsInWindow.add(x, y);
                 getWindow().adjustXBounds(x);
                 if (getWindow().inYWindowRange(y)) {
@@ -58,21 +58,28 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
 
     @Override
-    protected AreaGeometry<Rectangle> createSymbolGeometry(int x, int y, AreaGeometry<Rectangle> geometry) {
+    protected AreaGeometry<Rectangle> createSymbolGeometry(int x, int y) {
         return new AreaGeometry<>(null, null, createSymbolArea(x, y));
     }
 
 
     @Override
-    protected Rectangle createArea(int x, int y) {
+    protected Rectangle createArea(Number x, Number y) {
+        int yPixel = getWindow().yPixel(y);
+        int barHeight = (getStackBase() != null) ? getWindow().yPixel(getStackBase().getY(x)) - yPixel : getChartRenderer().areaBottom() - yPixel;
+        return createArea(getWindow().xPixel(x), yPixel, barHeight);
+    }
+
+
+    private Rectangle createArea(int x, int y, int barHeight) {
         int left = x - width / 2 + shift;
-        int barHeight = getChartRenderer().areaBottom() - y;
         return new Rectangle(left, y, width, barHeight);
 
     }
 
 
-    private Rectangle createSymbolArea(int x, int y) {
+    @Override
+    protected Rectangle createSymbolArea(int x, int y) {
         int height = (int) (width * 1.5f);
         int left = x - width / 2;
         int top = y - height / 2;
@@ -84,6 +91,5 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
     private int shift;
     
     private static final int DEFAULT_WIDTH = 7;
-
 
 }

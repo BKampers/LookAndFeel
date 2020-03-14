@@ -77,7 +77,7 @@ public class DefaultLineRenderer extends LineRenderer {
 
 
     @Override
-    protected PixelAreaGeometry createSymbolGeometry(int x, int y, PixelAreaGeometry geometry) {
+    protected PixelAreaGeometry createSymbolGeometry(int x, int y) {
         RectangularShape area = createSymbolArea(x, y);
         Point pixel = new Point((int) area.getCenterX(), (int) area.getCenterY());
         return new PixelAreaGeometry<>(null, null, area, pixel);
@@ -87,8 +87,8 @@ public class DefaultLineRenderer extends LineRenderer {
     @Override
     protected void drawSymbol(Graphics2D g2d, int x, int y) {
         RectangularShape area = createSymbolArea(x, y);
-        super.draw(g2d, new PixelAreaGeometry<>(null, null, area, new Point(x, y)));
         drawLine(g2d, x - SYMBOL_WIDTH / 2, y, x + SYMBOL_WIDTH / 2, y);
+        super.draw(g2d, new PixelAreaGeometry<>(null, null, area, new Point(x, y)));
     }
 
 

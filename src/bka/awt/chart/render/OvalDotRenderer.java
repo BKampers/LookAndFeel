@@ -28,7 +28,18 @@ public class OvalDotRenderer extends PointRenderer<Ellipse2D.Float> {
     
     
     @Override
-    protected Ellipse2D.Float createArea(int x, int y) {
+    protected Ellipse2D.Float createArea(Number x, Number y) {
+        return createEllipse(getWindow().xPixel(x), getWindow().yPixel(y));
+    }
+
+
+    @Override
+    protected Ellipse2D.Float createSymbolArea(int x, int y) {
+        return createEllipse(x, y);
+    }
+
+
+    private Ellipse2D.Float createEllipse(int x, int y) {
         return new Ellipse2D.Float(x - width / 2.0f, y - height / 2.0f, width, height);
     }
     
