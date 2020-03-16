@@ -19,13 +19,12 @@ public abstract class CoordinateAreaRenderer<S extends Shape> extends AbstractDa
     }
 
 
-    //protected abstract S createArea(int x, int y);
-    protected abstract S createArea(Number x, Number y);
+    protected abstract S createArea(Number x, Number y) throws ChartDataException;
     protected abstract S createSymbolArea(int x, int y);
 
 
     @Override
-    public GraphGeometry<AreaGeometry<S>> createGraphGeomerty(ChartData<Number, Number> chart) {
+    public GraphGeometry<AreaGeometry<S>> createGraphGeomerty(ChartData<Number, Number> chart) throws ChartDataException {
         GraphGeometry<AreaGeometry<S>> graphGeometry = new GraphGeometry<>();
         for (ChartDataElement<Number, Number> element : chart) {
             if (! element.isOutsideWindow()) {

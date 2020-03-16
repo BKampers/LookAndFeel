@@ -40,7 +40,7 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
 
     @Override
-    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData) {
+    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData) throws ChartDataException {
         ChartData<Number, Number> graphPointsInWindow = new ChartData<>();
         for (ChartDataElement<Number, Number> element : chartData) {
             Number x = element.getKey();
@@ -64,7 +64,7 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
 
     @Override
-    protected Rectangle createArea(Number x, Number y) {
+    protected Rectangle createArea(Number x, Number y) throws ChartDataException {
         int yPixel = getWindow().yPixel(y);
         int barHeight = (getStackBase() != null) ? getWindow().yPixel(getStackBase().getY(x)) - yPixel : getChartRenderer().areaBottom() - yPixel;
         return createArea(getWindow().xPixel(x), yPixel, barHeight);

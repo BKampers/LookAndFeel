@@ -45,7 +45,7 @@ public final class ChartGeometry {
      * @param yRanges: ranges of the y-axis(es)
      * @param yWindowBase: y location where the y-axis is drawn, null means origin
      */
-    public void initialize(Layout layout) {
+    public void initialize(Layout layout) throws ChartDataException {
         if (graphs.isEmpty()) {
             this.layout = Objects.requireNonNull(layout);
             xDataRange = new Range(layout.xWindowRange);
@@ -58,7 +58,7 @@ public final class ChartGeometry {
     }
 
 
-    private void computeWindows() {
+    private void computeWindows() throws ChartDataException {
         windows.clear();
         if (dataMap != null) {
             for (Map.Entry<Object, ChartData<Number, Number>> dataGraph : dataMap.entrySet()) {
@@ -90,7 +90,7 @@ public final class ChartGeometry {
     /**
      * Compute render data for points in window
      */
-    private void computeDataPoints() {
+    private void computeDataPoints() throws ChartDataException {
         if (dataMap != null) {
             for (Object key : dataMap.keySet()) {
                 AbstractDataAreaRenderer renderer = renderers.get(key);

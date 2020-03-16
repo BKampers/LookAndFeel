@@ -29,7 +29,12 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     }
 
 
-    public abstract GraphGeometry<G> createGraphGeomerty(ChartData<Number, Number> chart);
+    public AbstractDataAreaRenderer getStackBase() {
+        return stackBase;
+    }
+
+
+    public abstract GraphGeometry<G> createGraphGeomerty(ChartData<Number, Number> chart) throws ChartDataException;
     public abstract void drawLegend(Graphics2D g2d, Object key, LegendGeometry geometry);
 
 
@@ -55,7 +60,7 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
      * @param key
      * @param chartData
      */
-    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData) {
+    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData) throws ChartDataException {
         ChartData<Number, Number> graphPointsInWindow = new ChartData<>();
         for (ChartDataElement<Number, Number> element : chartData) {
             Number x = element.getKey();
@@ -69,12 +74,12 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     }
 
 
-    protected Number getY(ChartDataElement<Number, Number> element) {
+    protected Number getY(ChartDataElement<Number, Number> element) throws ChartDataException {
         return getY(element.getKey());
     }
 
 
-    protected Number getY(Number x) {
+    protected Number getY(Number x) throws ChartDataException {
         ChartData<Number, Number> chartData = chartRenderer.getChartGeometry().getChartData(this);
         double y = getY(chartData, x).doubleValue();
         if (stackBase != null) {
@@ -84,7 +89,7 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
     }
 
 
-    private Number getY(ChartData<Number, Number> chartData, Number x) {
+    private Number getY(ChartData<Number, Number> chartData, Number x) throws ChartDataException {
         Iterator<ChartDataElement<Number, Number>> it = chartData.iterator();
         while (it.hasNext()) {
             ChartDataElement<Number, Number> next = it.next();
@@ -92,7 +97,7 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
                 return next.getValue();
             }
         }
-        throw new NoSuchElementException(String.format("No y value for %s", x.toString()));
+        throw new ChartDataException(String.format("No y value for %s", x.toString()));
     }
 
 
@@ -121,11 +126,6 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
                 g2d.draw(area);
             }
         }
-    }
-
-
-    protected AbstractDataAreaRenderer getStackBase() {
-        return stackBase;
     }
 
 

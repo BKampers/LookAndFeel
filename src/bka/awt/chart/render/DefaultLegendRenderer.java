@@ -18,8 +18,8 @@ public class DefaultLegendRenderer {
         this.top = top;
     }
 
-
-    public void drawLegend(Graphics2D g2d, ChartGeometry geometry, Map<Object, AbstractDataAreaRenderer> renderers) {
+    
+    public void drawLegend(Graphics2D g2d, ChartGeometry geometry, Map<Object, AbstractDataAreaRenderer> renderers, java.util.List<Object> order) {
         LegendGeometry legendGeometry = new LegendGeometry();
         legendGeometry.setX(chartRenderer.areaRight() + SPACE);
         legendGeometry.setY(top);
@@ -27,8 +27,7 @@ public class DefaultLegendRenderer {
         legendGeometry.setFeed(FEED);
         legendGeometry.setFont(g2d.getFont());
         legendGeometry.setLabelColor(LABEL_COLOR);
-        for (Map.Entry<Object, GraphGeometry<AreaGeometry>> entry : geometry.getGraphs().entrySet()) {
-            Object key = entry.getKey();
+        for (Object key : order) {
             AbstractDataAreaRenderer renderer = renderers.get(key);
             if (renderer != null) {
                 renderer.drawLegend(g2d, key, legendGeometry);

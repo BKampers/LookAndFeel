@@ -349,7 +349,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
     }
     
 
-    public void paint(Graphics2D g2d, Rectangle bounds) {
+    public void paint(Graphics2D g2d, Rectangle bounds) throws ChartDataException {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         draw(g2d, bounds);
@@ -358,7 +358,12 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
     @Override
     public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-        draw((Graphics2D) graphics, rectangle(pageFormat));
+        try {
+            draw((Graphics2D) graphics, rectangle(pageFormat));
+        }
+        catch (ChartDataException ex) {
+            Logger.getLogger(ChartRenderer.class.getName()).log(Level.SEVERE, "Unable to paint chart", ex);
+        }
         return java.awt.print.Printable.PAGE_EXISTS;
     }
 
@@ -372,7 +377,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
     }
     
 
-    private void draw(Graphics2D g2d, Rectangle bounds) {
+    private void draw(Graphics2D g2d, Rectangle bounds) throws ChartDataException {
         setBounds(bounds);
         geometry.initialize(new ChartGeometry.Layout(chartArea(),leftOffset, rightOffset, xRange, yRanges, yWindowBase));
         draw(g2d);
@@ -408,12 +413,33 @@ public final class ChartRenderer implements java.awt.print.Printable {
         drawAxises(g2d);
         if (showLegend) {
             DefaultLegendRenderer legendRenderer = new DefaultLegendRenderer(this, topMargin);
-            legendRenderer.drawLegend(g2d, geometry, renderers);
+            legendRenderer.drawLegend(g2d, geometry, renderers, legendOrder());
         }
         drawTitle(g2d);
         if (highlight != null) {
             highlight.renderer.draw(g2d, highlight.geometry);
         }
+    }
+
+
+    private java.util.List<Object> legendOrder() {
+        java.util.List<Object> keyOrder = new ArrayList<>();
+        java.util.List<AbstractDataAreaRenderer> rendererOrder = new ArrayList<>();
+        Set<Object> keySet = new LinkedHashSet<>(geometry.getGraphs().keySet());
+        while (! keySet.isEmpty()) {
+            Iterator<Object> it = keySet.iterator();
+            while (it.hasNext()) {
+                Object key = it.next();
+                AbstractDataAreaRenderer renderer = renderers.get(key);
+                int index = (renderer.getStackBase() == null) ? rendererOrder.size() : rendererOrder.indexOf(renderer.getStackBase());
+                if (index >= 0) {
+                    rendererOrder.add(index, renderer);
+                    keyOrder.add(index, key);
+                    it.remove();
+                }
+            }
+        }
+        return keyOrder;
     }
 
 

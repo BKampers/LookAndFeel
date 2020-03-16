@@ -11,6 +11,7 @@ import bka.chart.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.logging.*;
 import javax.swing.*;
 
 
@@ -65,7 +66,12 @@ public final class ChartPanel extends javax.swing.JPanel {
         super.paintComponent(g);
         synchronized (renderer) {
             renderer.setLocale(getLocale());
-            renderer.paint((Graphics2D) g, getBounds());
+            try {
+                renderer.paint((Graphics2D) g, getBounds());
+            }
+            catch (ChartDataException ex) {
+                Logger.getLogger(ChartPanel.class.getName()).log(Level.SEVERE, "Unable to paint chart", ex);
+            }
         }
         drawSelectionRectangle((Graphics2D) g);
     }

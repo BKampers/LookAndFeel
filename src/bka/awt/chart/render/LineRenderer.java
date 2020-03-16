@@ -24,7 +24,7 @@ public abstract class LineRenderer extends AbstractDataAreaRendererBase<PixelAre
 
     
     @Override
-    public GraphGeometry createGraphGeomerty(ChartData<Number, Number> chart) {
+    public GraphGeometry createGraphGeomerty(ChartData<Number, Number> chart) throws ChartDataException {
         GraphGeometry<AreaGeometry> dataGeometry = new GraphGeometry<>();
         for (int i = 1; i < chart.size(); ++i) {
             ChartDataElement<Number, Number> p0 = chart.get(i - 1);
@@ -37,7 +37,7 @@ public abstract class LineRenderer extends AbstractDataAreaRendererBase<PixelAre
 
 
     @Override
-    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData) {
+    public void addPointsInWindow(Object key, ChartData<Number, Number> chartData) throws ChartDataException {
         ChartGeometry.Window window = getWindow();
         ChartDataElement<Number, Number>[] elements = new ChartDataElement[chartData.size()];
         int i = 0;
@@ -92,7 +92,7 @@ public abstract class LineRenderer extends AbstractDataAreaRendererBase<PixelAre
     }
 
 
-    private void add(ChartDataElement<Number, Number> element, GraphGeometry<AreaGeometry> dataGeometry) {
+    private void add(ChartDataElement<Number, Number> element, GraphGeometry<AreaGeometry> dataGeometry) throws ChartDataException {
         add(element.getKey(), getY(element), dataGeometry, ! element.isOutsideWindow());
     }
 
