@@ -76,10 +76,10 @@ public final class ChartGeometry {
     private void computeRanges() {
         if (layout.yWindowBase != null) {
             for (Range range : yDataRanges.values()) {
-                if (range.getMin() != null && range.getMin().doubleValue() > layout.yWindowBase.doubleValue()) {
+                if (range.isMinSet() && range.getMin().doubleValue() > layout.yWindowBase.doubleValue()) {
                     range.setMin(layout.yWindowBase);
                 }
-                if (range.getMax() != null && range.getMax().doubleValue() < layout.yWindowBase.doubleValue()) {
+                if (! range.isMaxSet() && range.getMax().doubleValue() < layout.yWindowBase.doubleValue()) {
                     range.setMax(layout.yWindowBase);
                 }
             }
@@ -116,7 +116,12 @@ public final class ChartGeometry {
 
 
     private static void initializeGrid(Grid grid, Range range) {
-        grid.initialize(range.getMin(), range.getMax());
+        if (! range.isInitialized()) {
+            grid.initialize(null, null);
+        }
+        else {
+            grid.initialize(range.getMin(), range.getMax());
+        }
     }
 
 
@@ -187,6 +192,11 @@ public final class ChartGeometry {
             return layout.area.y + layout.area.height / 2;
         }
         return layout.area.height + layout.area.y - pixel(y, yDataRanges.get(key).getMin(), range, layout.area.height);
+    }
+
+
+    public Range getXDataRange() {
+        return xDataRange;
     }
 
 
@@ -268,7 +278,7 @@ public final class ChartGeometry {
 
 
     private static double size(Range range) {
-        if (range.getMin() == null || range.getMax() == null) {
+        if (! range.isInitialized()) {
             return Double.POSITIVE_INFINITY;
         }
         return range.getMax().doubleValue() - range.getMin().doubleValue();
@@ -300,12 +310,12 @@ public final class ChartGeometry {
 
 
     private int leftOffset() {
-        return (layout.xWindowRange.getMin() == null) ? layout.leftOffset : 0;
+        return (layout.xWindowRange.isMinSet()) ? 0 : layout.leftOffset;
     }
 
 
     private int rightOffset() {
-        return (layout.xWindowRange.getMax() == null) ? layout.rightOffset : 0;
+        return (layout.xWindowRange.isMaxSet()) ? 0 : layout.rightOffset;
     }
 
 
@@ -333,10 +343,10 @@ public final class ChartGeometry {
         }
 
         private void adjustBounds(Range range, Number value) {
-            if (range.getMin() == null || value.doubleValue() < range.getMin().doubleValue()) {
+            if (! range.isMinSet() || value.doubleValue() < range.getMin().doubleValue()) {
                 range.setMin(value);
             }
-            if (range.getMax() == null || range.getMax().doubleValue() < value.doubleValue()) {
+            if (! range.isMaxSet() || range.getMax().doubleValue() < value.doubleValue()) {
                 range.setMax(value);
             }
         }
@@ -362,17 +372,13 @@ public final class ChartGeometry {
         }
 
         public boolean inXWindowRange(Number x) {
-            return inRange(x, layout.xWindowRange.getMin(), layout.xWindowRange.getMax());
+            return layout.xWindowRange.includes(x);
         }
 
         public boolean inYWindowRange(Number y) {
-            return inRange(y, layout.yWindowRanges.get(key).getMin(), layout.yWindowRanges.get(key).getMax());
+            return layout.yWindowRanges.get(key).includes(y);
         }
-
-        private boolean inRange(Number n, Number min, Number max) {
-            return (min == null || min.doubleValue() <= n.doubleValue()) && (max == null || n.doubleValue() <= max.doubleValue());
-        }
-        
+ 
         private ChartData<Number, Number> getPoints(Object key) {
             return points.get(key);
         }

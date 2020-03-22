@@ -80,10 +80,11 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
     @Override
     protected Rectangle createSymbolArea(int x, int y) {
-        int height = (int) (width * 1.5f);
-        int left = x - width / 2;
-        int top = y - height / 2;
-        return new Rectangle(left, top, width, height);
+        int symbolWidth = 10;
+        int symbolHeight = 16;
+        int left = x - symbolWidth / 2;
+        int top = y - symbolHeight / 2;
+        return new Rectangle(left, top, symbolWidth, symbolHeight);
     }
 
 

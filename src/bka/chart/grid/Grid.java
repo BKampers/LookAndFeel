@@ -33,8 +33,20 @@ public abstract class Grid {
     public void initialize(Number min, Number max) {
         markerLists.clear();
         if (min != null && max != null) {
-            compute(min, max);
+            if (min.equals(max)) {
+                compute(min);
+            }
+            else {
+                compute(min, max);
+            }
         }
+    }
+
+
+    private void compute(Number value) {
+        ArrayList<Number> markerValues = new ArrayList<>();
+        markerValues.add(value);
+        addMarkerList(new MarkerList(markerValues, "%s"));
     }
 
 

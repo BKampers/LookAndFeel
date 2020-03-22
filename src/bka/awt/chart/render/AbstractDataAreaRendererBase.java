@@ -12,7 +12,7 @@ import java.awt.*;
 abstract class AbstractDataAreaRendererBase<G extends AreaGeometry> extends AbstractDataAreaRenderer<G> {
 
 
-    AbstractDataAreaRendererBase(AreaDrawStyle drawStyle) {
+    public AbstractDataAreaRendererBase(AreaDrawStyle drawStyle) {
         super(drawStyle);
     }
 

@@ -10,12 +10,21 @@ import java.awt.geom.*;
 public class PieDrawStyle implements AreaDrawStyle<ArcAreaGeometry> {
 
 
-    private PieDrawStyle(Color[] colors) {
+    private PieDrawStyle(Color[][] colors) {
         this.colors = colors;
     }
 
 
-    public static PieDrawStyle create(Color[] colors) {
+    public static PieDrawStyle create(Color[][] colors) {
+        return new PieDrawStyle(colors);
+    }
+
+
+    public static PieDrawStyle create(Color[] baseColors) {
+        Color[][] colors = new Color[baseColors.length][];
+        for (int i = 0; i < baseColors.length; ++i) {
+            colors[i] = new Color[] { baseColors[i], baseColors[i].darker() };
+        }
         return new PieDrawStyle(colors);
     }
 
@@ -35,14 +44,13 @@ public class PieDrawStyle implements AreaDrawStyle<ArcAreaGeometry> {
         Arc2D.Float area = geometry.getArea();
         Point2D.Float center = new Point2D.Float((float) area.getCenterX(), (float) area.getCenterY());
         float diameter = (float) Math.max(area.getWidth(), area.getHeight());
-        Color color = colors[geometry.getIndex()];
-        return new RadialGradientPaint(center, diameter / 2.0f, fractions, new Color[] { color, color.darker() });
+        return new RadialGradientPaint(center, diameter / 2.0f, fractions, colors[geometry.getIndex()]);
     }
 
 
     @Override
     public Paint getBorderPaint(ArcAreaGeometry geometry) {
-        return colors[geometry.getIndex()].brighter();
+        return colors[geometry.getIndex()][0].brighter();
     }
 
 
@@ -65,7 +73,7 @@ public class PieDrawStyle implements AreaDrawStyle<ArcAreaGeometry> {
 
 
     private final float[] fractions = new float[] { 0.0f, 1.0f };
-    private final Color[] colors;
+    private final Color[][] colors;
     private boolean rotatedLabels;
 
 }

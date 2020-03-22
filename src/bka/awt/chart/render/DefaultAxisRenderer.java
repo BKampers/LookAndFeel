@@ -60,21 +60,23 @@ public class DefaultAxisRenderer extends AxisRenderer {
                         g2d.setColor(labelColor);
                         int yLabel = y + fontMetrics.getHeight() * labelLine;
                         String label = markerSet.getLabel(locale, value);
-                        if (label.endsWith(">")) {
-                            // draw label between two markers
-                            if (i < count - 1) {
-                                int xNext = xPixel(values.get(i + 1));
-                                if (xNext <= xMax) {
-                                    label = label.substring(0, label.length() - 1);
-                                    int width = fontMetrics.stringWidth(label);
-                                    g2d.drawString(label, x + (xNext - x) / 2 - width / 2, yLabel);
+                        if (label != null) {
+                            if (label.endsWith(">")) {
+                                // draw label between two markers
+                                if (i < count - 1) {
+                                    int xNext = xPixel(values.get(i + 1));
+                                    if (xNext <= xMax) {
+                                        label = label.substring(0, label.length() - 1);
+                                        int width = fontMetrics.stringWidth(label);
+                                        g2d.drawString(label, x + (xNext - x) / 2 - width / 2, yLabel);
+                                    }
                                 }
                             }
-                        }
-                        else {
-                            // draw label at the marker
-                            int width = fontMetrics.stringWidth(label);
-                            g2d.drawString(label, x - width / 2, yLabel);
+                            else {
+                                // draw label at the marker
+                                int width = fontMetrics.stringWidth(label);
+                                g2d.drawString(label, x - width / 2, yLabel);
+                            }
                         }
                     }
                 }
@@ -124,11 +126,13 @@ public class DefaultAxisRenderer extends AxisRenderer {
                     if (labelColor != null) {
                         g2d.setColor(labelColor);
                         String label = markerSet.getLabel(locale, value);
-                        int width = fontMetrics.stringWidth(label);
-                        columnWidth = Math.max(width, columnWidth);
-                        int labelPosition = x - width - labelOffset;
-                        g2d.drawString(label, labelPosition, y + fontMetrics.getDescent());
-                        titlePosition = Math.min(titlePosition, labelPosition);
+                        if (label != null) {
+                            int width = fontMetrics.stringWidth(label);
+                            columnWidth = Math.max(width, columnWidth);
+                            int labelPosition = x - width - labelOffset;
+                            g2d.drawString(label, labelPosition, y + fontMetrics.getDescent());
+                            titlePosition = Math.min(titlePosition, labelPosition);
+                        }
                     }
                 }
             }
@@ -191,6 +195,9 @@ public class DefaultAxisRenderer extends AxisRenderer {
             case MAXIMUM:
                 return xMax();
             default:
+                if (! getXRange().isInitialized()) {
+                    return xMin();
+                }
                 return x0();
         }
     }
@@ -203,6 +210,9 @@ public class DefaultAxisRenderer extends AxisRenderer {
             case MAXIMUM:
                 return yMax();
             default:
+                if (! getYRange().isInitialized()) {
+                    return yMin();
+                }
                 return y0();
         }
     }

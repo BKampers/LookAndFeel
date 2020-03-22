@@ -178,12 +178,12 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
 
     private static boolean minEquals(Range range, Number number) {
-        return Objects.equals(range.getMin(), number);
+        return range.isMinSet() && Objects.requireNonNull(number).equals(range.getMin());
     }
 
 
     private static boolean maxEquals(Range range, Number number) {
-        return Objects.equals(range.getMax(), number);
+        return range.isMaxSet() && Objects.requireNonNull(number).equals(range.getMax());
     }
 
 

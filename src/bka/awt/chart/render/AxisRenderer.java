@@ -6,6 +6,7 @@ package bka.awt.chart.render;
 
 
 import bka.awt.chart.geometry.*;
+import bka.chart.*;
 import bka.chart.grid.*;
 import java.util.*;
 
@@ -118,11 +119,21 @@ public abstract class AxisRenderer {
         return chartRenderer.areaBottom();
     }
 
-    
+
+    protected Range getXRange() {
+        return chartGeometry.getXDataRange();
+    }
+
+
+    protected Range getYRange() {
+        return chartGeometry.getYDataRanges().getDefault();
+    }
+
+
     private String title;
     private String unit;
 
     private ChartRenderer chartRenderer;
     private ChartGeometry chartGeometry;
-    
+
 }
