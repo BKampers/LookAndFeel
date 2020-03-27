@@ -102,7 +102,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
     
     
     public void setXWindowMinimum(Number min) {
-        if (! minEquals(xRange, min)) {
+        if (! Objects.equals(xRange.getMin(), min)) {
             xRange.setMin(min);
             invalidate();
         }
@@ -110,7 +110,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
     
     
     public void setXWindowMaximum(Number max) {
-        if (! maxEquals(xRange, max)) {
+        if (! Objects.equals(xRange.getMax(), max)) {
             xRange.setMax(max);
             invalidate();
         }
@@ -118,7 +118,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
     
     
     public void setXWindow(Number min, Number max) {
-        if (! rangeEquals(xRange, min, max)) {
+        if (! xRange.equals(min, max)) {
             xRange.set(min, max);
             invalidate();
         }
@@ -126,7 +126,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
     
     
     public void setYWindowMinimum(Number min) {
-        if (! minEquals(yRanges.getDefault(), min)) {
+        if (! Objects.equals(yRanges.getDefault().getMin(), min)) {
             yRanges.getDefault().setMin(min);
             invalidate();
         }
@@ -134,7 +134,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
 
     public void setYWindowMaximum(Number max) {
-        if (! maxEquals(yRanges.getDefault(), max)) {
+        if (! Objects.equals(yRanges.getDefault().getMax(), max)) {
             yRanges.getDefault().setMax(max);
             invalidate();
         }
@@ -150,7 +150,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
     
     
     public void setYWindow(Number min, Number max) {
-        if (! rangeEquals(yRanges.getDefault(), min, max)) {
+        if (! yRanges.getDefault().equals(min, max)) {
             yRanges.getDefault().set(min, max);
             invalidate();
         }
@@ -164,26 +164,11 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
     
     public void setWindow(Number xMin, Number xMax, Number yMin, Number yMax) {
-        if (! rangeEquals(xRange, xMin, xMax) || ! rangeEquals(yRanges.getDefault(), yMin, yMax)) {
+        if (! xRange.equals(xMin, xMax) || ! yRanges.getDefault().equals(yMin, yMax)) {
             xRange.set(xMin, xMax);
             yRanges.getDefault().set(yMin, yMax);
             invalidate();
         }
-    }
-
-
-    private static boolean rangeEquals(Range range, Number min, Number max) {
-        return minEquals(range, min) && maxEquals(range, max);
-    }
-
-
-    private static boolean minEquals(Range range, Number number) {
-        return range.isMinSet() && Objects.requireNonNull(number).equals(range.getMin());
-    }
-
-
-    private static boolean maxEquals(Range range, Number number) {
-        return range.isMaxSet() && Objects.requireNonNull(number).equals(range.getMax());
     }
 
 

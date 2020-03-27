@@ -65,9 +65,16 @@ public class BarRenderer extends CoordinateAreaRenderer<Rectangle> {
 
     @Override
     protected Rectangle createArea(Number x, Number y) throws ChartDataException {
+        int y0Pixel = getWindow().yPixel(0);
         int yPixel = getWindow().yPixel(y);
-        int barHeight = (getStackBase() != null) ? getWindow().yPixel(getStackBase().getY(x)) - yPixel : getChartRenderer().areaBottom() - yPixel;
-        return createArea(getWindow().xPixel(x), yPixel, barHeight);
+        if (y0Pixel > yPixel) {
+            int barHeight = (getStackBase() != null) ? getWindow().yPixel(getStackBase().getY(x)) - yPixel : y0Pixel - yPixel;
+            return createArea(getWindow().xPixel(x), yPixel, barHeight);
+        }
+        else {
+            int barHeight = (getStackBase() != null) ? getWindow().yPixel(getStackBase().getY(x)) + yPixel : yPixel - y0Pixel;
+            return createArea(getWindow().xPixel(x), y0Pixel, barHeight);
+        }
     }
 
 

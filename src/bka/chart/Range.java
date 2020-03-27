@@ -44,61 +44,81 @@ public class Range {
         return min != null && max != null;
     }
 
-
-    /**
-     * @return true is min is not null, false otherwise
-     */
-    public boolean isMinSet() {
-        return min != null;
-    }
-
-    /**
-     * @return min
-     * @throws NullPointerException if min not initialized
-     */
+   
     public Number getMin() {
-        return Objects.requireNonNull(min);
+        return min;
     }
 
 
-    /**
-     * @param min non null
-     * @throws NullPointerException if min is null
-     */
     public void setMin(Number min) {
-        this.min = Objects.requireNonNull(min);
+        this.min = min;
     }
 
-    /**
-     * @return true if max is not null, false otherwise
-     */
-    public boolean isMaxSet() {
-        return max != null;
-    }
 
-    /**
-     * @return max
-     * @throws NullPointerException if max not initialized
-     */
     public Number getMax() {
-        return Objects.requireNonNull(max);
+        return max;
     }
 
-    /**
-     * @param max non null
-     * @throws NullPointerException if max is null
-     */
+
     public void setMax(Number max) {
-        this.max = Objects.requireNonNull(max);
+        this.max = max;
+    }
+
+
+    /**
+     * Adjust min and max to number
+     *
+     * @param number
+     * @throws RuntimeException if number is null
+     *
+     * @see adjustMin
+     * @see adjustMax
+     */
+    public void adjust(Number number) {
+        adjustMin(number);
+        adjustMax(number);
+    }
+
+
+    /**
+     * Set min to number if min is null or min < number
+     *
+     * @param number
+     * @throws RuntimeException if number is null
+     */
+    public void adjustMin(Number number) {
+        Objects.requireNonNull(number);
+        if (min == null || number.doubleValue() < min.doubleValue()) {
+            min = number;
+        }
+    }
+
+
+    /**
+     * Set max to number if max is null or number >&gt; max
+     *
+     * @param number
+     * @throws RuntimeException if number is null
+     */
+    public void adjustMax(Number number) {
+        Objects.requireNonNull(number);
+        if (max == null || number.doubleValue() > max.doubleValue()) {
+            max = number;
+        }
     }
 
     /**
      * @param number
-     * @return true if given number id between min and max,
+     * @return true if given number is between this range's min and max,
      *         where min is handled as negative-infinity if null and max is handles as positive-infinity if null
      */
     public boolean includes(Number number) {
         return (min == null || min.doubleValue() <= number.doubleValue()) && (max == null || number.doubleValue() <= max.doubleValue());
+    }
+
+
+    public boolean equals(Number min, Number max) {
+        return Objects.equals(this.min, min) && Objects.equals(this.max, max);
     }
 
 
