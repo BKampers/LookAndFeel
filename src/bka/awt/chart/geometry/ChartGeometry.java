@@ -48,13 +48,24 @@ public final class ChartGeometry {
     public void initialize(Layout layout) throws ChartDataException {
         if (graphs.isEmpty()) {
             this.layout = Objects.requireNonNull(layout);
-            xDataRange = new Range(layout.xWindowRange);
-            yDataRanges = new RangeMap(layout.yWindowRanges);
-            computeWindows();
-            computeRanges();
-            computeDataPoints();
+            compute();
             initializeGrids();
         }
+    }
+
+
+    public void reinitialize(Range xRange, Range yRange) throws ChartDataException {
+        layout.setRanges(xRange, yRange);
+        compute();
+    }
+
+
+    private void compute() throws ChartDataException {
+        xDataRange = new Range(layout.getXWindowRange());
+        yDataRanges = new RangeMap(layout.getYWindowRanges());
+        computeWindows();
+        computeRanges();
+        computeDataPoints();
     }
 
 
@@ -74,9 +85,9 @@ public final class ChartGeometry {
 
 
     private void computeRanges() {
-        if (layout.yWindowBase != null) {
+        if (layout.getYWindowBase() != null) {
             for (Range range : yDataRanges.values()) {
-                range.adjust(layout.yWindowBase);
+                range.adjust(layout.getYWindowBase());
             }
         }
     }
@@ -141,8 +152,8 @@ public final class ChartGeometry {
 
     
     public double xValue(int pixelX) {
-        double ratio = xRange() / (layout.area.width - offsetSum());
-        return (pixelX - layout.area.x - leftOffset()) * ratio + xDataRange.getMin().doubleValue();
+        double ratio = xRange() / (layout.getAreaWidth() - offsetSum());
+        return (pixelX - layout.getAreaX() - leftOffset()) * ratio + xDataRange.getMin().doubleValue();
     }
 
 
@@ -157,17 +168,17 @@ public final class ChartGeometry {
 
 
     public double yValueByRange(Range range, int pixelY) {
-        double ratio = size(range) / layout.area.height;
-        return (layout.area.height - pixelY + layout.area.y) * ratio + range.getMin().doubleValue();
+        double ratio = size(range) / layout.getAreaHeight();
+        return (layout.getAreaHeight() - pixelY + layout.getAreaY()) * ratio + range.getMin().doubleValue();
     }
 
     
     public int xPixel(Number x) {
         double range = xRange();
         if (range == 0.0) {
-            return layout.area.x + layout.area.width / 2;
+            return layout.getAreaX() + layout.getAreaWidth() / 2;
         }
-        return layout.area.x + leftOffset() + pixel(x, xDataRange.getMin(), range, layout.area.width - offsetSum());
+        return layout.getAreaX() + leftOffset() + pixel(x, xDataRange.getMin(), range, layout.getAreaWidth() - offsetSum());
     }
 
 
@@ -179,9 +190,9 @@ public final class ChartGeometry {
     private int yPixel(Object key, Number y) {
         double range = yRange(key);
         if (range == 0.0) {
-            return layout.area.y + layout.area.height / 2;
+            return layout.getAreaY() + layout.getAreaHeight() / 2;
         }
-        return layout.area.height + layout.area.y - pixel(y, yDataRanges.get(key).getMin(), range, layout.area.height);
+        return layout.getAreaHeight() + layout.getAreaY() - pixel(y, yDataRanges.get(key).getMin(), range, layout.getAreaHeight());
     }
 
 
@@ -212,26 +223,6 @@ public final class ChartGeometry {
 
     public void setYGrid(Grid grid) {
         this.yGrid = grid;
-    }
-
-
-    public Number getXWindowMin() {
-        return layout.xWindowRange.getMin();
-    }
-
-
-    public Number getXWindowMax() {
-        return layout.xWindowRange.getMax();
-    }
-
-
-    public Number getYWindowMin(Object key) {
-        return layout.yWindowRanges.get(key).getMin();
-    }
-
-
-    public Number getYWindowMax(Object key) {
-        return layout.yWindowRanges.get(key).getMax();
     }
 
 
@@ -382,6 +373,47 @@ public final class ChartGeometry {
             this.xWindowRange = new Range(xWindowRange);
             this.yWindowRanges = new RangeMap(yWindowRanges);
             this.yWindowBase = yWindowBase;
+        }
+
+        public int getAreaX() {
+            return area.x;
+        }
+
+        public int getAreaY() {
+            return area.y;
+        }
+
+        public int getAreaWidth() {
+            return area.width;
+        }
+
+        public int getAreaHeight() {
+            return area.height;
+        }
+
+        public int getLeftOffset() {
+            return leftOffset;
+        }
+
+        public int getRightOffset() {
+            return rightOffset;
+        }
+
+        public Range getXWindowRange() {
+            return xWindowRange;
+        }
+
+        public RangeMap getYWindowRanges() {
+            return yWindowRanges;
+        }
+
+        public Number getYWindowBase() {
+            return yWindowBase;
+        }
+
+        private void setRanges(Range xRange, Range yRange) {
+            xWindowRange.set(xRange.getMin(), xRange.getMax());
+            yWindowRanges.getDefault().set(yRange.getMin(), yRange.getMax());
         }
 
         private final Rectangle area;

@@ -72,6 +72,12 @@ public abstract class PieSectorRenderer extends AbstractDataAreaRenderer<ArcArea
     }
 
 
+    @Override
+    public boolean supportStack() {
+        return false;
+    }
+
+
     protected GraphGeometry<ArcAreaGeometry> graphGeometry;
 
 

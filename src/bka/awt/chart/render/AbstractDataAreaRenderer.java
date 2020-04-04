@@ -25,7 +25,18 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
 
 
     public void setStackBase(AbstractDataAreaRenderer stackBase) {
+        if (stackBase != null && ! stackBase.supportStack()) {
+            throw new IllegalArgumentException(stackNotSupportedMessage(stackBase.getClass()));
+        }
+        if (! supportStack()) {
+            throw new IllegalStateException(stackNotSupportedMessage(getClass()));
+        }
         this.stackBase = stackBase;
+    }
+
+
+    private static String stackNotSupportedMessage(Class rendererClass) {
+        return String.format("Renderer '%s' does not support stacking", rendererClass.getName());
     }
 
 
@@ -75,7 +86,10 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
 
 
     protected Number getY(ChartDataElement<Number, Number> element) throws ChartDataException {
-        return getY(element.getKey());
+        if (supportStack()) {
+            return getY(element.getKey());
+        }
+        return element.getValue();
     }
 
 
@@ -141,6 +155,11 @@ public abstract class AbstractDataAreaRenderer<G extends AreaGeometry> {
 
     protected ChartGeometry.Window getWindow() {
         return window;
+    }
+
+
+    public boolean supportStack() {
+        return true;
     }
 
 

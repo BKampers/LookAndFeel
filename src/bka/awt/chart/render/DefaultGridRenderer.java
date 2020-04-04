@@ -37,10 +37,8 @@ public class DefaultGridRenderer extends GridRenderer {
             int areaHeight = getChartRenderer().areaHeight();
             int areaLeft = getChartRenderer().areaLeft();
             ChartGeometry geometry = getChartRenderer().getChartGeometry();
-            java.util.List<Number> values = geometry.getXGrid().getValues();
-            int count = values.size();
-            for (int i = 1; i < count; ++i) {
-                int x = Math.max(geometry.xPixel(values.get(i - 1)), areaLeft);
+            for (Number gridValue : geometry.getXGrid().getValues()) {
+                int x = Math.max(geometry.xPixel(gridValue), areaLeft);
                 g2d.drawLine(x, areaTop, x, areaTop + areaHeight);
             }
         }
@@ -57,10 +55,8 @@ public class DefaultGridRenderer extends GridRenderer {
             int areaLeft = getChartRenderer().areaLeft();
             int areaRight = getChartRenderer().areaRight();
             ChartGeometry geometry = getChartRenderer().getChartGeometry();
-            java.util.List<Number> values = geometry.getYGrid().getValues();
-            int count = values.size();
-            for (int i = 1; i < count; ++i) {
-                int y = Math.max(geometry.yPixel(values.get(i)), areaTop);
+            for (Number gridValue : geometry.getYGrid().getValues()) {
+                int y = Math.max(geometry.yPixel(gridValue), areaTop);
                 g2d.drawLine(areaLeft, y, areaRight, y);
             }
         }

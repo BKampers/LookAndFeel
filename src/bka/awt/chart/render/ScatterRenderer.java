@@ -47,6 +47,12 @@ public class ScatterRenderer<S extends Shape> extends AbstractDataAreaRendererBa
         return new java.awt.geom.Ellipse2D.Float(x - radius, y - radius, diameter, diameter);
     }
 
+
+    @Override
+    public boolean supportStack() {
+        return false;
+    }
+
     
     private static final float SIZE_FACTOR = 3.0f;
     private static final float SYMBOL_SIZE = 10.0f;

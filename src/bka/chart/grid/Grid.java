@@ -18,7 +18,7 @@ public abstract class Grid {
         }
 
         public List<Number> getValues() {
-            return values;
+            return Collections.unmodifiableList(values);
         }
 
         public String getLabel(Locale locale, Number value) {

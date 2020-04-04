@@ -115,6 +115,24 @@ public class Range {
     public boolean includes(Number number) {
         return (min == null || min.doubleValue() <= number.doubleValue()) && (max == null || number.doubleValue() <= max.doubleValue());
     }
+    
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(min, max);
+    }
+
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (! (object instanceof Range)) {
+            return false;
+        }
+        return equals(((Range) object).min, ((Range) object).max);
+    }
 
 
     public boolean equals(Number min, Number max) {

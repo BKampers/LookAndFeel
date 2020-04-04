@@ -43,13 +43,13 @@ public class NumberGrid extends Grid {
 
     @Override
     protected void compute(Number min, Number max) {
-        double low = min.doubleValue();
-        double high = max.doubleValue();
-        BigDecimal range = new BigDecimal(high - low);
+        BigDecimal low = new BigDecimal(min.doubleValue());
+        BigDecimal high = new BigDecimal(max.doubleValue());
+        BigDecimal range = high.subtract(low);
         int rangeExponent = range.precision() - range.scale() - 1;
         int stepExponent = rangeExponent - 1;
         BigDecimal stepSize = determineStepSize(range.movePointLeft(rangeExponent));
-        double step = stepSize.movePointRight(stepExponent).doubleValue();
+        BigDecimal step = stepSize.movePointRight(stepExponent);
         List<Number> markerValues = determineMarkerValues(low, high, step);
         int digits = Math.max(0, stepSize.scale() - stepExponent);
         addMarkerList(new MarkerList(markerValues, String.format(FORMAT, digits)));
@@ -69,14 +69,14 @@ public class NumberGrid extends Grid {
     }
 
 
-    private List<Number> determineMarkerValues(double low, double high, double step) {
+    private List<Number> determineMarkerValues(BigDecimal low, BigDecimal high, BigDecimal step) {
         List<Number> markerValues = new ArrayList<>();
-        double markerValue = Math.floor(low / step) * step;
-        while (markerValue <= high) {
+        BigDecimal endValue = high.divide(step, 0, RoundingMode.CEILING).multiply(step);
+        BigDecimal markerValue = low.divide(step, 0, RoundingMode.FLOOR).multiply(step);
+        while (markerValue.compareTo(endValue) <= 0) {
             markerValues.add(markerValue);
-            markerValue += step;
+            markerValue = markerValue.add(step);
         }
-        markerValues.add(markerValue);
         return markerValues;
     }
 

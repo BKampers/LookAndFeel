@@ -240,7 +240,7 @@ public class Demo extends javax.swing.JFrame {
         chartRenderer.setRenderer(LINE, new DefaultLineRenderer(createLineDrawStyle(Color.RED), LINE_MARKER_SIZE));
         chartRenderer.setRenderer(SINE, new DefaultLineRenderer(createLineDrawStyle(Color.BLUE), LINE_MARKER_SIZE));
         chartRenderer.setWindow(null, null, 0, 25);
-        chartRenderer.setYWindow(LINE, 1, 20);
+        chartRenderer.setYWindow(LINE, 0, 25);
         chartRenderer.setAxisPositions(ChartRenderer.AxisPosition.MINIMUM, ChartRenderer.AxisPosition.MINIMUM);
         chartRenderer.setXGrid(new NumberGrid());
         chartRenderer.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartRenderer.GridMode.X);

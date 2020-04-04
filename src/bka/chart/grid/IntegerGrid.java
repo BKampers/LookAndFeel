@@ -46,12 +46,18 @@ public class IntegerGrid extends NumberGrid {
     
     private void addValues(double low, double high, List<Number> values) {
         long step = computeStep(low, high);
-        long markerValue = (long) (low / step) * step;
+        long markerValue = round(low / step) * step;
         while (markerValue <= high) {
             values.add(markerValue);
             markerValue += step;
         }
         values.add(markerValue);
+    }
+
+
+    private static long round(double value) {
+        long trunk = (long) value;
+        return (value < 0) ? trunk - 1 : trunk;
     }
 
 

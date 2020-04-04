@@ -59,6 +59,12 @@ public final class ChartRenderer implements java.awt.print.Printable {
     }
 
 
+    public void setExpandToGrid(boolean xExpandToGrid, boolean yExpandToGrid) {
+        this.xExpandToGrid = xExpandToGrid;
+        this.yExpandToGrid = yExpandToGrid;
+    }
+
+
     public void setLocale(Locale locale) {
         this.locale = Objects.requireNonNull(locale);
     }
@@ -365,7 +371,55 @@ public final class ChartRenderer implements java.awt.print.Printable {
     private void draw(Graphics2D g2d, Rectangle bounds) throws ChartDataException {
         setBounds(bounds);
         geometry.initialize(new ChartGeometry.Layout(chartArea(),leftOffset, rightOffset, xRange, yRanges, yWindowBase));
+        expandToGrid();
         draw(g2d);
+    }
+
+
+    private void expandToGrid() throws ChartDataException {
+        Range expandedXRange = expandedXRange();
+        RangeMap expandedYRanges = expandedYRanges();
+        if (! xRange.equals(expandedXRange) || ! yRanges.getDefault().equals(expandedYRanges.getDefault())) {
+            geometry.reinitialize(expandedXRange, expandedYRanges.getDefault());
+        }
+    }
+
+
+    private Range expandedXRange() {
+        if (! xExpandToGrid || geometry.getXGrid().getMarkerLists().isEmpty()) {
+            return xRange;
+        }
+        java.util.List<Number> markerValues = geometry.getXGrid().getMarkerLists().get(0).getValues();
+        if (markerValues.size() < 2) {
+            return xRange;
+        }
+        Range expandedXRange = new Range(xRange);
+        if (xRange.getMin() == null) {
+            expandedXRange.setMin(markerValues.get(0));
+        }
+        if (xRange.getMax() == null) {
+            expandedXRange.setMax(markerValues.get(markerValues.size() - 1));
+        }
+        return expandedXRange;
+    }
+
+
+    private RangeMap expandedYRanges() {
+        if (! yExpandToGrid || geometry.getYGrid().getMarkerLists().isEmpty()) {
+            return yRanges;
+        }
+        java.util.List<Number> markerValues = geometry.getYGrid().getMarkerLists().get(0).getValues();
+        if (markerValues.size() < 2) {
+            return yRanges;
+        }
+        RangeMap expandedYRanges = new RangeMap(yRanges);
+        if (yRanges.getDefault().getMin() == null) {
+            expandedYRanges.getDefault().setMin(markerValues.get(0));
+        }
+        if (yRanges.getDefault().getMax() == null) {
+            expandedYRanges.getDefault().setMax(markerValues.get(markerValues.size() - 1));
+        }
+        return expandedYRanges;
     }
 
 
@@ -511,7 +565,7 @@ public final class ChartRenderer implements java.awt.print.Printable {
     private final ChartGeometry geometry = new ChartGeometry();
 
     private ChartDrawStyle chartDrawStyle;
-    private Locale locale = Locale.ENGLISH;
+    private Locale locale = Locale.getDefault();
 
     private String title;
     
@@ -546,5 +600,8 @@ public final class ChartRenderer implements java.awt.print.Printable {
 
     private int leftOffset;
     private int rightOffset;
+
+    private boolean xExpandToGrid;
+    private boolean yExpandToGrid;
     
 }
