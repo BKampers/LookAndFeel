@@ -5,9 +5,10 @@
 package bka.swing.chart;
 
 
+import bka.awt.chart.RangeMap;
+import bka.awt.chart.Range;
 import bka.awt.chart.geometry.*;
 import bka.awt.chart.render.*;
-import bka.chart.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;

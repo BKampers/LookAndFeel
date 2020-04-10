@@ -4,6 +4,11 @@
 
 package bka.chart.grid;
 
+import bka.awt.chart.grid.MapGrid;
+import bka.awt.chart.grid.IntegerGrid;
+import bka.awt.chart.grid.NumberGrid;
+import bka.awt.chart.grid.Grid;
+import bka.awt.chart.grid.TimestampGrid;
 import java.util.*;
 import java.util.concurrent.*;
 import org.junit.*;

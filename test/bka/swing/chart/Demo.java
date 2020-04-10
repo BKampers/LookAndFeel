@@ -3,11 +3,13 @@
 */
 package bka.swing.chart;
 
+import bka.awt.chart.grid.IntegerGrid;
+import bka.awt.chart.grid.NumberGrid;
+import bka.awt.chart.grid.TimestampGrid;
 import bka.awt.*;
 import bka.awt.chart.*;
 import bka.awt.chart.custom.*;
 import bka.awt.chart.render.*;
-import bka.chart.grid.*;
 import java.awt.*;
 import java.awt.print.*;
 import java.util.*;
