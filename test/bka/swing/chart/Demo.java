@@ -3,12 +3,10 @@
 */
 package bka.swing.chart;
 
-import bka.awt.chart.grid.IntegerGrid;
-import bka.awt.chart.grid.NumberGrid;
-import bka.awt.chart.grid.TimestampGrid;
 import bka.awt.*;
 import bka.awt.chart.*;
 import bka.awt.chart.custom.*;
+import bka.awt.chart.grid.*;
 import bka.awt.chart.render.*;
 import java.awt.*;
 import java.awt.print.*;
@@ -175,7 +173,6 @@ public class Demo extends javax.swing.JFrame {
             configurePieChart(graphs);
         }
         else {
-            chartRenderer.setAxisRenderer(new DefaultAxisRenderer());
             chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.DOUBLE_CLICK_GRID_AREA);
             chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.XY);
             if (GraphStyle.BAR.equals(selectedItem)) {
@@ -230,7 +227,7 @@ public class Demo extends javax.swing.JFrame {
         chartRenderer.setGraphs(graphs);
         chartRenderer.setRenderer(CURVE, createPolygonDotRenderer());
         chartRenderer.setWindow(null, null, null, null);
-        chartRenderer.setAxisPositions(ChartRenderer.AxisPosition.MINIMUM, ChartRenderer.AxisPosition.MINIMUM);
+        setAxisRenderer(ChartRenderer.AxisPosition.MINIMUM);
         chartRenderer.setXGrid(new NumberGrid());
         chartRenderer.setGridRenderer(new DefaultGridRenderer(DEFAULT_GRID_STYLE), ChartRenderer.GridMode.X);
     }
@@ -243,7 +240,7 @@ public class Demo extends javax.swing.JFrame {
         chartRenderer.setRenderer(SINE, new DefaultLineRenderer(createLineDrawStyle(Color.BLUE), LINE_MARKER_SIZE));
         chartRenderer.setWindow(null, null, 0, 25);
         chartRenderer.setYWindow(LINE, 0, 25);
-        chartRenderer.setAxisPositions(ChartRenderer.AxisPosition.MINIMUM, ChartRenderer.AxisPosition.MINIMUM);
+        setAxisRenderer(ChartRenderer.AxisPosition.MINIMUM);
         chartRenderer.setXGrid(new NumberGrid());
         chartRenderer.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartRenderer.GridMode.X);
     }
@@ -276,7 +273,7 @@ public class Demo extends javax.swing.JFrame {
         chartRenderer.setChart(SCATTER, scatter);
         chartRenderer.setRenderer(SCATTER, new ScatterRenderer<>(createPointDrawStyle()));
         chartRenderer.setWindow(xWindowMinimum, xWindowMaximum, 0, yWindowMaximum);
-        chartRenderer.setAxisPositions(ChartRenderer.AxisPosition.ORIGIN, ChartRenderer.AxisPosition.ORIGIN);
+        setAxisRenderer(ChartRenderer.AxisPosition.ORIGIN);
         chartRenderer.setXGrid(new NumberGrid());
         chartRenderer.setYGrid(new NumberGrid());
         chartRenderer.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartRenderer.GridMode.X);
@@ -287,7 +284,7 @@ public class Demo extends javax.swing.JFrame {
         chartRenderer.setGraphs(graphs);
         chartRenderer.setRenderer(MONTHS, createDotRenderer());
         chartRenderer.setWindow(null, null, null, null);
-        chartRenderer.setAxisPositions(ChartRenderer.AxisPosition.MINIMUM, ChartRenderer.AxisPosition.MINIMUM);
+        setAxisRenderer(ChartRenderer.AxisPosition.MINIMUM);
         chartRenderer.setXGrid(new TimestampGrid());
         chartRenderer.setYGrid(new IntegerGrid());
         chartRenderer.setGridRenderer(new DefaultGridRenderer(ZEBRA_GRID_STYLE), ChartRenderer.GridMode.X);
@@ -319,7 +316,7 @@ public class Demo extends javax.swing.JFrame {
         chartRenderer.setWindow(0, xMax, 0, null);
         chartRenderer.setXGrid(new IntegerGrid());
         chartRenderer.setGridRenderer(new DefaultGridRenderer(WHITE_GRADIENT_GRID_STYLE), ChartRenderer.GridMode.Y);
-        chartRenderer.setAxisPositions(ChartRenderer.AxisPosition.ORIGIN, ChartRenderer.AxisPosition.ORIGIN);
+        setAxisRenderer(ChartRenderer.AxisPosition.ORIGIN);
     }
 
 
@@ -328,11 +325,16 @@ public class Demo extends javax.swing.JFrame {
         chartRenderer.setXWindowMaximum(null);
         chartRenderer.setGraphs(graphs);
         chartRenderer.setAxisRenderer(null);
-        chartRenderer.setAxisPositions(ChartRenderer.AxisPosition.ORIGIN, ChartRenderer.AxisPosition.ORIGIN);
+        chartRenderer.setAxisRenderer(null);
         chartRenderer.setGridRenderer(null, ChartRenderer.GridMode.NONE);
         chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.NONE);
         chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.NONE);
         chartRenderer.setRenderer(YEARS, new DefaultPieSectorRenderer(createPieDrawStyle()));
+    }
+
+
+    private void setAxisRenderer(ChartRenderer.AxisPosition position) {
+        chartRenderer.setAxisRenderer(new DefaultAxisRenderer(position));
     }
 
     

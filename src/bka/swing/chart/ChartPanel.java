@@ -35,6 +35,7 @@ public final class ChartPanel extends javax.swing.JPanel {
 
     public static AxisRenderer createDefaultAxisRenderer() {
         return new DefaultAxisRenderer(
+            ChartRenderer.AxisPosition.ORIGIN,
             javax.swing.UIManager.getColor("Chart.axisColor"),
             javax.swing.UIManager.getColor("Chart.markerColor"),
             javax.swing.UIManager.getColor("Chart.labelColor"),
