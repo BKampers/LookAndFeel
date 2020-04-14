@@ -161,7 +161,7 @@ public class Demo extends javax.swing.JFrame {
         chartRenderer.setHighlightFormat(LINE, "x = %d", "y = %d");
         chartRenderer.setHighlightFormat(YEARS, "year = %d", "value = %f");
         chartRenderer.setHighlightFormat(MONTHS, "yyyy-MM-dd", "y = %d");
-        chartRenderer.setShowLegend(true);
+        chartRenderer.setLegendRenderer(new DefaultLegendRenderer(900, 80));
     }
 
 
@@ -239,7 +239,7 @@ public class Demo extends javax.swing.JFrame {
         chartRenderer.setRenderer(LINE, new DefaultLineRenderer(createLineDrawStyle(Color.RED), LINE_MARKER_SIZE));
         chartRenderer.setRenderer(SINE, new DefaultLineRenderer(createLineDrawStyle(Color.BLUE), LINE_MARKER_SIZE));
         chartRenderer.setWindow(null, null, 0, 25);
-        chartRenderer.setYWindow(LINE, 0, 25);
+        chartRenderer.setYWindow(LINE, null, null);
         setAxisRenderer(ChartRenderer.AxisPosition.MINIMUM);
         chartRenderer.setXGrid(new NumberGrid());
         chartRenderer.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartRenderer.GridMode.X);

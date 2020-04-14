@@ -5,8 +5,8 @@
 package bka.swing.chart;
 
 
-import bka.awt.chart.RangeMap;
-import bka.awt.chart.Range;
+import bka.awt.chart.*;
+import bka.awt.chart.custom.*;
 import bka.awt.chart.geometry.*;
 import bka.awt.chart.render.*;
 import java.awt.*;
@@ -34,13 +34,22 @@ public final class ChartPanel extends javax.swing.JPanel {
 
 
     public static AxisRenderer createDefaultAxisRenderer() {
-        return new DefaultAxisRenderer(
-            ChartRenderer.AxisPosition.ORIGIN,
-            javax.swing.UIManager.getColor("Chart.axisColor"),
-            javax.swing.UIManager.getColor("Chart.markerColor"),
-            javax.swing.UIManager.getColor("Chart.labelColor"),
-            javax.swing.UIManager.getColor("Chart.titleColor"),
-            javax.swing.UIManager.getColor("Chart.unitColor"));
+        AxisStyle style = new AxisStyle();
+        style.setAxisColor(getColor("axisColor"));
+        style.setMarkerColor(getColor("markerColor"));
+        style.setLabelColor(getColor("labelColor"));
+        style.setTitleColor(getColor("titleColor"));
+        style.setUnitColor(getColor("unitColor"));
+        return new DefaultAxisRenderer(ChartRenderer.AxisPosition.ORIGIN, style);
+    }
+
+
+    private static Color getColor(String key) {
+        Color color = javax.swing.UIManager.getColor("Chart." + key);
+        if (color == null) {
+            return Color.BLACK;
+        }
+        return color;
     }
 
 
@@ -240,7 +249,7 @@ public final class ChartPanel extends javax.swing.JPanel {
         private void zoom(Point point) {
             boolean xMode = renderer.getGridMode() == ChartRenderer.GridMode.X;
             ChartGeometry geometry = renderer.getChartGeometry();
-            java.util.List<Number> values = (xMode) ? geometry.getXGrid().getValues() : geometry.getYGrid().getValues();
+            java.util.List<Number> values = (xMode) ? geometry.getXGrid().getValues() : geometry.getYGrid(null).getValues();
             if (values.size() >= 2) {
                 Number min = values.get(0);
                 boolean zoomed = false;
