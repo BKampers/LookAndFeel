@@ -271,7 +271,7 @@ public class Demo extends javax.swing.JFrame {
             yWindowMaximum = Math.ceil(yWindowMaximum.doubleValue() + 0.001);
         }
         chartRenderer.setChart(SCATTER, scatter);
-        chartRenderer.setRenderer(SCATTER, new ScatterRenderer<>(createPointDrawStyle()));
+        chartRenderer.setRenderer(SCATTER, new ScatterRenderer<>(createPointDrawStyle(), 3.0f));
         chartRenderer.setWindow(xWindowMinimum, xWindowMaximum, 0, yWindowMaximum);
         setAxisRenderer(ChartRenderer.AxisPosition.ORIGIN);
         chartRenderer.setXGrid(new NumberGrid());
