@@ -235,7 +235,7 @@ public class Demo extends javax.swing.JFrame {
 
     private void configureLineChart(Map<Object, Map<Number, Number>> graphs) {
         chartRenderer.setGraphs(graphs);
-        chartRenderer.setRenderer(CURVE, new DefaultLineRenderer(createLineDrawStyle(Color.GREEN), LINE_MARKER_SIZE));
+        chartRenderer.setRenderer(CURVE, new DefaultLineRenderer(createLineDrawStyle(Color.GREEN), LINE_MARKER_SIZE, PolygonFactory.createStar(5, 3, 9)));
         chartRenderer.setRenderer(LINE, new DefaultLineRenderer(createLineDrawStyle(Color.RED), LINE_MARKER_SIZE));
         chartRenderer.setRenderer(SINE, new DefaultLineRenderer(createLineDrawStyle(Color.BLUE), LINE_MARKER_SIZE));
         chartRenderer.setWindow(null, null, 0, 25);
@@ -422,7 +422,7 @@ public class Demo extends javax.swing.JFrame {
 
 
     private static LineDrawStyle createLineDrawStyle(Color color) {
-        LineDrawStyle lineDrawStyle = LineDrawStyle.create(Color.MAGENTA, PointDrawStyle.createRadial(new Color[] { color, color.darker() }));
+        LineDrawStyle lineDrawStyle = LineDrawStyle.create(Color.MAGENTA, DefaultDrawStyle.createSolid(Color.BLACK), PointDrawStyle.createRadial(new Color[] { color, color.darker() }));
         Color areaColor = new Color(0x80FFFF00, true);
         lineDrawStyle.setTopAreaPaint(areaColor);
         lineDrawStyle.setBottomAreaPaint(areaColor.darker());
