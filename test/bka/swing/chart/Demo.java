@@ -234,10 +234,12 @@ public class Demo extends javax.swing.JFrame {
 
 
     private void configureLineChart(Map<Object, Map<Number, Number>> graphs) {
+        final Color areaColor = new Color(0x80FFFF00, true);
         chartRenderer.setGraphs(graphs);
-        chartRenderer.setRenderer(CURVE, new DefaultLineRenderer(createLineDrawStyle(Color.GREEN), LINE_MARKER_SIZE, PolygonFactory.createStar(5, 3, 9)));
-        chartRenderer.setRenderer(LINE, new DefaultLineRenderer(createLineDrawStyle(Color.RED), LINE_MARKER_SIZE));
-        chartRenderer.setRenderer(SINE, new DefaultLineRenderer(createLineDrawStyle(Color.BLUE), LINE_MARKER_SIZE));
+        PolygonDotRenderer markerRenderer = new PolygonDotRenderer(PolygonFactory.createStar(5, 3, 9), DefaultDrawStyle.createSolid(Color.BLACK));
+        chartRenderer.setRenderer(CURVE, new DefaultLineRenderer(createLineDrawStyle(Color.BLUE, areaColor), markerRenderer));
+        chartRenderer.setRenderer(LINE, new DefaultLineRenderer(createLineDrawStyle(Color.RED, areaColor), new OvalDotRenderer(9, null)));
+        chartRenderer.setRenderer(SINE, new DefaultLineRenderer(createLineDrawStyle(null, areaColor)));
         chartRenderer.setWindow(null, null, 0, 25);
         chartRenderer.setYWindow(LINE, null, null);
         setAxisRenderer(ChartRenderer.AxisPosition.MINIMUM);
@@ -421,17 +423,30 @@ public class Demo extends javax.swing.JFrame {
     }
 
 
-    private static LineDrawStyle createLineDrawStyle(Color color) {
-        LineDrawStyle lineDrawStyle = LineDrawStyle.create(Color.MAGENTA, DefaultDrawStyle.createSolid(Color.BLACK), PointDrawStyle.createRadial(new Color[] { color, color.darker() }));
-        Color areaColor = new Color(0x80FFFF00, true);
-        lineDrawStyle.setTopAreaPaint(areaColor);
-        lineDrawStyle.setBottomAreaPaint(areaColor.darker());
+    private static LineDrawStyle createLineDrawStyle(Color color, Color areaColor) {
+        PointDrawStyle pointDrawStyle = (color == null) ? null : PointDrawStyle.createRadial(new Color[] { Color.WHITE, color.darker() });
+        LineDrawStyle lineDrawStyle = LineDrawStyle.create(Color.MAGENTA, pointDrawStyle);
+        if (areaColor != null) {
+            lineDrawStyle.setTopAreaPaint(areaColor);
+            lineDrawStyle.setBottomAreaPaint(areaColor.darker());
+        }
         return lineDrawStyle;
     }
 
 
     private static PointRenderer createDotRenderer() {
         return new OvalDotRenderer(DOT_SIZE, DefaultDrawStyle.createSolid(Color.BLACK));
+    }
+
+
+    private static LineDrawStyle createMarkerDrawStyle(PointDrawStyle pointDrawStyle, Color areaColor) {
+        AreaDrawStyle markerDrawStyle = pointDrawStyle;
+        LineDrawStyle lineDrawStyle = LineDrawStyle.create(null, markerDrawStyle);
+        if (areaColor != null) {
+            lineDrawStyle.setTopAreaPaint(areaColor);
+            lineDrawStyle.setBottomAreaPaint(areaColor.darker());
+        }
+        return lineDrawStyle;
     }
 
 
@@ -494,7 +509,6 @@ public class Demo extends javax.swing.JFrame {
     private static final String MONTHS = "Per month";
 
     private static final int PIE_COLOR_COUNT = 7;
-    private static final int LINE_MARKER_SIZE = 9;
     private static final int DOT_SIZE = 4;
 
 }
