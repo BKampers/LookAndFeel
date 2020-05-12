@@ -146,12 +146,9 @@ public class Demo extends javax.swing.JFrame {
 
     
     private void populateComboBox() {
-        styleComboBox.addItem(GraphStyle.PIE);
-        styleComboBox.addItem(GraphStyle.LINE);
-        styleComboBox.addItem(GraphStyle.DOT);
-        styleComboBox.addItem(GraphStyle.POLYGON);
-        styleComboBox.addItem(GraphStyle.BAR);
-        styleComboBox.addItem(GraphStyle.SCATTER);
+        for (GraphStyle style : GraphStyle.values()) {
+            styleComboBox.addItem(style);
+        }
     }
 
 
@@ -229,6 +226,8 @@ public class Demo extends javax.swing.JFrame {
         chartRenderer.setWindow(null, null, null, null);
         setAxisRenderer(ChartRenderer.AxisPosition.MINIMUM);
         chartRenderer.setXGrid(new NumberGrid());
+        chartRenderer.setXGrid(new NumberGrid());
+        chartRenderer.setYGrid(new NumberGrid());
         chartRenderer.setGridRenderer(new DefaultGridRenderer(DEFAULT_GRID_STYLE), ChartRenderer.GridMode.X);
     }
 
@@ -244,6 +243,8 @@ public class Demo extends javax.swing.JFrame {
         chartRenderer.setYWindow(LINE, null, null);
         setAxisRenderer(ChartRenderer.AxisPosition.MINIMUM);
         chartRenderer.setXGrid(new NumberGrid());
+        chartRenderer.setXGrid(new NumberGrid());
+        chartRenderer.setYGrid(new NumberGrid());
         chartRenderer.setGridRenderer(new DefaultGridRenderer(GRAY_GRID_STYLE), ChartRenderer.GridMode.X);
     }
 
@@ -326,8 +327,8 @@ public class Demo extends javax.swing.JFrame {
         chartRenderer.setXWindowMinimum(null);
         chartRenderer.setXWindowMaximum(null);
         chartRenderer.setGraphs(graphs);
-        chartRenderer.setAxisRenderer(null);
-        chartRenderer.setAxisRenderer(null);
+        chartRenderer.setXAxisRenderer();
+        chartRenderer.setYAxisRenderer();
         chartRenderer.setGridRenderer(null, ChartRenderer.GridMode.NONE);
         chartPanel.setClickZoomMode(ChartPanel.ClickZoomMode.NONE);
         chartPanel.setDragZoomMode(ChartPanel.DragZoomMode.NONE);
@@ -336,7 +337,8 @@ public class Demo extends javax.swing.JFrame {
 
 
     private void setAxisRenderer(ChartRenderer.AxisPosition position) {
-        chartRenderer.setAxisRenderer(new DefaultAxisRenderer(position));
+        chartRenderer.setXAxisRenderer(new DefaultAxisRenderer(position));
+        chartRenderer.setYAxisRenderer(new DefaultAxisRenderer(position));
     }
 
     
