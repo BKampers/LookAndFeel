@@ -337,8 +337,8 @@ public class Demo extends javax.swing.JFrame {
 
 
     private void setAxisRenderer(ChartRenderer.AxisPosition position) {
-        chartRenderer.setXAxisRenderer(new DefaultAxisRenderer(position));
-        chartRenderer.setYAxisRenderer(new DefaultAxisRenderer(position));
+        chartRenderer.setXAxisRenderer(new DefaultAxisRenderer(position, Color.GRAY));
+        chartRenderer.setYAxisRenderer(new DefaultAxisRenderer(position, Color.GRAY));
     }
 
     

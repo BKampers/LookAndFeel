@@ -27,14 +27,14 @@ public final class ChartPanel extends javax.swing.JPanel {
         this.renderer = Objects.requireNonNull(renderer);
         selectionRectangleColor = UIManager.getColor("Chart.selectionRectangleColor");
         if (selectionRectangleColor == null) {
-            selectionRectangleColor = Color.GRAY;
+            selectionRectangleColor = Color.LIGHT_GRAY;
         }
         addListeners();
     }
 
 
     public static AxisRenderer createDefaultAxisRenderer() {
-        AxisStyle style = new AxisStyle();
+        AxisStyle style = new AxisStyle(null);
         style.setAxisColor(getColor("axisColor"));
         style.setMarkerColor(getColor("markerColor"));
         style.setLabelColor(getColor("labelColor"));
