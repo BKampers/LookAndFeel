@@ -253,15 +253,15 @@ public class Demo extends javax.swing.JFrame {
         Number xWindowMinimum = null;
         Number xWindowMaximum = null;
         Number yWindowMaximum = null;
-        for (ChartDataElement<Number, Number> data : scatter) {
-            if (xWindowMinimum == null || data.getKey().doubleValue() < xWindowMinimum.doubleValue()) {
-                xWindowMinimum = data.getKey();
+        for (ChartPoint data : scatter) {
+            if (xWindowMinimum == null || data.getX().doubleValue() < xWindowMinimum.doubleValue()) {
+                xWindowMinimum = data.getX();
             }
-            if (xWindowMaximum == null || data.getKey().doubleValue() > xWindowMaximum.doubleValue()) {
-                xWindowMaximum = data.getKey();
+            if (xWindowMaximum == null || data.getX().doubleValue() > xWindowMaximum.doubleValue()) {
+                xWindowMaximum = data.getX();
             }
-            if (yWindowMaximum == null || data.getValue().doubleValue() > yWindowMaximum.doubleValue()) {
-                yWindowMaximum = data.getValue();
+            if (yWindowMaximum == null || data.getY().doubleValue() > yWindowMaximum.doubleValue()) {
+                yWindowMaximum = data.getY();
             }
         }
         if (xWindowMinimum != null) {
@@ -474,7 +474,7 @@ public class Demo extends javax.swing.JFrame {
     private final Map<Number, Number> line = new TreeMap<>();
     private final Map<Number, Number> years = new TreeMap<>();
     private final Map<Number, Number> months = new TreeMap<>();
-    private final ChartData<Number, Number> scatter = new ChartData<>();
+    private final ChartPoints scatter = new ChartPoints();
 
     private Timer timer;
 
