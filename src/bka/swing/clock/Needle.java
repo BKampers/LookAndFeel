@@ -1,34 +1,35 @@
 package bka.swing.clock;
 
 import java.awt.*;
+import java.util.*;
 
 
 public abstract class Needle {
 
+    protected Needle(Point turningPoint, Scale scale) {
+        setTurningPoint(turningPoint);
+        setScale(scale);
+    }
+
     public void setValue(double value) {
         this.value = value;
     } 
-    
-    
-    public void setScale(Scale scale) {
-        this.scale = scale;
+
+    public final void setScale(Scale scale) {
+        this.scale = Objects.requireNonNull(scale);
     }
-    
     
     public Scale getScale() {
         return scale;
     }
-    
-    
-    public void setTurningPoint(Point point) {
-        turningPoint = point;
+
+    public final void setTurningPoint(Point point) {
+        turningPoint = Objects.requireNonNull(point);
     }
 
-    
-    public Point getTurningPoint() {
+    public final Point getTurningPoint() {
         return turningPoint;
     }
-
     
     public void paint(Graphics2D g2d) {
         g2d.setColor(Color.BLACK);
@@ -42,9 +43,8 @@ public abstract class Needle {
     public abstract void paintNeedle(Graphics2D g2d);    
 
     
-    protected Point turningPoint = new Point(0, 0);
-
-    private Scale scale = new Scale();
-    private double value = 0.0;
+    private Point turningPoint;
+    private Scale scale;
+    private double value;
 
 }

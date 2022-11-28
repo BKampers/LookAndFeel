@@ -1,43 +1,30 @@
 package bka.swing.clock;
 
 import java.awt.*;
+import java.util.*;
 
 
 public class ImageNeedle extends Needle {
-
-    public ImageNeedle() {
-    }
     
-    
-    public ImageNeedle(Image image, Point turningPoint, Point turningOffset) {
+    public ImageNeedle(Point turningPoint, Scale scale, Image image, Point turningOffset) {
+        super(turningPoint, scale);
         setImage(image);
-        setTurningPoint(turningPoint);
         setTurningOffset(turningOffset);
     }
-    
-    
-    public ImageNeedle(Image image, Point turningPoint, Point turningOffset, Scale scale) {
-        setImage(image);
-        setTurningPoint(turningPoint);
-        setTurningOffset(turningOffset);
-        setScale(scale);
-    }
-    
-    
-    public void setImage(Image image) {
-        this.image = image;
+
+    public final void setImage(Image image) {
+        this.image = Objects.requireNonNull(image);
     }
 
-    
-    public void setTurningOffset(Point point) {
-        turningOffset = point;
+    public final void setTurningOffset(Point point) {
+        turningOffset = Objects.requireNonNull(point);
     }
     
-    
+    @Override
     public void paintNeedle(Graphics2D g2d) {
-        g2d.drawImage(image, turningPoint.x-turningOffset.x, turningPoint.y-turningOffset.y, null);
+        Point turningPoint = getTurningPoint();
+        g2d.drawImage(image, turningPoint.x - turningOffset.x, turningPoint.y - turningOffset.y, null);
     }
-
     
     private Image image;
     private Point turningOffset;

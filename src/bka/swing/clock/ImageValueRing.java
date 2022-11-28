@@ -1,64 +1,66 @@
 package bka.swing.clock;
 
 import java.awt.*;
+import java.util.*;
 
 public class ImageValueRing extends ValueRing {
 
-    public ImageValueRing() {
-        super();
+    public ImageValueRing(Point center, int radius, Scale scale, Image[] images, Dimension dimension) {
+        this(center, radius, scale, 1.0, images, dimension);
     }
-    
 
-    public ImageValueRing(Image[] images, Dimension dimension, Point center, int radius) {
-        super();
-        this.images = images;
+    public ImageValueRing(Point center, int radius, Scale scale, double interval, Image[] images, Dimension dimension) {
+        this(center, radius, scale, interval, true, images, dimension);
+    }
+
+    public ImageValueRing(Point center, int radius, Scale scale, double interval, boolean itemsRotated, Image[] images, Dimension dimension) {
+        super(center, radius, scale, interval, itemsRotated);
+        setImages(images);
         setDimensions(dimension);
-        setCenter(center);
-        setRadius(radius);
     }
-    
 
-    public void setImages(Image[] images) {
-        this.images = images;
+    public final void setImages(Image[] images) {
+        this.images = requireValidArray(images);
     }
-    
-    
-    public void setDimensions(Dimension[] dimensions) {
-        this.dimensions = dimensions;
+
+    public final void setDimensions(Dimension[] dimensions) {
+        this.dimensions = requireValidArray(dimensions);
     }
-    
-    
-    public void setDimensions(Dimension dimension) {
+
+    private static <T> T[] requireValidArray(T[] array) {
+        if (array.length != 10) {
+            throw new IllegalArgumentException("Array count not 10");
+        }
+        if (Arrays.stream(array).anyMatch(Objects::isNull)) {
+            throw new NullPointerException("Array element");
+        }
+        return array;
+    }
+
+    public final void setDimensions(Dimension dimension) {
+        Objects.requireNonNull(dimension);
         dimensions = new Dimension[10];
         for (int i = 0; i < 10; i++) {
             dimensions[i] = dimension;
         }
     }
 
-    
-    public void paintValue(Graphics2D g2d, String value) {
+    @Override
+    protected void paintValue(Graphics2D g2d, String value) {
+        int[] indexes = value.chars().filter(ch -> '0' <= ch && ch <= '9').map(ch -> ch - '0').toArray();
         int width = 0;
         int height = 0;
-        for (int i = 0; i < value.length(); i++) {
-            int c = Character.valueOf(value.charAt(i)) - CHARACTER_VALUE_OF_0;
-            if (0 <= c && c < 10) {
-                width += dimensions[c].width;
-                height = Math.max(height, dimensions[c].height);
-            }
+        for (int i : indexes) {
+            width += dimensions[i].width;
+            height = Math.max(height, dimensions[i].height);
         }
         width /= -2;
         height /= -2;
-        for (int i = 0; i < value.length(); i++) {
-            int c = Character.valueOf(value.charAt(i)) - CHARACTER_VALUE_OF_0;
-            if (0 <= c && c < 10) {
-                g2d.drawImage(images[c], width, height, null);
-                width += dimensions[c].width;
-            }
+        for (int i : indexes) {
+            g2d.drawImage(images[i], width, height, null);
+            width += dimensions[i].width;
         }
     }
-    
-    
-    private static final int CHARACTER_VALUE_OF_0 = Character.valueOf('0');
     
     private Image[] images; 
     private Dimension[] dimensions; 
