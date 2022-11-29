@@ -7,18 +7,10 @@ public final class Scale {
     }
 
     public Scale(double minValue, double maxValue, double minAngle, double maxAngle) {
-        setValueRange(minValue, maxValue);
-        setAngleRange(minAngle, maxAngle);
-    }
-    
-    public void setValueRange(double min, double max) {
-        minValue = min;
-        maxValue = max;
-    }
-
-    public void setAngleRange(double min, double max) {
-        minAngle = min * 2 * Math.PI;
-        maxAngle = max * 2 * Math.PI;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
+        this.minAngle = minAngle * 2.0 * Math.PI;
+        this.maxAngle = maxAngle * 2.0 * Math.PI;
     }
 
     public double getMinValue() {
@@ -33,9 +25,9 @@ public final class Scale {
         return minAngle + (maxAngle - minAngle) * (value - minValue) / (maxValue - minValue);
     }
 
-    private double minValue;
-    private double maxValue;
-    private double minAngle;
-    private double maxAngle;
+    private final double minValue;
+    private final double maxValue;
+    private final double minAngle;
+    private final double maxAngle;
 
 }
