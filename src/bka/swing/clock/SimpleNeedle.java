@@ -17,6 +17,10 @@ public class SimpleNeedle extends Needle {
         this.stroke = stroke;
     }
 
+    public void setPaint(Paint paint) {
+        this.paint = paint;
+    }
+
     @Override
     public void paintNeedle(Graphics2D g2d) {
         Stroke restoreStroke = null;
@@ -24,6 +28,9 @@ public class SimpleNeedle extends Needle {
             restoreStroke = g2d.getStroke();
         }
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        if (paint != null) {
+            g2d.setPaint(paint);
+        }
         if (stroke != null) {
             g2d.setStroke(stroke);
         }
@@ -35,6 +42,7 @@ public class SimpleNeedle extends Needle {
     }
 
     private int length;
-    private Stroke stroke = null;
+    private Paint paint;
+    private Stroke stroke;
     
 }

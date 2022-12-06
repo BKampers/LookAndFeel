@@ -30,6 +30,11 @@ public class ArcRing extends Ring {
             this.stroke = Objects.requireNonNull(stroke);
         }
 
+        @Override
+        public String toString() {
+            return "Arc " + start + " .. " + end;
+        }
+
         private double start;
         private double end;
         private Paint paint;
