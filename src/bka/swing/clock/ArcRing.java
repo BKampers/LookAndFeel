@@ -1,6 +1,7 @@
 package bka.swing.clock;
 
 import java.awt.*;
+import java.awt.geom.*;
 import java.util.*;
 
 public class ArcRing extends Ring {
@@ -61,18 +62,18 @@ public class ArcRing extends Ring {
             g2d.setStroke(arc.stroke);
             double start = Math.toDegrees(scale.angle(arc.start));
             double end = Math.toDegrees(scale.angle(arc.end));
-            g2d.drawArc(x, y, size, size, startAngle(start), arcAngle(start, end));
+            g2d.draw(new Arc2D.Double(x, y,size,size,angleStart(start), angleExtent(start, end), Arc2D.OPEN));
         }
         g2d.setStroke(restoreStroke);
     }
 
-    private static int startAngle(double start) {
-        return 90 - (int) Math.round(start);
+    private static double angleStart(double start) {
+        return 90d - start;
     }
 
-    private static int arcAngle(double start, double end) {
-        int arc = (int) Math.round(start - end);
-        return (arc <= 0) ? arc : -360 + arc;
+    private static double angleExtent(double start, double end) {
+        double arc = start - end;
+        return (arc <= 0.0) ? arc : -360d + arc;
     }
 
     private final Collection<Arc> arcs;
