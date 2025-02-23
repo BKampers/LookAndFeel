@@ -11,19 +11,17 @@ public class RealValidator extends AbstractValidator {
         super(field, min, max);
     }
 
-
     public RealValidator(JFormattedTextField field, Double min, Double max, int maxDecimals) {
         super(field, min, max);
         enableDecimalCheck(maxDecimals);
     }
-
 
     public final void enableDecimalCheck(int count) {
         checkDecimalCount = true;
         maxDecimalCount = count;
     }
 
-
+    @Override
     public Number value() {
         DecimalFormat format = new DecimalFormat();
         try {
@@ -34,17 +32,15 @@ public class RealValidator extends AbstractValidator {
         }
     }
 
-
+    @Override
     protected boolean inRange(Number number) {
         double value = number.doubleValue();
-        return min.doubleValue() <= value && value <= max.doubleValue();
+        return getMin().doubleValue() <= value && value <= getMax().doubleValue();
     }
 
-
+    @Override
     protected String filter(String text, int offset) {
-        /*
-        ** TBD accept minus sign if super.min < 0
-        */
+        // TODO accept minus sign if super.min < 0
         java.text.DecimalFormatSymbols symbols = new java.text.DecimalFormatSymbols();
         String filtered = new String();
         String fieldText = field.getText();
@@ -74,7 +70,6 @@ public class RealValidator extends AbstractValidator {
         }
         return filtered;
     }
-
 
     private int maxDecimalCount = 0;
     private boolean checkDecimalCount = false;

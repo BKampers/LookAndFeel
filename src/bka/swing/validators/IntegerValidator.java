@@ -10,12 +10,11 @@ public class IntegerValidator extends AbstractValidator {
         super(field, min, max);
     }
 
-
     public IntegerValidator(JFormattedTextField field, Integer min, Integer max) {
-        super(field, new Long(min), new Long(max));
+        super(field, min, max);
     }
 
-
+    @Override
     public Number value() {
         try {
             return Long.parseLong(field.getText());
@@ -25,20 +24,20 @@ public class IntegerValidator extends AbstractValidator {
         }
     }
 
-
+    @Override
     protected boolean inRange(Number number) {
         long value = number.longValue();
-        return min.longValue() <= value && value <= max.longValue();
+        return getMin().longValue() <= value && value <= getMax().longValue();
     }
 
-
+    @Override
     protected String filter(String text, int offset) {
         java.text.DecimalFormatSymbols symbols = new java.text.DecimalFormatSymbols();
         String filtered = new String();
         char[] charArray = text.toCharArray();
         for (int i = 0; i < charArray.length; i++) {
             char ch = charArray[i];
-            if (Character.isDigit(ch) || min.longValue() < 0 && offset == 0 && i == 0 && ch == symbols.getMinusSign()) {
+            if (Character.isDigit(ch) || getMin().longValue() < 0 && offset == 0 && i == 0 && ch == symbols.getMinusSign()) {
                 filtered += ch;
             }
         }

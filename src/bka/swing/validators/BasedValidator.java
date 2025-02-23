@@ -12,42 +12,40 @@ public class BasedValidator extends AbstractValidator {
         this.radix = radix;
     }
 
-
     public BasedValidator(JFormattedTextField field, Integer min, Integer max, int radix) {
-        this(field, new BigInteger(min.toString()), new BigInteger(max.toString()), radix);
+        this(field, BigInteger.valueOf(min), BigInteger.valueOf(max), radix);
     }
-
 
     public String valueString() {
         Number value = value();
         if (value instanceof BigInteger) {
             return ((BigInteger) value()).toString(radix);
         }
-        else {
+        return null;
+    }
+
+    @Override
+    public Number value() {
+        try {
+            String text = field.getText().replaceAll(separatorRegex(), "");
+            return new BigInteger(text, radix);
+        }
+        catch (NumberFormatException ex) {
             return null;
         }
     }
-
-
-    public Number value() {
-        BigInteger value = null;
-        String text = field.getText();
-        text = text.replaceAll(SEPARATOR_STRING, "");
-        try {
-            value = new BigInteger(text, radix);
-        }
-        catch (NumberFormatException ex) {
-        }
-        return value;
+    
+    private static String separatorRegex() {
+        return "\\" + SEPARATOR;
     }
 
-
+    @Override
     protected boolean inRange(Number number) {
         BigInteger value = (BigInteger) value();
-        return value.compareTo((BigInteger) min) >= 0 && value.compareTo((BigInteger) max) <= 0;
+        return value.compareTo((BigInteger) getMin()) >= 0 && value.compareTo((BigInteger) getMax()) <= 0;
     }
 
-
+    @Override
     protected String filter(String text, int offset) {
         String filtered = new String();
         for (char ch : text.toCharArray()) {
@@ -58,7 +56,7 @@ public class BasedValidator extends AbstractValidator {
                 ch = Character.toUpperCase(ch);
             }
             if ('0' <= ch && ch <= '9' || 'A' <= ch && ch <= (char) ('A' + radix - 11) || 
-                offset == 0 && ((BigInteger) min).compareTo(BigInteger.ZERO) < 0 && ch == '-' ||
+                offset == 0 && ((BigInteger) getMin()).compareTo(BigInteger.ZERO) < 0 && ch == '-' ||
                 ch == SEPARATOR)
             {
                 filtered += ch;
@@ -68,9 +66,8 @@ public class BasedValidator extends AbstractValidator {
     }
 
 
-    private int radix;
+    private final int radix;
 
     private static final char SEPARATOR = ':';
-    private static final String SEPARATOR_STRING = "" + SEPARATOR;
 
 }
